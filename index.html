@@ -23,9 +23,11 @@
         .box h3 { margin: 0; font-size: 1.2rem; }
         .box p { font-size: 3rem; margin: 10px 0 0 0; font-weight: bold; }
 
+        /* Running Text Penuh Layar */
         .marquee-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 3px solid #fbbf24; z-index: 999; }
         marquee { font-size: 1.8rem; padding: 12px 0; display: block; width: 100%; color: white; }
 
+        /* Tombol & Panel Setting */
         #btn-menu { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10000; }
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10001; width: 550px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.5); text-align: left; }
         .row-item { background: #f8fafc; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fbbf24; }
@@ -33,9 +35,6 @@
         .btn-green { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px; }
         .btn-blue { background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px; }
         .btn-red { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        #slide-iqomah { background: rgba(0,0,0,0.98); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; }
-        #iq-timer { font-size: 15rem; color: #fbbf24; font-weight: bold; }
     </style>
 </head>
 <body onclick="pancingSuara()">
@@ -47,11 +46,6 @@
         <div id="jam">00:00:00</div>
         <div id="tanggal-masehi">Memuat Tanggal...</div>
         <div id="tanggal-hijriah">Memuat Kalender Islam...</div>
-    </div>
-
-    <div id="slide-iqomah">
-        <h1 style="font-size:3rem">PANGGILAN IQOMAH</h1>
-        <div id="iq-timer">10:00</div>
     </div>
 
     <div class="sholat-grid">
@@ -67,32 +61,126 @@
     </div>
 
     <div id="admin-panel">
-        <h2 style="margin-top:0;">⚙️ Pengaturan JWS</h2>
+        <h2 style="margin-top:0; border-bottom: 2px solid #fbbf24; padding-bottom: 10px;">⚙️ Pengaturan JWS</h2>
         <div class="row-item">
             <b>1. Identitas & Running Text</b><br>
             <input type="text" id="in-nama" placeholder="Nama Satuan">
             <input type="text" id="in-run" placeholder="Running Text">
-            <button class="btn-green" onclick="simpanTeks()">SIMPAN</button>
+            <button class="btn-green" onclick="simpanTeks()">SIMPAN TEKS</button>
         </div>
         <div class="row-item">
             <b>2. Ganti Background</b><br>
             <input type="file" id="in-bg" accept="image/*">
-            <button class="btn-blue" onclick="uploadBG()">UPLOAD</button>
+            <button class="btn-blue" onclick="uploadBG()">UPLOAD BG</button>
         </div>
         <div class="row-item">
             <b>3. Manajemen Audio & Tes Azan</b>
             <div id="audio-list" style="margin-top:10px;"></div>
         </div>
-        <button onclick="tutupSetting()" style="width:100%; padding:10px; border:none; cursor:pointer; font-weight:bold; background:#ddd;">TUTUP</button>
+        <button onclick="tutupSetting()" style="width:100%; padding:12px; border:none; background:#ddd; cursor:pointer; border-radius:5px; font-weight:bold;">TUTUP</button>
     </div>
 
     <script>
         const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
         let db; 
         let audioMap = {}; 
-        let iqAktif = false; 
-        let iqSisa = 0;
 
-        // Inisialisasi Database
-        const req = indexedDB.open("JWS_KORPASGAT_STABLE_V2", 1);
-        req.on
+        const req = indexedDB.open("JWS_STABLE_V2", 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
+        req.onsuccess = e => { db = e.target.result; initApp(); };
+
+        function initApp() {
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nama") || "STAFLOG KORPASGAT";
+            document.getElementById("disp-run").innerText = localStorage.getItem("run") || "STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU";
+
+            const tx = db.transaction("files", "readonly").objectStore("files");
+            tx.get("bg").onsuccess = e => {
+                if(e.target.result) {
+                    document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`);
+                }
+            };
+
+            audioKeys.forEach(k => {
+                tx.get(k).onsuccess = e => {
+                    if(e.target.result) audioMap[k] = new Audio(URL.createObjectURL(e.target.result.data));
+                };
+            });
+
+            setInterval(updateSistem, 1000);
+            updateSistem();
+        }
+
+        function updateSistem() {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            document.getElementById('tanggal-masehi').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            
+            // Kalender Hijriah
+            const hijri = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', {day:'numeric', month:'long', year:'numeric'}).format(d);
+            document.getElementById('tanggal-hijriah').innerText = hijri + " H";
+
+            // Deteksi Waktu Sholat (detik 00)
+            if(d.getSeconds() === 0) {
+                const jm = d.toLocaleTimeString('id-ID', {hour12:false, hour:'2-digit', minute:'2-digit'}).replace(/\./g, ':');
+                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => {
+                    if(jm === document.getElementById(s).innerText) audioMap[s]?.play();
+                });
+            }
+        }
+
+        // Fungsi Admin
+        function simpanTeks() {
+            localStorage.setItem("nama", document.getElementById("in-nama").value);
+            localStorage.setItem("run", document.getElementById("in-run").value);
+            location.reload();
+        }
+
+        function uploadBG() {
+            const f = document.getElementById("in-bg").files[0];
+            if(!f) return;
+            db.transaction("files", "readwrite").objectStore("files").put({id: "bg", data: f}).onsuccess = () => location.reload();
+        }
+
+        function uploadAudio(k) {
+            const f = document.getElementById('f-'+k).files[0];
+            if(!f) return;
+            db.transaction("files", "readwrite").objectStore("files").put({id: k, data: f}).onsuccess = () => location.reload();
+        }
+
+        function tesSuara(k) {
+            if(audioMap[k]) { audioMap[k].currentTime = 0; audioMap[k].play(); }
+            else alert("Audio belum ada!");
+        }
+
+        function stopSuara(k) { audioMap[k]?.pause(); }
+
+        function buatDaftarAudio() {
+            const container = document.getElementById("audio-list");
+            container.innerHTML = "";
+            audioKeys.forEach(k => {
+                const ada = !!audioMap[k];
+                container.innerHTML += `
+                    <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                        <b>${k.toUpperCase()}</b> <span style="color:${ada?'green':'red'}">${ada?'READY':'KOSONG'}</span><br>
+                        <input type="file" id="f-${k}" style="font-size:11px; width:180px;">
+                        <button class="btn-green" onclick="uploadAudio('${k}')" style="font-size:10px;">SAVE</button>
+                        <button class="btn-blue" onclick="tesSuara('${k}')" style="font-size:10px;">TES</button>
+                        <button class="btn-red" onclick="stopSuara('${k}')" style="font-size:10px;">STOP</button>
+                    </div>`;
+            });
+        }
+
+        function pancingSuara() {
+            Object.values(audioMap).forEach(a => { a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(() => {}); });
+        }
+
+        function bukaSetting() {
+            document.getElementById("admin-panel").style.display = "block";
+            document.getElementById("in-nama").value = localStorage.getItem("nama") || "";
+            document.getElementById("in-run").value = localStorage.getItem("run") || "";
+            buatDaftarAudio();
+        }
+        function tutupSetting() { document.getElementById("admin-panel").style.display = "none"; }
+    </script>
+</body>
+</html>
