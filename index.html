@@ -1,433 +1,308 @@
-
-Percakapan dengan Gemini
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <title>MASTER KOMANDO - STAFLOG KORPASGAT</title>
-
     <style>
-
-        :root { --bg-img: url('https://unsplash.com'); }
-
+        :root { --bg-img: url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?q=80&w=2000'); }
         body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; cursor: pointer; }
-
         .header-top { text-align: center; padding: 10px 0; background: rgba(0,0,0,0.3); border-bottom: 2px solid #fbbf24; }
-
         #disp-nama { font-size: 2.2rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
-
         .clock-section { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 5px 0; }
-
         #analog-clock { width: 140px; height: 140px; border: 5px solid #fbbf24; border-radius: 50%; position: relative; background: rgba(255,255,255,0.05); }
-
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; transform: translateX(-50%); }
-
         .hour-hand { width: 5px; height: 35px; background: #fff; z-index: 3; }
-
         .min-hand { width: 3px; height: 55px; background: #ddd; z-index: 2; }
-
         .sec-hand { width: 2px; height: 60px; background: #ff4444; z-index: 1; }
-
         .center-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: #fbbf24; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
-
         #jam { font-size: 7rem; font-weight: bold; line-height: 1; }
-
         .dates-container { text-align: center; margin-bottom: 5px; font-size: 1.3rem; }
-
         #tanggal-hijri { color: #fbbf24; font-weight: bold; }
-
         .slide { display: none; height: 48vh; align-items: center; justify-content: center; padding: 0 40px; animation: slideIn 1s; }
-
         .slide.active { display: flex; flex-direction: column; }
-
         @keyframes slideIn { from { opacity: 0; } to { opacity: 1; } }
-
         .sholat-grid { display: flex; gap: 12px; width: 100%; }
-
         .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
-
         .box p { font-size: 2.8rem; margin: 5px 0 0 0; font-weight: bold; }
-
         #slide-iqomah { background: rgba(0,0,0,0.95); z-index: 1000; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-
         #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; }
-
         marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; }
-
         #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-
         
-
         /* PANEL SETTING */
-
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; }
-
         .group { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 10px; }
-
         .group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 13px; color: #1e293b; }
-
         input, textarea { width: 95%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; }
-
         .row-item { background: #f8fafc; padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 5px solid #fbbf24; }
-
         .btn-blue { padding: 8px 15px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
-
         .btn-green { padding: 8px 15px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
-
+        .btn-red { padding: 8px 15px; background: #ef4444; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
     </style>
-
 </head>
-
 <body onclick="aktifkanSuaraSistem()">
-
-
 
     <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
 
-
-
     <div class="header-top">
-
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
-
         <div class="clock-section">
-
             <div id="analog-clock">
-
                 <div id="h-hand" class="hand hour-hand"></div>
-
                 <div id="m-hand" class="hand min-hand"></div>
-
                 <div id="s-hand" class="hand sec-hand"></div>
-
                 <div class="center-dot"></div>
-
             </div>
-
             <div id="jam">00:00:00</div>
-
         </div>
-
         <div class="dates-container"><span id="tanggal">...</span> | <span id="tanggal-hijri">...</span></div>
-
     </div>
-
-
-
-    <!-- IQOMAH -->
 
     <div id="slide-iqomah">
-
         <h1 style="font-size:4rem">MENUJU IQOMAH</h1>
-
         <div id="iqomah-timer">10:00</div>
-
     </div>
-
-
-
-    <!-- DISPLAY JADWAL -->
 
     <div id="slide-sholat" class="slide active">
-
         <div class="sholat-grid">
-
             <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
-
             <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
-
             <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
-
             <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
-
             <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
-
         </div>
-
-        <div style="margin-top:10px; color:#fbbf24; font-weight:bold;">Mode: Offline Abadi</div>
-
     </div>
-
-
 
     <div id="slide-info" class="slide">
-
-        <div class="pengumuman-card"><h1 id="val-judul">PENGUMUMAN</h1><p id="val-isi">-</p></div>
-
+        <div style="text-align:center; background:rgba(0,0,0,0.5); padding:30px; border-radius:20px;">
+            <h1 id="val-judul" style="color:#fbbf24;">PENGUMUMAN</h1>
+            <p id="val-isi" style="font-size:2rem;">-</p>
+        </div>
     </div>
-
-
 
     <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
 
-
-
     <div id="admin-panel">
-
         <h2 style="margin:0 0 15px 0; border-bottom:3px solid #fbbf24;">⚙️ Pengaturan Komando</h2>
-
         
-
         <div class="group">
-
             <label>1. Teks & Waktu:</label>
-
             <input type="text" id="in-nama" placeholder="Nama Instansi"><br>
-
             <input type="text" id="in-running" placeholder="Running Text"><br>
-
             <input type="text" id="in-judul" placeholder="Judul Pengumuman"><br>
-
             <textarea id="in-isi" rows="2" placeholder="Isi Pengumuman"></textarea>
-
             Tahrim (Min): <input type="number" id="in-tahrim-min" style="width:50px;"> | Iqomah (Min): <input type="number" id="in-iqomah-min" style="width:50px;">
-
             <button onclick="simpanTeksWaktu()" style="width:100%; padding:10px; background:#1e293b; color:white; border-radius:8px; margin-top:10px; cursor:pointer;">✅ SIMPAN TEKS & WAKTU</button>
-
         </div>
 
-
-
         <div class="group">
-
-            <label>2. Ganti Background (Simpan Satu-satu):</label>
-
+            <label>2. Ganti Background:</label>
             <div class="row-item" style="display:flex; align-items:center; gap:10px;">
-
                 <input type="file" id="in-bg" accept="image/*">
-
                 <button class="btn-blue" onclick="simpanBG()">SIMPAN BG</button>
-
             </div>
-
         </div>
-
-
 
         <div class="group">
-
-            <label>3. Manajemen Audio (Simpan Satu-satu):</label>
-
+            <label>3. Manajemen Audio:</label>
             <div id="list-audio-container"></div>
-
         </div>
-
         
-
         <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer; margin-top:10px;">TUTUP</button>
-
     </div>
 
-
-
     <script>
-
         const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
-
         let db; let iqAktif = false; let iqSisa = 0;
 
-
-
-        const req = indexedDB.open("KorpasgatFinal_FIX_BG", 1);
-
+        // Buka Database
+        const req = indexedDB.open("Korpasgat_DB_v1", 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-
         req.onsuccess = e => { db = e.target.result; muatData(); };
-
-
+        req.onerror = () => { alert("Gagal memuat database browser."); };
 
         function hitungJadwal() {
-
             const lat = -7.025; const lng = 107.52; const date = new Date();
-
             const d = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-
             const e = 0.0172 * (d - 80); const dec = 0.409 * Math.sin(e);
-
             const eqt = 0.165 * Math.sin(2 * e) - 0.126 * Math.cos(e) - 0.025 * Math.sin(e);
-
             const mid = 12 + 7 - lng / 15 - eqt;
-
             const sunTime = (angle) => {
-
                 const cosH = (Math.sin(angle * Math.PI / 180) - Math.sin(lat * Math.PI / 180) * Math.sin(dec)) / (Math.cos(lat * Math.PI / 180) * Math.cos(dec));
-
                 return mid + (Math.acos(cosH) * 180 / Math.PI) / 15;
-
             };
-
             const fmt = (t) => {
-
                 const h = Math.floor(t); const m = Math.floor((t - h) * 60) + 2;
-
                 return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-
             };
-
             document.getElementById("subuh").innerText = fmt(mid - (sunTime(-20) - mid));
-
             document.getElementById("dzuhur").innerText = fmt(mid);
-
             document.getElementById("ashar").innerText = fmt(sunTime(-36));
-
             document.getElementById("maghrib").innerText = fmt(sunTime(-1));
-
             document.getElementById("isya").innerText = fmt(sunTime(-18));
-
         }
-
-
 
         function muatData() {
-
+            // Teks
             if(localStorage.getItem("nama")) document.getElementById("disp-nama").innerText = localStorage.getItem("nama");
-
             if(localStorage.getItem("running")) document.getElementById("disp-running").innerText = localStorage.getItem("running");
-
             if(localStorage.getItem("judul")) document.getElementById("val-judul").innerText = localStorage.getItem("judul");
-
             if(localStorage.getItem("isi")) document.getElementById("val-isi").innerText = localStorage.getItem("isi");
-
-            document.getElementById("in-tahrim-min").value = localStorage.getItem("tahrim-min") || 5;
-
-            document.getElementById("in-iqomah-min").value = localStorage.getItem("iqomah-min") || 10;
-
-
-
+            
+            // Background
             const tx = db.transaction("files", "readonly").objectStore("files");
+            tx.get("bg").onsuccess = e => { 
+                if(e.target.result) document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`); 
+            };
 
-            tx.get("bg").onsuccess = e => { if(e.target.result) document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`); };
-
-            audioKeys.forEach(k => { tx.get(k).onsuccess = e => { if(e.target.result) { const a = new Audio(URL.createObjectURL(e.target.result.data)); a.id = "play-" + k; document.body.appendChild(a); } }; });
-
+            // Audio
+            audioKeys.forEach(k => { 
+                tx.get(k).onsuccess = e => { 
+                    if(e.target.result) { 
+                        const a = new Audio(URL.createObjectURL(e.target.result.data)); 
+                        a.id = "play-" + k; a.preload = "auto";
+                        document.body.appendChild(a); 
+                    } 
+                }; 
+            });
             hitungJadwal();
-
         }
-
-
 
         function simpanBG() {
-
-            const f = document.getElementById('in-bg').files;
-
-            if(f.length === 0) return alert("Pilih gambar dulu!");
-
-            db.transaction("files", "readwrite").objectStore("files").put({ id: "bg", data: f }).onsuccess = () => { alert("Background Berhasil Disimpan!"); location.reload(); };
-
+            const f = document.getElementById('in-bg').files[0];
+            if(!f) return alert("Pilih gambar!");
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").put({ id: "bg", data: f }).onsuccess = () => {
+                alert("BG Tersimpan!"); location.reload();
+            };
         }
-
-
 
         function simpanSuara(k) {
-
             const inp = document.getElementById('f-'+k);
-
-            if(inp.files.length === 0) return alert("Pilih file dulu!");
-
-            db.transaction("files", "readwrite").objectStore("files").put({ id: k, data: inp.files }).onsuccess = () => { localStorage.setItem("fname-"+k, inp.files.name); alert("Berhasil!"); location.reload(); };
-
+            if(inp.files.length === 0) return alert("Pilih file audio!");
+            const file = inp.files[0];
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").put({ id: k, data: file }).onsuccess = () => {
+                localStorage.setItem("fname-"+k, file.name);
+                alert("Audio " + k.toUpperCase() + " Berhasil!"); location.reload();
+            };
         }
 
+        function testAudio(k) {
+            const a = document.getElementById("play-" + k);
+            if(a) { a.currentTime = 0; a.play(); } else { alert("File audio belum diisi!"); }
+        }
 
+        function stopAudio(k) {
+            const a = document.getElementById("play-" + k);
+            if(a) { a.pause(); a.currentTime = 0; }
+        }
 
         function simpanTeksWaktu() {
-
             localStorage.setItem("nama", document.getElementById("in-nama").value);
-
             localStorage.setItem("running", document.getElementById("in-running").value);
-
             localStorage.setItem("judul", document.getElementById("in-judul").value);
-
             localStorage.setItem("isi", document.getElementById("in-isi").value);
-
             localStorage.setItem("tahrim-min", document.getElementById("in-tahrim-min").value);
-
             localStorage.setItem("iqomah-min", document.getElementById("in-iqomah-min").value);
-
-            alert("Teks & Waktu Tersimpan!"); location.reload();
-
+            alert("Data Tersimpan!"); location.reload();
         }
-
-
 
         function buatDaftarAudio() {
-
-            const container = document.getElementById("list-audio-container"); container.innerHTML = "";
-
+            const container = document.getElementById("list-audio-container"); 
+            container.innerHTML = "";
             audioKeys.forEach(k => {
-
-                const isAda = document.getElementById("play-" + k);
-
+                const isAda = !!document.getElementById("play-" + k);
                 const fn = localStorage.getItem("fname-"+k) || "Kosong";
-
-                container.innerHTML += `<div class="row-item"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><b>${k.toUpperCase()}</b><span style="color:${isAda?'green':'red'}">${isAda?'✅ SIAP':'❌ KOSONG'}</span></div><div style="display:flex; gap:5px;"><input type="file" id="f-${k}" style="flex:1; font-size:10px;"><button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button></div><div style="font-size:9px; color:gray;">File: ${fn}</div></div>`;
-
+                container.innerHTML += `
+                    <div class="row-item">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <b>${k.toUpperCase()}</b>
+                            <span style="color:${isAda?'green':'red'}">${isAda?'✅ SIAP':'❌ KOSONG'}</span>
+                        </div>
+                        <input type="file" id="f-${k}" style="font-size:10px; width:100%; margin-bottom:5px;">
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button>
+                            <button class="btn-blue" onclick="testAudio('${k}')" ${!isAda?'disabled':''}>▶️ TES</button>
+                            <button class="btn-red" onclick="stopAudio('${k}')" ${!isAda?'disabled':''}>⏹️ STOP</button>
+                        </div>
+                        <div style="font-size:9px; color:gray; margin-top:3px;">File: ${fn}</div>
+                    </div>`;
             });
-
         }
 
-
-
-        function aktifkanSuaraSistem() { audioKeys.forEach(k => { const a = document.getElementById("play-"+k); if(a) { a.play().then(()=> {a.pause(); a.currentTime=0;}); } }); }
+        function aktifkanSuaraSistem() { 
+            audioKeys.forEach(k => { 
+                const a = document.getElementById("play-"+k); 
+                if(a) { a.play().then(()=> {a.pause(); a.currentTime=0;}).catch(()=>{}); } 
+            }); 
+        }
 
         function bukaSetting() { 
-
             document.getElementById("admin-panel").style.display = "block";
-
             document.getElementById("in-nama").value = localStorage.getItem("nama") || "";
-
             document.getElementById("in-running").value = localStorage.getItem("running") || "";
-
             document.getElementById("in-judul").value = localStorage.getItem("judul") || "";
-
             document.getElementById("in-isi").value = localStorage.getItem("isi") || "";
-
             buatDaftarAudio(); 
-
         }
 
         function tutupSetting() { document.getElementById("admin-panel").style.display = "none"; }
 
-
-
         function update() {
-
             const d = new Date();
-
             document.getElementById('jam').innerText = d.toLocaleTimeString('id-ID', {hour12:false});
-
             document.getElementById('tanggal').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-
+            
             const s = d.getSeconds(); const m = d.getMinutes(); const h = d.getHours();
-
             document.getElementById('s-hand').style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
-
             document.getElementById('m-hand').style.transform = `translateX(-50%) rotate(${m * 6 + s * 0.1}deg)`;
-
             document.getElementById('h-hand').style.transform = `translateX(-50%) rotate(${h * 30 + m * 0.5}deg)`;
-
+            
             const hj = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', {day:'numeric', month:'long', year:'numeric'}).format(d);
-
             document.getElementById('tanggal-hijri').innerText = hj.replace('H', '').trim() + " Hijriah";
-
+            
             const jm = d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':');
 
-            if(iqAktif) { iqSisa--; if(iqSisa <= 0) { iqAktif = false; document.getElementById("slide-iqomah").style.display = "none"; } else { let mm = Math.floor(iqSisa / 60); let ss = iqSisa % 60; document.getElementById("iqomah-timer").innerText = `${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`; } }
+            if(iqAktif) { 
+                iqSisa--; 
+                if(iqSisa <= 0) { 
+                    iqAktif = false; document.getElementById("slide-iqomah").style.display = "none"; 
+                } else { 
+                    let mm = Math.floor(iqSisa / 60); let ss = iqSisa % 60; 
+                    document.getElementById("iqomah-timer").innerText = `${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`; 
+                } 
+            }
 
-            if(s === 0) { ["subuh","dzuhur","ashar","maghrib","isya"].forEach(x => { const w = document.getElementById(x).innerText; if(jm === w) { document.getElementById("play-tahrim")?.pause(); document.getElementById("play-"+x)?.play(); iqAktif = true; iqSisa = parseInt(localStorage.getItem("iqomah-min") || 10) * 60; document.getElementById("slide-iqomah").style.display = "flex"; } const [hh, mm] = w.split(':').map(Number); const tT = new Date(); tT.setHours(hh, mm - parseInt(localStorage.getItem("tahrim-min") || 5), 0); if(jm === tT.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':')) document.getElementById("play-tahrim")?.play(); }); }
-
+            if(s === 0) { 
+                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(x => { 
+                    const w = document.getElementById(x).innerText; 
+                    if(jm === w) { 
+                        document.getElementById("play-tahrim")?.pause(); 
+                        document.getElementById("play-"+x)?.play(); 
+                        iqAktif = true; 
+                        iqSisa = parseInt(localStorage.getItem("iqomah-min") || 10) * 60; 
+                        document.getElementById("slide-iqomah").style.display = "flex"; 
+                    } 
+                    const [hh, mm] = w.split(':').map(Number); 
+                    const tT = new Date(); tT.setHours(hh, mm - parseInt(localStorage.getItem("tahrim-min") || 5), 0); 
+                    if(jm === tT.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':')) {
+                        document.getElementById("play-tahrim")?.play(); 
+                    }
+                }); 
+            }
         }
-
+        
         setInterval(update, 1000);
-
-        let slide = 0; setInterval(() => { if(!iqAktif) { const ss = document.querySelectorAll(".slide"); ss[slide].classList.remove("active"); slide = (slide + 1) % ss.length; ss[slide].classList.add("active"); } }, 25000);
-
+        let currentSlide = 0; 
+        setInterval(() => { 
+            if(!iqAktif) { 
+                const ss = document.querySelectorAll(".slide"); 
+                ss[currentSlide].classList.remove("active"); 
+                currentSlide = (currentSlide + 1) % ss.length; 
+                ss[currentSlide].classList.add("active"); 
+            } 
+        }, 20000);
     </script>
-
 </body>
-
 </html>
