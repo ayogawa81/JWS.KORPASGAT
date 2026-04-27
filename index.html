@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MASTER DISPLAY KORPASGAT</title>
+    <title>DISPLAY KOMANDO - STAFLOG KORPASGAT</title>
     <style>
         :root { --bg-img: url('https://unsplash.com'); }
         body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
@@ -22,8 +22,8 @@
 
         /* JADWAL SHOLAT */
         .sholat-grid { display: flex; gap: 15px; width: 100%; }
-        .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
-        .box p { font-size: 3rem; margin: 5px 0 0 0; font-weight: bold; }
+        .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
+        .box p { font-size: 3.2rem; margin: 5px 0 0 0; font-weight: bold; }
 
         /* PENGUMUMAN */
         .pengumuman-card { background: rgba(251, 191, 36, 0.1); border: 3px solid #fbbf24; padding: 40px; border-radius: 30px; width: 85%; text-align: center; }
@@ -34,21 +34,21 @@
         #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
         
         /* ADMIN PANEL */
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 650px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px rgba(0,0,0,1); }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 100px rgba(0,0,0,1); }
         .group { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 10px; }
-        .group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 13px; }
+        .group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 13px; color: #1e293b; }
         input[type="text"], textarea, input[type="number"] { width: 95%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; }
-        .row-audio { background: #f8fafc; padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 5px solid #fbbf24; }
-        .status-badge { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
-        .btn-blue { padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px; font-weight: bold; }
-        .btn-green { padding: 6px 12px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        .row-audio { background: #f8fafc; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fbbf24; }
+        .status-badge { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 5px; }
+        .btn-blue { padding: 8px 15px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-green { padding: 8px 15px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
 
-    <div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; display:flex; align-items:center; justify-content:center;">
+    <div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; align-items:center; justify-content:center;">
         <button onclick="mulai()" style="padding:22px 60px; font-size:1.8rem; background:#fbbf24; border-radius:60px; border:none; font-weight:bold; cursor:pointer;">MULAI DISPLAY</button>
     </div>
 
@@ -56,7 +56,7 @@
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
         <div id="jam">00:00:00</div>
         <div class="dates-container">
-            <div id="tanggal">Memuat...</div>
+            <div id="tanggal">...</div>
             <div id="tanggal-hijri">...</div>
         </div>
     </div>
@@ -74,7 +74,7 @@
     <div id="slide-info" class="slide">
         <div class="pengumuman-card">
             <h1 id="val-judul">PENGUMUMAN</h1>
-            <p id="val-isi">Siapkan data pengumuman di menu pengaturan.</p>
+            <p id="val-isi">Silakan isi pengumuman di pengaturan.</p>
         </div>
     </div>
 
@@ -86,67 +86,68 @@
             <label>Identitas & BG:</label>
             <input type="text" id="in-nama" placeholder="Nama"><input type="text" id="in-running" placeholder="Running Text"><input type="file" id="in-bg">
             <label>Pengumuman (Slide 2):</label>
-            <input type="text" id="in-judul" placeholder="Judul"><textarea id="in-isi" rows="3" placeholder="Isi"></textarea>
+            <input type="text" id="in-judul" placeholder="Judul"><textarea id="in-isi" rows="3"></textarea>
             <button onclick="simpanTeksBG()" style="width:100%; padding:10px; background:#1e293b; color:white; border-radius:8px; cursor:pointer;">✅ SIMPAN TEKS & BG</button>
         </div>
         <div class="group">
-            <label>Set Waktu Tahrim (Menit sebelum adzan):</label>
-            <input type="number" id="in-tahrim-min" value="5" style="width:50px;"> Menit
+            <label>Durasi Tahrim (Menit sebelum adzan):</label>
+            <input type="number" id="in-tahrim-min" value="5" style="width:60px;">
         </div>
         <div class="group">
-            <label>Manajemen Audio (Simpan Satu-satu):</label>
-            <div id="audio-list-render"></div> <!-- INI ID BARU -->
+            <label>🔊 Daftar Suara (Pilih & Simpan Satu-satu):</label>
+            <div id="list-audio-container"></div>
         </div>
         <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer;">TUTUP</button>
     </div>
 
     <script>
-        const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
+        const keys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
         let db;
 
-        const reqDB = indexedDB.open("KorpasMaster_Fix", 1);
-        reqDB.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        reqDB.onsuccess = e => { db = e.target.result; muatData(); };
+        const req = indexedDB.open("KorpasgatFinal_DB_V3", 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
+        req.onsuccess = e => { db = e.target.result; muatData(); };
 
         function muatData() {
             if(localStorage.getItem("nama")) document.getElementById("disp-nama").innerText = localStorage.getItem("nama");
             if(localStorage.getItem("running")) document.getElementById("disp-running").innerText = localStorage.getItem("running");
             if(localStorage.getItem("judul")) document.getElementById("val-judul").innerText = localStorage.getItem("judul");
             if(localStorage.getItem("isi")) document.getElementById("val-isi").innerText = localStorage.getItem("isi");
+            if(localStorage.getItem("tahrim-min")) document.getElementById("in-tahrim-min").value = localStorage.getItem("tahrim-min");
 
             const tx = db.transaction("files", "readonly").objectStore("files");
             tx.get("bg").onsuccess = e => { if(e.target.result) document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`); };
-            audioKeys.forEach(k => {
+            keys.forEach(k => {
                 tx.get(k).onsuccess = e => { if(e.target.result) { const a = new Audio(URL.createObjectURL(e.target.result.data)); a.id = "play-" + k; document.body.appendChild(a); } };
             });
         }
 
-        function renderAudio() {
-            const container = document.getElementById("audio-list-render");
+        function buatDaftarAudio() {
+            const container = document.getElementById("list-audio-container");
             container.innerHTML = "";
-            audioKeys.forEach(k => {
+            keys.forEach(k => {
                 const isAda = document.getElementById("play-" + k);
-                const sName = localStorage.getItem("fname-" + k) || "Kosong";
+                const fname = localStorage.getItem("fname-" + k) || "Kosong";
                 container.innerHTML += `
                 <div class="row-audio">
                     <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><b>${k.toUpperCase()}</b><span class="status-badge" style="background:${isAda?'#dcfce7':'#fee2e2'}; color:${isAda?'#166534':'#991b1b'}">${isAda?'✅ SIAP':'❌ KOSONG'}</span></div>
-                    <div style="display:flex; gap:5px;"><input type="file" id="f-${k}" style="flex:1; font-size:10px;"><button class="btn-blue" onclick="tes('${k}')">TES</button><button class="btn-green" onclick="simpanAudio('${k}')">SIMPAN</button></div>
-                    <div style="font-size:10px; color:gray; margin-top:3px;">File: ${sName}</div>
+                    <div style="display:flex; gap:5px;"><input type="file" id="f-${k}" style="flex:1; font-size:11px;"><button class="btn-blue" onclick="tesSuara('${k}')">TES</button><button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button></div>
+                    <div style="font-size:10px; color:gray; margin-top:4px;">File: ${fname}</div>
                 </div>`;
             });
         }
 
-        function simpanAudio(k) {
+        function simpanSuara(k) {
             const inp = document.getElementById('f-'+k);
-            if(inp.files.length === 0) return alert("Pilih file!");
+            if(inp.files.length === 0) return alert("Pilih file dulu!");
             const tx = db.transaction("files", "readwrite").objectStore("files");
             tx.put({ id: k, data: inp.files[0] }).onsuccess = () => {
                 localStorage.setItem("fname-" + k, inp.files[0].name);
-                alert("Berhasil!"); location.reload();
+                alert("Berhasil disimpan!"); location.reload();
             };
         }
 
-        function tes(k) {
+        function tesSuara(k) {
             const inp = document.getElementById('f-'+k);
             let p = document.getElementById("play-" + k) || new Audio();
             if(inp.files.length > 0) { p.src = URL.createObjectURL(inp.files[0]); p.play(); } 
@@ -161,14 +162,14 @@
             localStorage.setItem("tahrim-min", document.getElementById("in-tahrim-min").value);
             const f = document.getElementById('in-bg').files[0];
             if(f) { db.transaction("files", "readwrite").objectStore("files").put({ id: "bg", data: f }).onsuccess = () => location.reload(); }
-            else { location.reload(); }
+            else { alert("Teks tersimpan!"); location.reload(); }
         }
 
         function mulai() { 
             document.getElementById("overlay").style.display = "none"; 
-            audioKeys.forEach(k => { const a = document.getElementById("play-"+k); if(a) { a.play().then(()=> {a.pause(); a.currentTime=0;}); } }); 
+            keys.forEach(k => { const a = document.getElementById("play-"+k); if(a) { a.play().then(()=> {a.pause(); a.currentTime=0;}); } }); 
         }
-        function bukaSetting() { document.getElementById("admin-panel").style.display = "block"; renderAudio(); }
+        function bukaSetting() { document.getElementById("admin-panel").style.display = "block"; buatDaftarAudio(); }
         function tutupSetting() { document.getElementById("admin-panel").style.display = "none"; }
 
         function update() {
@@ -180,8 +181,7 @@
             if(d.getSeconds() === 0) {
                 const jm = d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':');
                 ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => {
-                    const w = document.getElementById(s).innerText;
-                    if(jm === w) document.getElementById("play-"+s)?.play();
+                    if(jm === document.getElementById(s).innerText) document.getElementById("play-"+s)?.play();
                 });
             }
         }
