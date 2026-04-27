@@ -5,232 +5,37 @@
     <title>MASTER KOMANDO - STAFLOG KORPASGAT</title>
     <style>
         :root { --bg-img: url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?q=80&w=2000'); }
-        body { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; text-align: center; cursor: pointer; }
+        body { 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), var(--bg-img); 
+            background-size: cover; background-position: center; color: white; 
+            font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; 
+            height: 100vh; text-align: center; cursor: pointer; 
+        }
         
+        /* HEADER & JAM */
         .header { padding: 20px 0; background: rgba(0,0,0,0.4); border-bottom: 3px solid #fbbf24; }
         #disp-nama { font-size: 2.5rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
         #jam { font-size: 8.5rem; font-weight: bold; line-height: 1; margin: 10px 0; font-family: 'Courier New', monospace; }
         #tanggal { font-size: 1.6rem; margin-bottom: 5px; opacity: 0.9; }
 
+        /* JADWAL SHOLAT */
         .sholat-grid { display: flex; gap: 15px; width: 95%; margin: 40px auto; justify-content: center; }
         .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; flex: 1; border-bottom: 8px solid #fbbf24; min-width: 160px; }
         .box h3 { margin: 0; font-size: 1.3rem; letter-spacing: 1px; }
         .box p { font-size: 3.2rem; margin: 15px 0 0 0; font-weight: bold; }
 
-        #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        
+        /* RUNNING TEXT (PERBAIKAN LEBAR) */
+        marquee { 
+            position: fixed; bottom: 0; left: 0; width: 100vw; 
+            background: #000; padding: 15px 0; font-size: 2rem; 
+            border-top: 3px solid #fbbf24; z-index: 999; margin: 0;
+        }
+
         /* PANEL SETTING */
+        #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; text-align: left; }
         .row-item { background: #f1f5f9; padding: 15px; margin-bottom: 12px; border-radius: 10px; border-left: 5px solid #fbbf24; }
-        input, textarea { width: 95%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        input { width: 95%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
         .btn-action { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; color: white; }
         
-        #slide-iqomah { background: rgba(0,0,0,0.98); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; }
-        #iq-timer { font-size: 18rem; color: #fbbf24; font-weight: bold; }
-
-        marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; }
-    </style>
-</head>
-<body onclick="unmuteAudio()">
-
-    <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
-
-    <div class="header">
-        <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
-        <div id="jam">00:00:00</div>
-        <div id="tanggal">Memuat Tanggal...</div>
-    </div>
-
-    <div id="slide-iqomah">
-        <h1 style="font-size:4rem">MENUJU IQOMAH</h1>
-        <div id="iq-timer">10:00</div>
-    </div>
-
-    <div class="sholat-grid">
-        <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
-        <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
-        <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
-        <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
-        <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
-    </div>
-
-    <marquee id="disp-run">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
-
-    <div id="admin-panel">
-        <h2 style="margin-top:0; border-bottom: 2px solid #fbbf24; padding-bottom: 10px;">⚙️ Master Setting</h2>
-        
-        <div class="row-item">
-            <b>1. Teks & Identitas</b><br>
-            <input type="text" id="in-nama" placeholder="Nama Instansi">
-            <input type="text" id="in-run" placeholder="Running Text">
-            <button class="btn-action" style="background:#22c55e" onclick="simpanTeks()">SIMPAN TEKS</button>
-        </div>
-
-        <div class="row-item">
-            <b>2. Waktu Jeda (Menit)</b><br>
-            Tahrim: <input type="number" id="in-tahrim" style="width:60px;"> | 
-            Iqomah: <input type="number" id="in-iqomah" style="width:60px;">
-            <button class="btn-action" style="background:#1e293b" onclick="simpanWaktu()">SIMPAN JEDA</button>
-        </div>
-
-        <div class="row-item">
-            <b>3. Ganti Background</b><br>
-            <input type="file" id="in-bg" accept="image/*">
-            <button class="btn-action" style="background:#3b82f6" onclick="uploadBG()">UPLOAD GAMBAR</button>
-        </div>
-
-        <div class="row-item">
-            <b>4. Manajemen Audio</b>
-            <div id="audio-list" style="margin-top:10px;"></div>
-        </div>
-
-        <button onclick="tutupSetting()" style="width:100%; padding:10px; border:none; background:#ddd; cursor:pointer; border-radius:5px;">TUTUP</button>
-    </div>
-
-    <script>
-        const keys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
-        let db; 
-        let audioMap = {}; 
-        let iqAktif = false; 
-        let iqSisa = 0;
-
-        // 1. DATABASE INIT
-        const req = indexedDB.open("JWS_MASTER_V3", 1);
-        req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        req.onsuccess = e => { 
-            db = e.target.result; 
-            initApp(); 
-        };
-
-        function initApp() {
-            // Load Teks
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nama") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("run") || "STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU";
-
-            const tx = db.transaction("files", "readonly").objectStore("files");
-            
-            // Load BG
-            tx.get("bg").onsuccess = e => {
-                if(e.target.result) document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`);
-            };
-
-            // Load Audio
-            keys.forEach(k => {
-                tx.get(k).onsuccess = e => {
-                    if(e.target.result) audioMap[k] = new Audio(URL.createObjectURL(e.target.result.data));
-                };
-            });
-
-            // Start Logic
-            setInterval(jalankanSistem, 1000);
-            hitungJadwal();
-        }
-
-        // 2. SISTEM JAM & LOGIKA AZAN
-        function jalankanSistem() {
-            const now = new Date();
-            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
-            document.getElementById('jam').innerText = jamStr;
-            document.getElementById('tanggal').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-
-            if(iqAktif) {
-                iqSisa--;
-                if(iqSisa <= 0) { iqAktif = false; document.getElementById("slide-iqomah").style.display = "none"; }
-                else {
-                    let m = Math.floor(iqSisa/60); let s = iqSisa%60;
-                    document.getElementById("iq-timer").innerText = `${m}:${s.toString().padStart(2,'0')}`;
-                }
-            }
-
-            // Cek Waktu Sholat tiap menit baru (detik 00)
-            if(now.getSeconds() === 0) {
-                const jm = jamStr.substring(0,5);
-                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => {
-                    if(jm === document.getElementById(s).innerText) {
-                        audioMap['tahrim']?.pause();
-                        audioMap[s]?.play();
-                        iqAktif = true;
-                        iqSisa = (parseInt(localStorage.getItem("iqomah")) || 10) * 60;
-                        document.getElementById("slide-iqomah").style.display = "flex";
-                    }
-                });
-            }
-        }
-
-        // 3. SETTING FUNCTIONS
-        function simpanTeks() {
-            localStorage.setItem("nama", document.getElementById("in-nama").value);
-            localStorage.setItem("run", document.getElementById("in-run").value);
-            alert("Teks disimpan!"); location.reload();
-        }
-
-        function simpanWaktu() {
-            localStorage.setItem("tahrim", document.getElementById("in-tahrim").value);
-            localStorage.setItem("iqomah", document.getElementById("in-iqomah").value);
-            alert("Jeda waktu disimpan!");
-        }
-
-        function uploadBG() {
-            const f = document.getElementById("in-bg").files[0];
-            if(!f) return;
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({id: "bg", data: f}).onsuccess = () => location.reload();
-        }
-
-        function uploadAudio(k) {
-            const f = document.getElementById('file-'+k).files[0];
-            if(!f) return;
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({id: k, data: f}).onsuccess = () => {
-                alert(`Audio ${k} tersimpan!`);
-                location.reload();
-            };
-        }
-
-        function testAudio(k) {
-            if(audioMap[k]) { audioMap[k].currentTime = 0; audioMap[k].play(); }
-            else alert("Audio belum ada!");
-        }
-
-        function buatDaftarAudio() {
-            const container = document.getElementById("audio-list");
-            container.innerHTML = "";
-            keys.forEach(k => {
-                const ada = !!audioMap[k];
-                container.innerHTML += `
-                    <div style="margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">
-                        <b>${k.toUpperCase()}</b> <span style="color:${ada?'green':'red'}">${ada?'[ADA]':'[KOSONG]'}</span><br>
-                        <input type="file" id="file-${k}" style="font-size:11px; width:200px;">
-                        <button onclick="uploadAudio('${k}')" style="font-size:10px; background:#22c55e; color:white; border:none; padding:4px;">SIMPAN</button>
-                        <button onclick="testAudio('${k}')" style="font-size:10px; background:#3b82f6; color:white; border:none; padding:4px;">TEST</button>
-                    </div>`;
-            });
-        }
-
-        function unmuteAudio() {
-            Object.values(audioMap).forEach(a => {
-                a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
-            });
-        }
-
-        function hitungJadwal() {
-            // Simulasi Jadwal - Silakan ganti dengan PrayTimes.js atau nilai statis
-            document.getElementById("subuh").innerText = "04:35";
-            document.getElementById("dzuhur").innerText = "11:52";
-            document.getElementById("ashar").innerText = "15:10";
-            document.getElementById("maghrib").innerText = "17:48";
-            document.getElementById("isya").innerText = "18:59";
-        }
-
-        function bukaSetting() {
-            document.getElementById("admin-panel").style.display = "block";
-            document.getElementById("in-nama").value = localStorage.getItem("nama") || "";
-            document.getElementById("in-run").value = localStorage.getItem("run") || "";
-            document.getElementById("in-tahrim").value = localStorage.getItem("tahrim") || 5;
-            document.getElementById("in-iqomah").value = localStorage.getItem("iqomah") || 10;
-            buatDaftarAudio();
-        }
-        function tutupSetting() { document.getElementById("admin-panel").style.display = "none"; }
-    </script>
-</body>
-</html>
+        #slide-iqomah { background: rgba(0,0,0,0.98); position: fixed; top: 0; left:
