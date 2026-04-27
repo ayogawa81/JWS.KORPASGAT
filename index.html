@@ -2,202 +2,122 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MASTER KOMANDO - STAFLOG KORPASGAT</title>
+    <title>STAFLOG KORPASGAT - FIXED</title>
     <style>
         :root { --bg-img: url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?q=80&w=2000'); }
-        body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; cursor: pointer; }
-        .header-top { text-align: center; padding: 10px 0; background: rgba(0,0,0,0.3); border-bottom: 2px solid #fbbf24; }
-        #disp-nama { font-size: 2.2rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
-        #jam { font-size: 7rem; font-weight: bold; line-height: 1; margin: 10px 0; }
-        .slide { display: none; height: 48vh; align-items: center; justify-content: center; padding: 0 40px; animation: slideIn 1s; }
-        .slide.active { display: flex; flex-direction: column; }
-        .sholat-grid { display: flex; gap: 12px; width: 100%; }
-        .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
-        .box p { font-size: 2.8rem; margin: 5px 0 0 0; font-weight: bold; }
-        #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        
-        /* ADMIN PANEL */
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .row-item { background: #f8fafc; padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 5px solid #fbbf24; }
-        .btn-blue { padding: 8px 15px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-green { padding: 8px 15px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-red { padding: 8px 15px; background: #ef4444; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; }
+        body { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; text-align: center; }
+        .header { padding: 20px; border-bottom: 2px solid #fbbf24; background: rgba(0,0,0,0.4); }
+        #disp-nama { font-size: 2.5rem; color: #fbbf24; margin: 0; letter-spacing: 2px; }
+        #jam { font-size: 8rem; font-weight: bold; margin: 10px 0; font-family: monospace; }
+        .sholat-grid { display: flex; gap: 15px; padding: 20px; justify-content: center; margin-top: 20px; }
+        .box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; width: 180px; border-bottom: 5px solid #fbbf24; }
+        .box h3 { margin: 0; font-size: 1.2rem; opacity: 0.8; }
+        .box p { font-size: 2.5rem; margin: 10px 0 0 0; font-weight: bold; }
+        #btn-menu { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(251,191,36,0.3); border: 1px solid #fbbf24; border-radius: 50%; color: white; cursor: pointer; z-index: 100; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 20px; border-radius: 10px; width: 400px; z-index: 1000; box-shadow: 0 0 50px black; }
+        marquee { position: fixed; bottom: 0; width: 100%; background: #000; padding: 10px; font-size: 1.5rem; border-top: 2px solid #fbbf24; }
     </style>
 </head>
-<body onclick="aktifkanAudio()">
+<body onclick="startAudioContext()">
 
-    <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
+    <button id="btn-menu" onclick="toggleAdmin()">⚙️</button>
 
-    <div class="header-top">
+    <div class="header">
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
         <div id="jam">00:00:00</div>
-        <div id="tanggal">Memuat...</div>
+        <div id="tanggal">Memuat Tanggal...</div>
     </div>
 
-    <div id="slide-sholat" class="slide active">
-        <div class="sholat-grid">
-            <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
-            <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
-            <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
-            <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
-            <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
-        </div>
+    <div class="sholat-grid">
+        <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
+        <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
+        <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
+        <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
+        <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
     </div>
 
-    <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
+    <marquee id="disp-run">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
 
     <div id="admin-panel">
-        <h2 style="border-bottom:3px solid #fbbf24;">⚙️ Pengaturan Komando</h2>
-        
-        <div class="row-item">
-            <label><b>1. Nama Instansi & Running Text</b></label><br>
-            <input type="text" id="in-nama" placeholder="Nama Instansi" style="width:90%; margin:5px 0;"><br>
-            <input type="text" id="in-running" placeholder="Running Text" style="width:90%; margin:5px 0;"><br>
-            <button class="btn-green" onclick="simpanTeks()">SIMPAN TEKS</button>
-        </div>
-
-        <div class="row-item">
-            <label><b>2. Ganti Background</b></label><br>
-            <input type="file" id="in-bg" accept="image/*">
-            <button class="btn-blue" onclick="simpanBG()">SIMPAN BG</button>
-        </div>
-
-        <div class="row-item">
-            <label><b>3. Manajemen Audio</b></label>
-            <div id="list-audio-container"></div>
-        </div>
-        
-        <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer; margin-top:10px;">TUTUP</button>
+        <h3>Pengaturan</h3>
+        <input type="text" id="in-nama" placeholder="Nama Instansi" style="width:90%; padding:8px; margin-bottom:10px;">
+        <button onclick="simpanSettings()" style="width:100%; padding:10px; background:#22c55e; color:white; border:none; border-radius:5px; cursor:pointer;">SIMPAN</button>
+        <button onclick="toggleAdmin()" style="width:100%; margin-top:5px; background:#ddd; border:none; padding:5px;">Tutup</button>
     </div>
 
     <script>
-        const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
+        // 1. Inisialisasi Data & Database
         let db;
-        let audioObjects = {}; // Menyimpan objek audio agar bisa di-tes
-
-        // Inisialisasi Database
-        const request = indexedDB.open("Korpasgat_Final_DB", 1);
+        const request = indexedDB.open("JWS_DB_NEW", 1);
         request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        request.onsuccess = e => { db = e.target.result; muatSemuaData(); };
+        request.onsuccess = e => { db = e.target.result; loadPersistedData(); };
 
-        function muatSemuaData() {
-            // Muat Teks
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nama") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-running").innerText = localStorage.getItem("running") || "STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU";
-
-            const tx = db.transaction("files", "readonly").objectStore("files");
+        function loadPersistedData() {
+            const nama = localStorage.getItem("nama");
+            if(nama) document.getElementById("disp-nama").innerText = nama;
             
-            // Muat BG
+            // Ambil Background dari DB
+            const tx = db.transaction("files", "readonly").objectStore("files");
             tx.get("bg").onsuccess = e => {
                 if(e.target.result) {
                     const url = URL.createObjectURL(e.target.result.data);
                     document.documentElement.style.setProperty('--bg-img', `url(${url})`);
                 }
             };
-
-            // Muat Audio ke Memori
-            audioKeys.forEach(k => {
-                tx.get(k).onsuccess = e => {
-                    if(e.target.result) {
-                        const url = URL.createObjectURL(e.target.result.data);
-                        audioObjects[k] = new Audio(url);
-                        console.log(`Audio ${k} siap diputar.`);
-                    }
-                };
-            });
-
-            hitungJadwal();
         }
 
-        // Fungsi Tes Audio (Satu Fungsi Utama)
-        function jalankanTes(k) {
-            const sound = audioObjects[k];
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(err => alert("Klik layar sekali dulu agar suara bisa bunyi!"));
-            } else {
-                alert("File audio " + k.toUpperCase() + " belum diisi!");
-            }
+        // 2. Fungsi Jam & Tanggal (WAJIB JALAN)
+        function updateWaktu() {
+            const sekarang = new Date();
+            
+            // Update Jam
+            const h = String(sekarang.getHours()).padStart(2, '0');
+            const m = String(sekarang.getMinutes()).padStart(2, '0');
+            const s = String(sekarang.getSeconds()).padStart(2, '0');
+            document.getElementById('jam').innerText = `${h}:${m}:${s}`;
+            
+            // Update Tanggal
+            const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('tanggal').innerText = sekarang.toLocaleDateString('id-ID', opsi);
+            
+            // Hitung Jadwal Sholat setiap jam (menit 0)
+            if (sekarang.getMinutes() === 0 && sekarang.getSeconds() === 0) hitungJadwal();
         }
 
-        function stopTes(k) {
-            if (audioObjects[k]) {
-                audioObjects[k].pause();
-                audioObjects[k].currentTime = 0;
-            }
-        }
-
-        function simpanSuara(k) {
-            const file = document.getElementById('f-' + k).files[0];
-            if (!file) return alert("Pilih file dulu!");
-
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({ id: k, data: file });
-            tx.oncomplete = () => {
-                localStorage.setItem("fname-" + k, file.name);
-                alert("Berhasil menyimpan suara " + k);
-                location.reload(); // Reload untuk memperbarui objek audio
-            };
-        }
-
-        function buatDaftarAudio() {
-            const container = document.getElementById("list-audio-container");
-            container.innerHTML = "";
-            audioKeys.forEach(k => {
-                const isAda = !!audioObjects[k];
-                const fileName = localStorage.getItem("fname-" + k) || "Kosong";
-                container.innerHTML += `
-                    <div style="border-bottom:1px solid #ddd; padding:10px 0;">
-                        <b>${k.toUpperCase()}</b> <span style="color:${isAda?'green':'red'}">${isAda?'[SIAP]':'[KOSONG]'}</span><br>
-                        <input type="file" id="f-${k}" style="font-size:12px; margin:5px 0;">
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button>
-                            <button class="btn-blue" onclick="jalankanTes('${k}')">▶️ TES</button>
-                            <button class="btn-red" onclick="stopTes('${k}')">⏹️ STOP</button>
-                        </div>
-                        <small style="color:gray">File: ${fileName}</small>
-                    </div>`;
-            });
-        }
-
-        // Fungsi Wajib Browser Modern: Unlock Audio via Click
-        function aktifkanAudio() {
-            audioKeys.forEach(k => {
-                if (audioObjects[k]) {
-                    audioObjects[k].play().then(() => {
-                        audioObjects[k].pause();
-                        audioObjects[k].currentTime = 0;
-                    }).catch(() => {});
-                }
-            });
-        }
-
-        function simpanTeks() {
-            localStorage.setItem("nama", document.getElementById("in-nama").value);
-            localStorage.setItem("running", document.getElementById("in-running").value);
-            alert("Teks disimpan!"); location.reload();
-        }
-
-        function simpanBG() {
-            const f = document.getElementById('in-bg').files[0];
-            if(!f) return alert("Pilih gambar!");
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({ id: "bg", data: f }).onsuccess = () => {
-                alert("Background diganti!"); location.reload();
-            };
-        }
-
+        // 3. Fungsi Jadwal Sholat (Sederhana untuk Test)
         function hitungJadwal() {
-            // Contoh statis untuk testing (Bisa diganti rumus PrayTimes)
+            // Logika simulasi jadwal (Anda bisa ganti dengan library PrayTimes)
             document.getElementById("subuh").innerText = "04:35";
             document.getElementById("dzuhur").innerText = "11:52";
-            document.getElementById("ashar").innerText = "15:10";
-            document.getElementById("maghrib").innerText = "17:50";
-            document.getElementById("isya").innerText = "19:00";
+            document.getElementById("ashar").innerText = "15:11";
+            document.getElementById("maghrib").innerText = "17:48";
+            document.getElementById("isya").innerText = "18:59";
         }
 
-        function updateWaktu() {
-            const d = new Date();
-            document.getElementById('jam').innerText = d.toLocaleTimeString('id-ID', {hour12:false});
-            document.getElementById('tanggal').innerText =
+        // 4. Admin & Settings
+        function toggleAdmin() {
+            const p = document.getElementById("admin-panel");
+            p.style.display = p.style.display === "block" ? "none" : "block";
+        }
+
+        function simpanSettings() {
+            const n = document.getElementById("in-nama").value;
+            if(n) {
+                localStorage.setItem("nama", n);
+                document.getElementById("disp-nama").innerText = n;
+                alert("Tersimpan!");
+                toggleAdmin();
+            }
+        }
+
+        function startAudioContext() {
+            console.log("Audio system ready.");
+        }
+
+        // JALANKAN INTERVAL
+        setInterval(updateWaktu, 1000);
+        updateWaktu(); // Jalankan langsung tanpa tunggu 1 detik
+        hitungJadwal(); // Jalankan jadwal
+    </script>
+</body>
+</html>
