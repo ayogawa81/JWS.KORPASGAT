@@ -1,33 +1,92 @@
-function tick() {
-    const now = new Date();
-    
-    // 1. Update Jam Digital
-    const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g,':');
-    document.getElementById('jam').innerText = jamStr;
-    
-    // 2. Update Tanggal Masehi (Senin, 27 April 2026)
-    const opsiMasehi = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    document.getElementById('tanggal-masehi').innerText = now.toLocaleDateString('id-ID', opsiMasehi);
-    
-    // 3. Update Tanggal Hijriah dengan Nama Bulan (Contoh: 10 Syawal 1447 H)
-    try {
-        const opsiHijri = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formatterHijri = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', opsiHijri);
-        const hijriStr = formatterHijri.format(now);
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWS MASTER - STAFLOG KORPASGAT</title>
+    <style>
+        :root { --primary: #fbbf24; --bg-overlay: rgba(0,0,0,0.75); }
+        body { 
+            margin: 0; padding: 0; overflow: hidden; height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111; color: white; text-align: center;
+        }
+        #bg-layer {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background-size: cover; background-position: center;
+            filter: brightness(0.4); z-index: -1;
+            transition: background 0.5s ease;
+        }
+        .container { display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
         
-        document.getElementById('tanggal-hijriah').innerText = hijriStr + " H";
-    } catch (e) {
-        document.getElementById('tanggal-hijriah').innerText = "Gagal memuat Hijriah";
-    }
+        /* Header & Jam */
+        .header { padding: 30px 0; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+        #disp-nama { font-size: 2.8rem; color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 800; }
+        #jam { font-size: 10rem; font-weight: bold; line-height: 1; margin: 15px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
+        .tgl-box { font-size: 1.8rem; margin-top: 5px; }
+        #tanggal-hijriah { color: var(--primary); font-weight: 600; margin-top: 8px; border-top: 1px solid rgba(251, 191, 36, 0.3); display: inline-block; padding-top: 5px; }
 
-    // 4. Cek Waktu Azan (Setiap menit ke-00)
-    if(now.getSeconds() === 0) {
-        const jm = jamStr.substring(0,5);
-        const jadwal = ["subuh","dzuhur","ashar","maghrib","isya"];
-        jadwal.forEach(s => {
-            if(jm === document.getElementById(s).innerText) {
-                audioMap[s]?.play();
-            }
-        });
-    }
-}
+        /* Grid Jadwal Sholat */
+        .sholat-grid { display: flex; gap: 20px; width: 95%; margin: 0 auto; justify-content: center; padding-bottom: 100px; }
+        .box { 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); 
+            padding: 30px 10px; border-radius: 25px; flex: 1; 
+            border-bottom: 8px solid var(--primary); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .box:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); }
+        .box h3 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; opacity: 0.8; }
+        .box p { font-size: 4rem; margin: 20px 0 0 0; font-weight: 900; }
+
+        /* Running Text */
+        .footer { background: #000; border-top: 4px solid var(--primary); position: relative; }
+        marquee { font-size: 2.2rem; padding: 15px 0; display: block; font-weight: bold; text-transform: uppercase; }
+
+        /* Admin Panel */
+        #btn-menu { position: fixed; top: 25px; right: 25px; width: 60px; height: 60px; background: rgba(251, 191, 36, 0.3); border: 2px solid var(--primary); border-radius: 50%; color: var(--primary); font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 40px; border-radius: 25px; z-index: 101; width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px rgba(0,0,0,0.8); text-align: left; }
+        .section { background: #f8fafc; padding: 20px; margin-bottom: 20px; border-radius: 15px; border-left: 8px solid var(--primary); }
+        input[type="text"], input[type="file"] { width: 95%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+        .btn-save { background: #10b981; color: white; }
+        .btn-test { background: #3b82f6; color: white; }
+        .btn-stop { background: #ef4444; color: white; }
+        .btn-close { width: 100%; background: #64748b; color: white; margin-top: 10px; padding: 15px; }
+    </style>
+</head>
+<body onclick="pancingSuara()">
+
+    <div id="bg-layer"></div>
+    <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
+
+    <div class="container">
+        <div class="header">
+            <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
+            <div id="jam">00:00:00</div>
+            <div class="tgl-box">
+                <div id="tanggal-masehi">Memuat Tanggal...</div>
+                <div id="tanggal-hijriah">Memuat Hijriah...</div>
+            </div>
+        </div>
+
+        <div class="sholat-grid">
+            <div class="box"><h3>SUBUH</h3><p id="subuh">04:35</p></div>
+            <div class="box"><h3>DZUHUR</h3><p id="dzuhur">11:52</p></div>
+            <div class="box"><h3>ASHAR</h3><p id="ashar">15:10</p></div>
+            <div class="box"><h3>MAGHRIB</h3><p id="maghrib">17:48</p></div>
+            <div class="box"><h3>ISYA</h3><p id="isya">18:59</p></div>
+        </div>
+
+        <div class="footer">
+            <marquee id="disp-run" scrollamount="10">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <h2 style="margin:0 0 20px 0; border-bottom:3px solid var(--primary); padding-bottom:10px;">⚙️ Konfigurasi Sistem</h2>
+        
+        <div class="section">
+            <b>Identitas & Pengumuman</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan (Contoh: STAFLOG KORPASGAT)">
+            <input type="text" id="
