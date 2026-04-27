@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>DISPLAY KOMANDO - IQOMAH SETTING</title>
+    <title>MASTER DISPLAY KOMANDO - STAFLOG KORPASGAT</title>
     <style>
         :root { --bg-img: url('https://unsplash.com'); }
         body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; cursor: pointer; }
@@ -10,9 +10,9 @@
         /* HEADER */
         .header-top { text-align: center; padding: 10px 0; background: rgba(0,0,0,0.3); border-bottom: 2px solid #fbbf24; }
         #disp-nama { font-size: 2.2rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
-        .clock-section { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 5px 0; }
         
-        /* ANALOG */
+        /* JAM SECTION */
+        .clock-section { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 5px 0; }
         #analog-clock { width: 140px; height: 140px; border: 5px solid #fbbf24; border-radius: 50%; position: relative; background: rgba(255,255,255,0.05); }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; transform: translateX(-50%); }
         .hour-hand { width: 5px; height: 35px; background: #fff; z-index: 3; }
@@ -24,13 +24,12 @@
         .m3 { right: 5px; top: 50%; width: 10px; height: 4px; transform: translateY(-50%); }
         .m6 { bottom: 5px; left: 50%; width: 4px; height: 10px; transform: translateX(-50%); }
         .m9 { left: 5px; top: 50%; width: 10px; height: 4px; transform: translateY(-50%); }
-
-        /* DIGITAL */
         #jam { font-size: 7rem; font-weight: bold; line-height: 1; }
+        
         .dates-container { text-align: center; margin-bottom: 5px; font-size: 1.3rem; }
         #tanggal-hijri { color: #fbbf24; font-weight: bold; }
 
-        /* SLIDES */
+        /* SLIDE SYSTEM */
         .slide { display: none; height: 48vh; align-items: center; justify-content: center; padding: 0 40px; animation: slideIn 1s; }
         .slide.active { display: flex; flex-direction: column; }
         @keyframes slideIn { from { opacity: 0; } to { opacity: 1; } }
@@ -38,12 +37,17 @@
         .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
         .box p { font-size: 2.8rem; margin: 5px 0 0 0; font-weight: bold; }
 
-        /* LAYAR IQOMAH */
-        #slide-iqomah { background: rgba(0,0,0,0.95); z-index: 100; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; line-height: 1; }
-        #iqomah-text { font-size: 5rem; color: white; text-transform: uppercase; letter-spacing: 15px; margin-bottom: 20px; }
-
+        /* PENGUMUMAN */
         .pengumuman-card { background: rgba(251, 191, 36, 0.1); border: 3px solid #fbbf24; padding: 30px; border-radius: 30px; width: 85%; text-align: center; }
+        #val-judul { font-size: 2.2rem; color: #fbbf24; margin: 0 0 10px 0; text-transform: uppercase; }
+        #val-isi { font-size: 1.8rem; color: white; margin: 0; }
+
+        /* IQOMAH OVERLAY */
+        #slide-iqomah { background: rgba(0,0,0,0.95); z-index: 1000; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; line-height: 1; }
+        #iqomah-text { font-size: 4rem; color: white; text-transform: uppercase; letter-spacing: 10px; margin-bottom: 20px; }
+
+        /* FOOTER & MENU */
         marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; }
         #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
         
@@ -54,7 +58,7 @@
         input, textarea { width: 95%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; }
         .row-audio { background: #f8fafc; padding: 10px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fbbf24; }
         .status-badge { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 5px; }
-        .btn-blue, .btn-green { padding: 8px 15px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; }
+        .btn-blue, .btn-green { padding: 8px 15px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .btn-blue { background: #3b82f6; } .btn-green { background: #22c55e; }
     </style>
 </head>
@@ -81,7 +85,7 @@
     <div id="slide-iqomah">
         <div id="iqomah-text">MENUJU IQOMAH</div>
         <div id="iqomah-timer">10:00</div>
-        <div style="font-size: 2rem; color: #aaa; margin-top: 20px;">Luruskan Shaf & Matikan HP</div>
+        <div style="font-size: 1.5rem; color: #aaa; margin-top: 20px;">Luruskan Shaf & Matikan HP</div>
     </div>
 
     <!-- SLIDES -->
@@ -96,56 +100,46 @@
     </div>
 
     <div id="slide-info" class="slide">
-        <div class="pengumuman-card"><h1 id="val-judul">PENGUMUMAN</h1><p id="val-isi">Siapkan data pengumuman di pengaturan.</p></div>
+        <div class="pengumuman-card"><h1 id="val-judul">PENGUMUMAN</h1><p id="val-isi">Gunakan menu pengaturan untuk merubah teks ini.</p></div>
     </div>
 
     <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
 
     <!-- ADMIN PANEL -->
     <div id="admin-panel">
-        <h2 style="margin:0 0 15px 0; border-bottom:3px solid #fbbf24;">⚙️ Pengaturan Komando</h2>
+        <h2 style="margin:0 0 15px 0; border-bottom:3px solid #fbbf24;">⚙️ Pengaturan Komando Lengkap</h2>
         
-        <!-- PENGATURAN TEKS -->
         <div class="group">
-            <label>1. Identitas & Pengumuman:</label>
+            <label>1. Teks Identitas & Slide Pengumuman:</label>
             <input type="text" id="in-nama" placeholder="Nama Instansi">
-            <input type="text" id="in-running" placeholder="Running Text">
-            <input type="text" id="in-judul" placeholder="Judul Pengumuman (Slide 2)">
+            <input type="text" id="in-running" placeholder="Teks Berjalan">
+            <input type="text" id="in-judul" placeholder="Judul Pengumuman">
             <textarea id="in-isi" rows="2" placeholder="Isi Pengumuman"></textarea>
         </div>
 
-        <!-- PENGATURAN WAKTU (BARU) -->
-        <div class="group" style="background: #fff9e6;">
-            <label>2. Pengaturan Durasi (Menit):</label>
-            <div style="display:flex; gap:20px;">
-                <div>Tahrim: <input type="number" id="in-tahrim-min" value="5" style="width:60px;"> Min</div>
-                <div>Iqomah: <input type="number" id="in-iqomah-min" value="10" style="width:60px;"> Min</div>
+        <div class="group" style="background:#fff9e6;">
+            <label>2. Pengaturan Waktu (Menit):</label>
+            <div style="display:flex; gap:10px; align-items:center;">
+                Tahrim: <input type="number" id="in-tahrim-min" value="5" style="width:50px;"> Min |
+                Iqomah: <input type="number" id="in-iqomah-min" value="10" style="width:50px;"> Min
             </div>
-            <p style="font-size:10px; color:gray; margin-top:5px;">*Tahrim: bunyi sebelum adzan. Iqomah: hitung mundur setelah adzan.</p>
         </div>
 
-        <!-- PENGATURAN BG -->
         <div class="group">
-            <label>3. Ganti Background:</label>
-            <input type="file" id="in-bg" accept="image/*">
-        </div>
-
-        <button onclick="simpanSettingUtama()" style="width:100%; padding:12px; background:#1e293b; color:white; border-radius:8px; font-weight:bold; cursor:pointer; margin-bottom:15px;">✅ SIMPAN TEKS, BG & DURASI</button>
-
-        <!-- MANAJEMEN AUDIO -->
-        <div class="group">
-            <label>4. Daftar Suara (Pilih & Simpan Satu-satu):</label>
+            <label>3. Background & Audio (Simpan Satu-satu):</label>
+            <input type="file" id="in-bg" style="margin-bottom:15px;">
             <div id="list-audio-container"></div>
         </div>
-        
-        <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer;">TUTUP</button>
+
+        <button onclick="simpanSettingUtama()" style="width:100%; padding:15px; background:#1e293b; color:white; border-radius:8px; font-weight:bold; cursor:pointer;">✅ SIMPAN SEMUA PERUBAHAN TEKS & WAKTU</button>
+        <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer; margin-top:10px;">BATAL / TUTUP</button>
     </div>
 
     <script>
         const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
         let db; let iqAktif = false; let iqSisa = 0;
 
-        const req = indexedDB.open("KorpasgatFinal_Iqomah_V1", 1);
+        const req = indexedDB.open("KorpasgatStable_V3", 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
         req.onsuccess = e => { db = e.target.result; muatData(); };
 
@@ -174,8 +168,7 @@
         function simpanSuara(k) {
             const inp = document.getElementById('f-'+k);
             if(inp.files.length === 0) return alert("Pilih file!");
-            const fileObj = inp.files[0];
-            db.transaction("files", "readwrite").objectStore("files").put({ id: k, data: fileObj }).onsuccess = () => { localStorage.setItem("fname-" + k, fileObj.name); location.reload(); };
+            db.transaction("files", "readwrite").objectStore("files").put({ id: k, data: inp.files[0] }).onsuccess = () => { localStorage.setItem("fname-" + k, inp.files[0].name); alert("Berhasil!"); location.reload(); };
         }
 
         function tesSuara(k) {
@@ -192,7 +185,7 @@
             localStorage.setItem("tahrim-min", document.getElementById("in-tahrim-min").value);
             localStorage.setItem("iqomah-min", document.getElementById("in-iqomah-min").value);
             const f = document.getElementById('in-bg').files[0];
-            if(f) { db.transaction("files", "readwrite").objectStore("files").put({ id: "bg", data: f }).onsuccess = () => location.reload(); } else { alert("Data Tersimpan!"); location.reload(); }
+            if(f) { db.transaction("files", "readwrite").objectStore("files").put({ id: "bg", data: f }).onsuccess = () => location.reload(); } else { alert("Setting Tersimpan!"); location.reload(); }
         }
 
         function aktifkanSuaraSistem() { audioKeys.forEach(k => { const a = document.getElementById("play-"+k); if(a) { a.play().then(()=> {a.pause(); a.currentTime=0;}); } }); }
@@ -204,7 +197,6 @@
             document.getElementById('jam').innerText = d.toLocaleTimeString('id-ID', {hour12:false});
             document.getElementById('tanggal').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
             
-            // Hands
             const s = d.getSeconds(); const m = d.getMinutes(); const h = d.getHours();
             document.getElementById('s-hand').style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
             document.getElementById('m-hand').style.transform = `translateX(-50%) rotate(${m * 6 + s * 0.1}deg)`;
@@ -215,7 +207,6 @@
             
             const jm = d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':');
 
-            // IQOMAH LOGIC
             if(iqAktif) {
                 iqSisa--;
                 if(iqSisa <= 0) {
@@ -229,11 +220,11 @@
             }
 
             if(s === 0) {
-                const adzans = ["subuh","dzuhur","ashar","maghrib","isya"];
+                const sholats = ["subuh","dzuhur","ashar","maghrib","isya"];
                 const tDur = parseInt(localStorage.getItem("tahrim-min") || 5);
                 const iqDur = parseInt(localStorage.getItem("iqomah-min") || 10);
 
-                adzans.forEach(x => {
+                sholats.forEach(x => {
                     const wAdzan = document.getElementById(x).innerText;
                     if(jm === wAdzan) {
                         const pt = document.getElementById("play-tahrim"); if(pt) pt.pause();
@@ -244,7 +235,9 @@
                     }
                     const [hh, mm] = wAdzan.split(':').map(Number);
                     const tT = new Date(); tT.setHours(hh, mm - tDur, 0);
-                    if(jm === tT.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':')) document.getElementById("play-tahrim")?.play();
+                    if(jm === tT.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':')) {
+                        document.getElementById("play-tahrim")?.play();
+                    }
                 });
             }
         }
