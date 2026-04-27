@@ -2,30 +2,54 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>STAFLOG KORPASGAT - FIXED</title>
+    <title>MASTER KOMANDO - STAFLOG KORPASGAT</title>
     <style>
         :root { --bg-img: url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?q=80&w=2000'); }
-        body { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; text-align: center; }
-        .header { padding: 20px; border-bottom: 2px solid #fbbf24; background: rgba(0,0,0,0.4); }
-        #disp-nama { font-size: 2.5rem; color: #fbbf24; margin: 0; letter-spacing: 2px; }
-        #jam { font-size: 8rem; font-weight: bold; margin: 10px 0; font-family: monospace; }
-        .sholat-grid { display: flex; gap: 15px; padding: 20px; justify-content: center; margin-top: 20px; }
-        .box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; width: 180px; border-bottom: 5px solid #fbbf24; }
-        .box h3 { margin: 0; font-size: 1.2rem; opacity: 0.8; }
-        .box p { font-size: 2.5rem; margin: 10px 0 0 0; font-weight: bold; }
-        #btn-menu { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(251,191,36,0.3); border: 1px solid #fbbf24; border-radius: 50%; color: white; cursor: pointer; z-index: 100; }
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 20px; border-radius: 10px; width: 400px; z-index: 1000; box-shadow: 0 0 50px black; }
-        marquee { position: fixed; bottom: 0; width: 100%; background: #000; padding: 10px; font-size: 1.5rem; border-top: 2px solid #fbbf24; }
+        body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; cursor: pointer; text-align: center; }
+        
+        /* HEADER & JAM */
+        .header-top { padding: 15px 0; background: rgba(0,0,0,0.3); border-bottom: 2px solid #fbbf24; }
+        #disp-nama { font-size: 2.2rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
+        #jam { font-size: 7.5rem; font-weight: bold; line-height: 1; margin: 10px 0; font-family: monospace; }
+        #tanggal { font-size: 1.5rem; margin-bottom: 5px; }
+        #tanggal-hijri { color: #fbbf24; font-weight: bold; font-size: 1.3rem; }
+
+        /* JADWAL SHOLAT */
+        .sholat-grid { display: flex; gap: 12px; width: 95%; margin: 30px auto; justify-content: center; }
+        .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; min-width: 150px; }
+        .box h3 { margin: 0; font-size: 1.2rem; opacity: 0.9; }
+        .box p { font-size: 3rem; margin: 10px 0 0 0; font-weight: bold; }
+
+        /* IQOMAH OVERLAY */
+        #slide-iqomah { background: rgba(0,0,0,0.95); z-index: 1000; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; }
+
+        /* PANEL ADMIN */
+        #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; text-align: left; }
+        .row-item { background: #f8fafc; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fbbf24; }
+        input[type="text"], input[type="number"], textarea { width: 95%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .btn-blue { padding: 8px 15px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-green { padding: 8px 15px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-red { padding: 8px 15px; background: #ef4444; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; left: 0; }
     </style>
 </head>
-<body onclick="startAudioContext()">
+<body onclick="bukaSuaraBrowser()">
 
-    <button id="btn-menu" onclick="toggleAdmin()">⚙️</button>
+    <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
 
-    <div class="header">
+    <div class="header-top">
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
         <div id="jam">00:00:00</div>
         <div id="tanggal">Memuat Tanggal...</div>
+        <div id="tanggal-hijri">...</div>
+    </div>
+
+    <div id="slide-iqomah">
+        <h1 style="font-size:4rem">MENUJU IQOMAH</h1>
+        <div id="iqomah-timer">00:00</div>
     </div>
 
     <div class="sholat-grid">
@@ -36,88 +60,14 @@
         <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
     </div>
 
-    <marquee id="disp-run">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
+    <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
 
     <div id="admin-panel">
-        <h3>Pengaturan</h3>
-        <input type="text" id="in-nama" placeholder="Nama Instansi" style="width:90%; padding:8px; margin-bottom:10px;">
-        <button onclick="simpanSettings()" style="width:100%; padding:10px; background:#22c55e; color:white; border:none; border-radius:5px; cursor:pointer;">SIMPAN</button>
-        <button onclick="toggleAdmin()" style="width:100%; margin-top:5px; background:#ddd; border:none; padding:5px;">Tutup</button>
-    </div>
-
-    <script>
-        // 1. Inisialisasi Data & Database
-        let db;
-        const request = indexedDB.open("JWS_DB_NEW", 1);
-        request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        request.onsuccess = e => { db = e.target.result; loadPersistedData(); };
-
-        function loadPersistedData() {
-            const nama = localStorage.getItem("nama");
-            if(nama) document.getElementById("disp-nama").innerText = nama;
-            
-            // Ambil Background dari DB
-            const tx = db.transaction("files", "readonly").objectStore("files");
-            tx.get("bg").onsuccess = e => {
-                if(e.target.result) {
-                    const url = URL.createObjectURL(e.target.result.data);
-                    document.documentElement.style.setProperty('--bg-img', `url(${url})`);
-                }
-            };
-        }
-
-        // 2. Fungsi Jam & Tanggal (WAJIB JALAN)
-        function updateWaktu() {
-            const sekarang = new Date();
-            
-            // Update Jam
-            const h = String(sekarang.getHours()).padStart(2, '0');
-            const m = String(sekarang.getMinutes()).padStart(2, '0');
-            const s = String(sekarang.getSeconds()).padStart(2, '0');
-            document.getElementById('jam').innerText = `${h}:${m}:${s}`;
-            
-            // Update Tanggal
-            const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('tanggal').innerText = sekarang.toLocaleDateString('id-ID', opsi);
-            
-            // Hitung Jadwal Sholat setiap jam (menit 0)
-            if (sekarang.getMinutes() === 0 && sekarang.getSeconds() === 0) hitungJadwal();
-        }
-
-        // 3. Fungsi Jadwal Sholat (Sederhana untuk Test)
-        function hitungJadwal() {
-            // Logika simulasi jadwal (Anda bisa ganti dengan library PrayTimes)
-            document.getElementById("subuh").innerText = "04:35";
-            document.getElementById("dzuhur").innerText = "11:52";
-            document.getElementById("ashar").innerText = "15:11";
-            document.getElementById("maghrib").innerText = "17:48";
-            document.getElementById("isya").innerText = "18:59";
-        }
-
-        // 4. Admin & Settings
-        function toggleAdmin() {
-            const p = document.getElementById("admin-panel");
-            p.style.display = p.style.display === "block" ? "none" : "block";
-        }
-
-        function simpanSettings() {
-            const n = document.getElementById("in-nama").value;
-            if(n) {
-                localStorage.setItem("nama", n);
-                document.getElementById("disp-nama").innerText = n;
-                alert("Tersimpan!");
-                toggleAdmin();
-            }
-        }
-
-        function startAudioContext() {
-            console.log("Audio system ready.");
-        }
-
-        // JALANKAN INTERVAL
-        setInterval(updateWaktu, 1000);
-        updateWaktu(); // Jalankan langsung tanpa tunggu 1 detik
-        hitungJadwal(); // Jalankan jadwal
-    </script>
-</body>
-</html>
+        <h2 style="border-bottom:3px solid #fbbf24; margin-top:0;">⚙️ Pengaturan Komando</h2>
+        
+        <div class="row-item">
+            <label><b>1. Teks Instansi & Informasi</b></label>
+            <input type="text" id="in-nama" placeholder="Nama Instansi">
+            <input type="text" id="in-running" placeholder="Running Text">
+            <div style="margin-top:5px;">
+                Tahrim (Menit): <input type="number" id="in-tahrim-min"
