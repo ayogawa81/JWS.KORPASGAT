@@ -9,7 +9,7 @@
         body { 
             margin: 0; padding: 0; overflow: hidden; height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #111; color: white; text-align: center;
+            background: #111; color: white; text-align: center; cursor: pointer;
         }
         #bg-layer {
             position: fixed; top:0; left:0; width:100%; height:100%;
@@ -19,40 +19,32 @@
         }
         .container { display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
         
-        /* Header & Jam */
         .header { padding: 30px 0; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
         #disp-nama { font-size: 2.8rem; color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 800; }
         #jam { font-size: 10rem; font-weight: bold; line-height: 1; margin: 15px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
         .tgl-box { font-size: 1.8rem; margin-top: 5px; }
         #tanggal-hijriah { color: var(--primary); font-weight: 600; margin-top: 8px; border-top: 1px solid rgba(251, 191, 36, 0.3); display: inline-block; padding-top: 5px; }
 
-        /* Grid Jadwal Sholat */
         .sholat-grid { display: flex; gap: 20px; width: 95%; margin: 0 auto; justify-content: center; padding-bottom: 100px; }
         .box { 
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); 
             padding: 30px 10px; border-radius: 25px; flex: 1; 
             border-bottom: 8px solid var(--primary); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transition: transform 0.3s;
         }
-        .box:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); }
         .box h3 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; opacity: 0.8; }
         .box p { font-size: 4rem; margin: 20px 0 0 0; font-weight: 900; }
 
-        /* Running Text */
-        .footer { background: #000; border-top: 4px solid var(--primary); position: relative; }
+        .footer { background: #000; border-top: 4px solid var(--primary); }
         marquee { font-size: 2.2rem; padding: 15px 0; display: block; font-weight: bold; text-transform: uppercase; }
 
-        /* Admin Panel */
-        #btn-menu { position: fixed; top: 25px; right: 25px; width: 60px; height: 60px; background: rgba(251, 191, 36, 0.3); border: 2px solid var(--primary); border-radius: 50%; color: var(--primary); font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        #btn-menu { position: fixed; top: 25px; right: 25px; width: 60px; height: 60px; background: rgba(251, 191, 36, 0.3); border: 2px solid var(--primary); border-radius: 50%; color: var(--primary); font-size: 30px; display: flex; align-items: center; justify-content: center; z-index: 100; }
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 40px; border-radius: 25px; z-index: 101; width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px rgba(0,0,0,0.8); text-align: left; }
         .section { background: #f8fafc; padding: 20px; margin-bottom: 20px; border-radius: 15px; border-left: 8px solid var(--primary); }
         input[type="text"], input[type="file"] { width: 95%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
-        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
-        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-right: 5px; }
         .btn-save { background: #10b981; color: white; }
         .btn-test { background: #3b82f6; color: white; }
         .btn-stop { background: #ef4444; color: white; }
-        .btn-close { width: 100%; background: #64748b; color: white; margin-top: 10px; padding: 15px; }
     </style>
 </head>
 <body onclick="pancingSuara()">
@@ -65,7 +57,7 @@
             <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
             <div id="jam">00:00:00</div>
             <div class="tgl-box">
-                <div id="tanggal-masehi">Memuat Tanggal...</div>
+                <div id="tanggal-masehi">Memuat...</div>
                 <div id="tanggal-hijriah">Memuat Hijriah...</div>
             </div>
         </div>
@@ -84,9 +76,101 @@
     </div>
 
     <div id="admin-panel">
-        <h2 style="margin:0 0 20px 0; border-bottom:3px solid var(--primary); padding-bottom:10px;">⚙️ Konfigurasi Sistem</h2>
-        
+        <h2 style="margin:0 0 20px 0; border-bottom:3px solid var(--primary);">⚙️ Panel Admin</h2>
         <div class="section">
-            <b>Identitas & Pengumuman</b>
-            <input type="text" id="in-nama" placeholder="Nama Satuan (Contoh: STAFLOG KORPASGAT)">
-            <input type="text" id="
+            <b>Identitas</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
+            <input type="text" id="in-run" placeholder="Running Text">
+            <button class="btn-save" onclick="simpanTeks()">SIMPAN</button>
+        </div>
+        <div class="section">
+            <b>Background</b>
+            <input type="file" id="in-bg" accept="image/*">
+            <button class="btn-test" onclick="uploadBG()">UPLOAD</button>
+        </div>
+        <div id="audio-list" class="section"><b>Audio Azan</b></div>
+        <button onclick="tutupSetting()" style="width:100%; padding:15px; background:#64748b; color:white;">TUTUP</button>
+    </div>
+
+    <script>
+        const keys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
+        let db, audioMap = {};
+
+        const req = indexedDB.open("JWS_KORPASGAT_FINAL", 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
+        req.onsuccess = e => { db = e.target.result; init(); };
+
+        function init() {
+            document.getElementById("disp-nama").innerText = localStorage.getItem("n") || "STAFLOG KORPASGAT";
+            document.getElementById("disp-run").innerText = localStorage.getItem("r") || "STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU";
+
+            const tx = db.transaction("files", "readonly").objectStore("files");
+            tx.get("bg").onsuccess = e => {
+                if(e.target.result) document.getElementById("bg-layer").style.backgroundImage = `url(${URL.createObjectURL(e.target.result.data)})`;
+            };
+
+            keys.forEach(k => {
+                tx.get(k).onsuccess = e => {
+                    if(e.target.result) audioMap[k] = new Audio(URL.createObjectURL(e.target.result.data));
+                };
+            });
+
+            setInterval(tick, 1000);
+            tick();
+        }
+
+        function tick() {
+            const d = new Date();
+            const jamStr = d.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g,':');
+            document.getElementById('jam').innerText = jamStr;
+            document.getElementById('tanggal-masehi').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            
+            try {
+                const hijri = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', {day:'numeric', month:'long', year:'numeric'}).format(d);
+                document.getElementById('tanggal-hijriah').innerText = hijri + " H";
+            } catch(e) { document.getElementById('tanggal-hijriah').innerText = "-"; }
+
+            if(d.getSeconds() === 0) {
+                const cur = jamStr.substring(0,5);
+                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => {
+                    if(cur === document.getElementById(s).innerText) audioMap[s]?.play();
+                });
+            }
+        }
+
+        function simpanTeks() {
+            localStorage.setItem("n", document.getElementById("in-nama").value);
+            localStorage.setItem("r", document.getElementById("in-run").value);
+            location.reload();
+        }
+
+        function uploadBG() {
+            const f = document.getElementById("in-bg").files[0];
+            if(f) db.transaction("files", "readwrite").objectStore("files").put({id: "bg", data: f}).onsuccess = () => location.reload();
+        }
+
+        function uploadAudio(id) {
+            const f = document.getElementById('f-'+id).files[0];
+            if(f) db.transaction("files", "readwrite").objectStore("files").put({id: id, data: f}).onsuccess = () => location.reload();
+        }
+
+        function pancingSuara() {
+            Object.values(audioMap).forEach(a => { a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {}); });
+        }
+
+        function bukaSetting() {
+            document.getElementById("admin-panel").style.display = "block";
+            const div = document.getElementById("audio-list");
+            div.innerHTML = "<b>Manajemen Audio</b>";
+            keys.forEach(k => {
+                const ada = !!audioMap[k];
+                div.innerHTML += `<div style='margin-top:10px;'>${k.toUpperCase()} [${ada?'SIAP':'KOSONG'}]<br>
+                    <input type='file' id='f-${k}' style='font-size:11px; width:150px;'>
+                    <button class='btn-save' onclick="uploadAudio('${k}')">SAVE</button>
+                    <button class='btn-test' onclick="audioMap['${k}']?.play()">TES</button></div>`;
+            });
+        }
+        function tutupSetting() { document.getElementById("admin-panel").style.display = "none"; }
+    </script>
+</body>
+</html>
