@@ -2,66 +2,39 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MASTER DISPLAY KOMANDO - STAFLOG KORPASGAT</title>
+    <title>MASTER KOMANDO - STAFLOG KORPASGAT</title>
     <style>
         :root { --bg-img: url('https://unsplash.com'); }
         body { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); background-size: cover; background-position: center; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; height: 100vh; cursor: pointer; }
-        
         .header-top { text-align: center; padding: 10px 0; background: rgba(0,0,0,0.3); border-bottom: 2px solid #fbbf24; }
         #disp-nama { font-size: 2.2rem; color: #fbbf24; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
         .clock-section { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 5px 0; }
-        
-        /* ANALOG */
-        #analog-clock { width: 140px; height: 140px; border: 5px solid #fbbf24; border-radius: 50%; position: relative; background: rgba(255,255,255,0.05); }
-        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; transform: translateX(-50%); }
+        #analog-clock { width: 140px; height: 140px; border: 5px solid #fbbf24; border-radius: 50%; position: relative; }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; transform: translateX(-50%); }
         .hour-hand { width: 5px; height: 35px; background: #fff; z-index: 3; }
         .min-hand { width: 3px; height: 55px; background: #ddd; z-index: 2; }
         .sec-hand { width: 2px; height: 60px; background: #ff4444; z-index: 1; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: #fbbf24; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .mark { position: absolute; background: #fbbf24; }
-        .m12 { top: 5px; left: 50%; width: 4px; height: 10px; transform: translateX(-50%); }
-        .m3 { right: 5px; top: 50%; width: 10px; height: 4px; transform: translateY(-50%); }
-        .m6 { bottom: 5px; left: 50%; width: 4px; height: 10px; transform: translateX(-50%); }
-        .m9 { left: 5px; top: 50%; width: 10px; height: 4px; transform: translateY(-50%); }
-
-        /* DIGITAL */
         #jam { font-size: 7rem; font-weight: bold; line-height: 1; }
         .dates-container { text-align: center; margin-bottom: 5px; font-size: 1.3rem; }
         #tanggal-hijri { color: #fbbf24; font-weight: bold; }
-
-        /* SLIDES */
         .slide { display: none; height: 48vh; align-items: center; justify-content: center; padding: 0 40px; animation: slideIn 1s; }
         .slide.active { display: flex; flex-direction: column; }
         @keyframes slideIn { from { opacity: 0; } to { opacity: 1; } }
         .sholat-grid { display: flex; gap: 12px; width: 100%; }
-        .box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid #fbbf24; }
-        .box h3 { font-size: 1.1rem; margin: 0; color: #ccc; }
+        .box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 6px solid #fbbf24; }
         .box p { font-size: 2.8rem; margin: 5px 0 0 0; font-weight: bold; }
-
-        /* PENGUMUMAN */
-        .pengumuman-card { background: rgba(251, 191, 36, 0.1); border: 3px solid #fbbf24; padding: 30px; border-radius: 30px; width: 85%; text-align: center; }
-        #val-judul { font-size: 2.2rem; color: #fbbf24; margin: 0 0 10px 0; text-transform: uppercase; }
-        #val-isi { font-size: 1.8rem; color: white; margin: 0; }
-
-        /* IQOMAH */
         #slide-iqomah { background: rgba(0,0,0,0.95); z-index: 1000; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; line-height: 1; }
-        #iqomah-text { font-size: 4rem; color: white; text-transform: uppercase; letter-spacing: 10px; }
-
-        /* FOOTER & SETTING */
+        #iqomah-timer { font-size: 18rem; font-weight: bold; color: #fbbf24; }
         marquee { font-size: 1.8rem; position: fixed; bottom: 0; background: #000; padding: 12px 0; width: 100%; border-top: 3px solid #fbbf24; }
         #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; border-radius: 50%; color: #fbbf24; font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 20px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .group { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 10px; }
-        .group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 13px; color: #1e293b; }
+        .group { border: 1px solid #ddd; padding: 10px; margin-bottom: 12px; border-radius: 10px; }
         input, textarea { width: 95%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; }
         .row-audio { background: #f8fafc; padding: 10px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fbbf24; }
         .status-badge { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 5px; }
-        .btn-blue, .btn-green { padding: 8px 15px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-blue, .btn-green { padding: 8px 15px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; }
         .btn-blue { background: #3b82f6; } .btn-green { background: #22c55e; }
-        .manual-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
-        .manual-grid input { width: 80%; font-size: 11px; text-align: center; }
     </style>
 </head>
 <body onclick="aktifkanSuaraSistem()">
@@ -72,7 +45,6 @@
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
         <div class="clock-section">
             <div id="analog-clock">
-                <div class="mark m12"></div><div class="mark m3"></div><div class="mark m6"></div><div class="mark m9"></div>
                 <div id="h-hand" class="hand hour-hand"></div>
                 <div id="m-hand" class="hand min-hand"></div>
                 <div id="s-hand" class="hand sec-hand"></div>
@@ -83,78 +55,47 @@
         <div class="dates-container"><span id="tanggal">...</span> | <span id="tanggal-hijri">...</span></div>
     </div>
 
-    <!-- IQOMAH SCREEN -->
+    <!-- IQOMAH -->
     <div id="slide-iqomah">
-        <div id="iqomah-text">MENUJU IQOMAH</div>
+        <h1 style="font-size:4rem">MENUJU IQOMAH</h1>
         <div id="iqomah-timer">10:00</div>
-        <div style="font-size: 1.5rem; color: #aaa; margin-top: 20px;">Luruskan Shaf & Matikan HP</div>
     </div>
 
-    <!-- SLIDE UTAMA -->
+    <!-- SLIDES -->
     <div id="slide-sholat" class="slide active">
         <div class="sholat-grid">
-            <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
-            <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
-            <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
-            <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
-            <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
+            <div class="box"><h3>SUBUH</h3><p id="subuh">04:34</p></div>
+            <div class="box"><h3>DZUHUR</h3><p id="dzuhur">11:51</p></div>
+            <div class="box"><h3>ASHAR</h3><p id="ashar">15:11</p></div>
+            <div class="box"><h3>MAGHRIB</h3><p id="maghrib">17:48</p></div>
+            <div class="box"><h3>ISYA</h3><p id="isya">18:58</p></div>
         </div>
-        <div id="mode-info" style="margin-top:10px; color:#fbbf24; font-weight:bold;">Mode: Memuat...</div>
+        <div id="mode-info" style="margin-top:10px; color:#fbbf24;">Mode: Online</div>
     </div>
 
     <div id="slide-info" class="slide">
         <div class="pengumuman-card"><h1 id="val-judul">PENGUMUMAN</h1><p id="val-isi">-</p></div>
     </div>
 
-    <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU</marquee>
+    <marquee id="disp-running">DISIPLIN ADALAH NAFASKU</marquee>
 
-    <!-- ADMIN PANEL -->
     <div id="admin-panel">
-        <h2 style="margin:0 0 15px 0; border-bottom:3px solid #fbbf24;">⚙️ Pengaturan Komando Super</h2>
-        
-        <!-- JADWAL SETTING -->
+        <h2>⚙️ Pengaturan Komando</h2>
         <div class="group" style="background:#e6f3ff;">
-            <label>1. Pengaturan Jadwal (Hybrid):</label>
-            <input type="checkbox" id="check-auto" style="width:auto;" onchange="toggleManual()"> Aktifkan Jadwal Otomatis (Internet)<br>
-            <div id="div-auto">ID Kota: <input type="text" id="in-id-kota" value="1209" style="width:60px;"> (1209=Kab, 1210=Kota)</div>
-            <div id="div-manual">
-                <label>Set Jam Manual (Offline):</label>
-                <div class="manual-grid">
-                    <div>Sbh<input type="text" id="m-subuh" placeholder="04:30"></div>
-                    <div>Dzh<input type="text" id="m-dzuhur" placeholder="11:50"></div>
-                    <div>Asr<input type="text" id="m-ashar" placeholder="15:10"></div>
-                    <div>Mgr<input type="text" id="m-maghrib" placeholder="17:45"></div>
-                    <div>Isy<input type="text" id="m-isya" placeholder="18:55"></div>
-                </div>
-            </div>
+            <label>1. Jadwal (Ceklis untuk Online):</label><br>
+            <input type="checkbox" id="check-auto" style="width:auto;"> Aktifkan Online (ID Kota: <input type="text" id="in-id-kota" value="1209" style="width:50px;">)
         </div>
-
         <div class="group">
-            <label>2. Identitas & Slide Pengumuman:</label>
-            <input type="text" id="in-nama" placeholder="Nama Instansi"><br>
-            <input type="text" id="in-running" placeholder="Running Text"><br>
-            <input type="text" id="in-judul" placeholder="Judul Slide 2"><br>
-            <textarea id="in-isi" rows="2" placeholder="Isi Slide 2"></textarea>
+            <label>2. Identitas & Slide 2:</label>
+            <input type="text" id="in-nama"><input type="text" id="in-running"><input type="text" id="in-judul"><textarea id="in-isi"></textarea>
         </div>
-
-        <div class="group" style="background:#fff9e6;">
-            <label>3. Durasi Waktu (Menit):</label>
-            Tahrim: <input type="number" id="in-tahrim-min" value="5" style="width:50px;"> Min |
-            Iqomah: <input type="number" id="in-iqomah-min" value="10" style="width:50px;"> Min
-        </div>
-
         <div class="group">
-            <label>4. Ganti Background:</label>
-            <input type="file" id="in-bg" accept="image/*">
+            <label>3. Durasi Tahrim & Iqomah (Menit):</label>
+            Tahrim: <input type="number" id="in-tahrim-min" value="5" style="width:50px;"> | Iqomah: <input type="number" id="in-iqomah-min" value="10" style="width:50px;">
         </div>
-
-        <button onclick="simpanSemuaSetting()" style="width:100%; padding:15px; background:#1e293b; color:white; border-radius:8px; font-weight:bold; cursor:pointer; margin-bottom:15px;">✅ SIMPAN SEMUA TEKS, BG & WAKTU</button>
-
-        <div class="group">
-            <label>5. Manajemen Audio (Pilih & Simpan Satu-satu):</label>
-            <div id="list-audio-container"></div>
-        </div>
-        
+        <div class="group"><label>4. Ganti Background:</label><input type="file" id="in-bg"></div>
+        <button onclick="simpanSettingUtama()" style="width:100%; padding:15px; background:#1e293b; color:white; border-radius:8px; font-weight:bold; cursor:pointer;">✅ SIMPAN SEMUA SETTING</button>
+        <div class="group" style="margin-top:20px;"><label>5. Audio (Simpan Satu per satu):</label><div id="list-audio-container"></div></div>
         <button onclick="tutupSetting()" style="width:100%; border:none; background:none; color:gray; cursor:pointer;">TUTUP</button>
     </div>
 
@@ -162,59 +103,44 @@
         const audioKeys = ["tahrim", "subuh", "dzuhur", "ashar", "maghrib", "isya"];
         let db; let iqAktif = false; let iqSisa = 0;
 
-        const req = indexedDB.open("KorpasgatUltimate_DB", 1);
+        const req = indexedDB.open("KorpasgatStable_V4", 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
         req.onsuccess = e => { db = e.target.result; muatData(); };
-
-        function toggleManual() {
-            const isAuto = document.getElementById("check-auto").checked;
-            document.getElementById("div-auto").style.display = isAuto ? "block" : "none";
-            document.getElementById("div-manual").style.display = isAuto ? "none" : "block";
-        }
 
         function muatData() {
             if(localStorage.getItem("nama")) document.getElementById("disp-nama").innerText = localStorage.getItem("nama");
             if(localStorage.getItem("running")) document.getElementById("disp-running").innerText = localStorage.getItem("running");
             if(localStorage.getItem("judul")) document.getElementById("val-judul").innerText = localStorage.getItem("judul");
             if(localStorage.getItem("isi")) document.getElementById("val-isi").innerText = localStorage.getItem("isi");
-            if(localStorage.getItem("tahrim-min")) document.getElementById("in-tahrim-min").value = localStorage.getItem("tahrim-min");
-            if(localStorage.getItem("iqomah-min")) document.getElementById("in-iqomah-min").value = localStorage.getItem("iqomah-min");
-            if(localStorage.getItem("id-kota")) document.getElementById("in-id-kota").value = localStorage.getItem("id-kota");
-            
-            const isAuto = localStorage.getItem("is-auto") !== "false";
-            document.getElementById("check-auto").checked = isAuto;
-            ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => document.getElementById("m-"+s).value = localStorage.getItem("m-"+s) || "");
-
-            toggleManual();
-            applyJadwal();
+            document.getElementById("in-tahrim-min").value = localStorage.getItem("tahrim-min") || 5;
+            document.getElementById("in-iqomah-min").value = localStorage.getItem("iqomah-min") || 10;
+            document.getElementById("check-auto").checked = localStorage.getItem("is-auto") !== "false";
+            document.getElementById("in-id-kota").value = localStorage.getItem("id-kota") || "1209";
 
             const tx = db.transaction("files", "readonly").objectStore("files");
             tx.get("bg").onsuccess = e => { if(e.target.result) document.documentElement.style.setProperty('--bg-img', `url(${URL.createObjectURL(e.target.result.data)})`); };
             audioKeys.forEach(k => { tx.get(k).onsuccess = e => { if(e.target.result) { const a = new Audio(URL.createObjectURL(e.target.result.data)); a.id = "play-" + k; document.body.appendChild(a); } }; });
+            applyJadwal();
         }
 
         async function applyJadwal() {
             const isAuto = document.getElementById("check-auto").checked;
             if(isAuto) {
-                document.getElementById("mode-info").innerText = "Mode: Otomatis (Internet)";
-                const idK = document.getElementById("in-id-kota").value || "1209";
+                const idK = document.getElementById("in-id-kota").value;
                 const t = new Date();
                 try {
                     const res = await fetch(`https://myquran.com{idK}/${t.getFullYear()}/${t.getMonth()+1}/${t.getDate()}`);
                     const d = await res.json();
                     if(d.status) {
                         const j = d.data.jadwal;
-                        ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => document.getElementById(s).innerText = j[s]);
-                        localStorage.setItem("j-cache", JSON.stringify(j));
+                        document.getElementById("subuh").innerText = j.subuh;
+                        document.getElementById("dzuhur").innerText = j.dzuhur;
+                        document.getElementById("ashar").innerText = j.ashar;
+                        document.getElementById("maghrib").innerText = j.maghrib;
+                        document.getElementById("isya").innerText = j.isya;
+                        document.getElementById("mode-info").innerText = "Mode: Online (" + d.data.lokasi + ")";
                     }
-                } catch(e) { 
-                    const j = JSON.parse(localStorage.getItem("j-cache"));
-                    if(j) ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => document.getElementById(s).innerText = j[s]);
-                    document.getElementById("mode-info").innerText = "Mode: Offline (Cache)";
-                }
-            } else {
-                document.getElementById("mode-info").innerText = "Mode: Manual (Offline)";
-                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => document.getElementById(s).innerText = localStorage.getItem("m-"+s) || "--:--");
+                } catch(e) { document.getElementById("mode-info").innerText = "Mode: Offline (Check Internet)"; }
             }
         }
 
@@ -222,25 +148,17 @@
             const container = document.getElementById("list-audio-container"); container.innerHTML = "";
             audioKeys.forEach(k => {
                 const isAda = document.getElementById("play-" + k);
-                const fname = localStorage.getItem("fname-" + k) || "Kosong";
-                container.innerHTML += `<div class="row-audio"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><b>${k.toUpperCase()}</b><span class="status-badge" style="background:${isAda?'#dcfce7':'#fee2e2'}; color:${isAda?'#166534':'#991b1b'}">${isAda?'✅ SIAP':'❌ KOSONG'}</span></div><div style="display:flex; gap:5px;"><input type="file" id="f-${k}" style="flex:1; font-size:10px;"><button class="btn-blue" onclick="tesSuara('${k}')">TES</button><button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button></div><div style="font-size:10px; color:gray;">File: ${fname}</div></div>`;
+                container.innerHTML += `<div class="row-audio"><div style="display:flex; justify-content:space-between;"><b>${k.toUpperCase()}</b><span style="color:${isAda?'green':'red'}">${isAda?'✅ SIAP':'❌ KOSONG'}</span></div><input type="file" id="f-${k}" style="font-size:10px;"><button class="btn-green" onclick="simpanSuara('${k}')">SIMPAN</button></div>`;
             });
         }
 
         function simpanSuara(k) {
             const inp = document.getElementById('f-'+k);
             if(inp.files.length === 0) return alert("Pilih file!");
-            const fileObj = inp.files[0];
-            db.transaction("files", "readwrite").objectStore("files").put({ id: k, data: fileObj }).onsuccess = () => { localStorage.setItem("fname-" + k, fileObj.name); alert("Berhasil!"); location.reload(); };
+            db.transaction("files", "readwrite").objectStore("files").put({ id: k, data: inp.files[0] }).onsuccess = () => location.reload();
         }
 
-        function tesSuara(k) {
-            const inp = document.getElementById('f-'+k);
-            let p = document.getElementById("play-" + k) || new Audio();
-            if(inp.files.length > 0) { p.src = URL.createObjectURL(inp.files[0]); p.play(); } else if(p.src) { p.play(); }
-        }
-
-        function simpanSemuaSetting() {
+        function simpanSettingUtama() {
             localStorage.setItem("nama", document.getElementById("in-nama").value);
             localStorage.setItem("running", document.getElementById("in-running").value);
             localStorage.setItem("judul", document.getElementById("in-judul").value);
@@ -249,8 +167,6 @@
             localStorage.setItem("iqomah-min", document.getElementById("in-iqomah-min").value);
             localStorage.setItem("is-auto", document.getElementById("check-auto").checked);
             localStorage.setItem("id-kota", document.getElementById("in-id-kota").value);
-            ["subuh","dzuhur","ashar","maghrib","isya"].forEach(s => localStorage.setItem("m-"+s, document.getElementById("m-"+s).value));
-            
             const f = document.getElementById('in-bg').files;
             if(f.length > 0) { db.transaction("files", "readwrite").objectStore("files").put({ id: "bg", data: f[0] }).onsuccess = () => location.reload(); } else { location.reload(); }
         }
@@ -276,32 +192,24 @@
 
             if(iqAktif) {
                 iqSisa--;
-                if(iqSisa <= 0) {
-                    document.getElementById("iqomah-text").innerText = "WAKTUNYA SHOLAT";
-                    document.getElementById("iqomah-timer").innerText = "00:00";
-                    if(iqSisa < -300) { iqAktif = false; document.getElementById("slide-iqomah").style.display = "none"; }
-                } else {
+                if(iqSisa <= 0) { iqAktif = false; document.getElementById("slide-iqomah").style.display = "none"; }
+                else {
                     let mm = Math.floor(iqSisa / 60); let ss = iqSisa % 60;
                     document.getElementById("iqomah-timer").innerText = `${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
                 }
             }
 
             if(s === 0) {
-                const sholats = ["subuh","dzuhur","ashar","maghrib","isya"];
-                const tDur = parseInt(localStorage.getItem("tahrim-min") || 5);
-                const iqDur = parseInt(localStorage.getItem("iqomah-min") || 10);
-                sholats.forEach(x => {
-                    const wAdzan = document.getElementById(x).innerText;
-                    if(wAdzan === "--:--") return;
-                    if(jm === wAdzan) {
-                        const pt = document.getElementById("play-tahrim"); if(pt) pt.pause();
+                ["subuh","dzuhur","ashar","maghrib","isya"].forEach(x => {
+                    const w = document.getElementById(x).innerText;
+                    if(jm === w) {
+                        document.getElementById("play-tahrim")?.pause();
                         document.getElementById("play-"+x)?.play();
-                        iqAktif = true; iqSisa = iqDur * 60;
+                        iqAktif = true; iqSisa = parseInt(localStorage.getItem("iqomah-min") || 10) * 60;
                         document.getElementById("slide-iqomah").style.display = "flex";
-                        document.getElementById("iqomah-text").innerText = "MENUJU IQOMAH";
                     }
-                    const [hh, mm] = wAdzan.split(':').map(Number);
-                    const tT = new Date(); tT.setHours(hh, mm - tDur, 0);
+                    const [hh, mm] = w.split(':').map(Number);
+                    const tT = new Date(); tT.setHours(hh, mm - parseInt(localStorage.getItem("tahrim-min") || 5), 0);
                     if(jm === tT.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.', ':')) document.getElementById("play-tahrim")?.play();
                 });
             }
