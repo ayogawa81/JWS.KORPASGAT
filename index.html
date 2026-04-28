@@ -3,214 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT - ULTIMATE EDITION</title>
+    <title>JWS KORPASGAT - EDISI PRESISI</title>
     <style>
-        :root { --accent: #fbbf24; --active: #ef4444; --bg-overlay: rgba(0, 0, 0, 0.75); }
+        :root { --accent: #fbbf24; }
         
         body { 
             margin: 0; background: #000 no-repeat center center fixed; background-size: cover;
-            color: white; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white; font-family: 'Arial', sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
         }
 
-        /* Efek Overlay Agar Teks Jelas di Atas Foto */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); z-index: 1; }
+        /* Header Sesuai Foto */
+        .header { padding: 30px 0 10px 0; text-align: center; }
+        #disp-nama { font-size: 5.5rem; font-weight: 900; color: var(--accent); margin: 0; letter-spacing: 2px; }
 
-        .content { position: relative; z-index: 2; height: 100vh; display: flex; flex-direction: column; }
+        /* Area Jam Utama */
+        .main-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        #jam { font-size: 22rem; font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -5px; }
+        #iqomah-box { font-size: 18rem; color: #ff0000; font-weight: 900; display: none; }
 
-        /* Header Gagah */
-        .header { padding: 20px; text-align: center; border-bottom: 4px solid var(--accent); background: rgba(0,0,0,0.8); }
-        #disp-nama { font-size: 4.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; letter-spacing: 3px; text-shadow: 4px 4px 0px #000; }
+        /* Kotak Info Tanggal */
+        .info-pill { 
+            background: rgba(0,0,0,0.8); border: 3px solid var(--accent); 
+            padding: 15px 60px; border-radius: 100px; margin-top: -20px; text-align: center;
+        }
+        #tgl { font-size: 2.8rem; font-weight: 900; display: block; }
+        #hijri { font-size: 2rem; color: var(--accent); font-weight: bold; display: block; margin-top: 5px; }
 
-        /* Jam Digital Utama */
-        .main-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #jam { font-size: 16rem; font-weight: 900; margin: 0; line-height: 1; text-shadow: 10px 10px 20px rgba(0,0,0,0.8); font-variant-numeric: tabular-nums; }
-        #iqomah-box { font-size: 13rem; color: var(--active); font-weight: 900; display: none; animation: pulse 1s infinite; }
-        
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* Baris Jadwal Sholat */
+        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.95); border-top: 5px solid var(--accent); }
+        .card { flex: 1; padding: 25px 0; text-align: center; border-right: 2px solid #333; }
+        .card.active-now { background: #ef4444 !important; }
+        .card h3 { margin: 0; font-size: 1.8rem; color: var(--accent); font-weight: 900; }
+        .card p { margin: 10px 0 0; font-size: 5.8rem; font-weight: 900; }
 
-        .info-box { text-align: center; background: rgba(0,0,0,0.6); padding: 10px 40px; border-radius: 50px; border: 2px solid var(--accent); margin-top: 20px; }
-        #tgl { font-size: 2.2rem; font-weight: bold; }
-        #hijri { font-size: 1.8rem; color: var(--accent); font-weight: bold; display: block; }
-
-        /* Jadwal Sholat Modern */
-        .prayer-grid { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
-        .card { flex: 1; padding: 30px 10px; text-align: center; border-right: 1px solid #444; transition: 0.3s; }
-        .card.active-now { background: var(--active) !important; position: relative; }
-        .card.active-now::after { content: "WAKTUNYA SHOLAT"; position: absolute; top: -30px; left: 0; width: 100%; background: var(--active); font-size: 12px; font-weight: bold; }
-        .card h3 { margin: 0; font-size: 1.8rem; color: var(--accent); letter-spacing: 2px; }
-        .card p { margin: 10px 0 0; font-size: 5.5rem; font-weight: 900; }
-
-        /* Running Text */
-        marquee { background: #000; color: var(--accent); font-size: 2.8rem; font-weight: bold; padding: 15px 0; border-top: 4px solid var(--accent); text-transform: uppercase; }
-
-        /* Panel Pengaturan Ultimate */
-        #btn-set { position: fixed; top: 25px; right: 25px; z-index: 100; font-size: 30px; opacity: 0.4; }
+        /* Panel Pengaturan */
+        #btn-set { position: fixed; top: 30px; right: 30px; z-index: 100; font-size: 35px; opacity: 0.3; }
         #panel { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 550px; max-height: 90vh; background: white; color: #333; padding: 30px; 
-            border-radius: 20px; z-index: 1000; box-shadow: 0 0 100px rgba(0,0,0,1); overflow-y: auto;
+            width: 580px; max-height: 85vh; background: white; color: #333; padding: 30px; 
+            border-radius: 15px; z-index: 1000; box-shadow: 0 0 50px #000; overflow-y: auto;
         }
-        .section-title { font-weight: 800; color: #1c2434; border-bottom: 3px solid var(--accent); margin: 20px 0 10px 0; display: flex; align-items: center; gap: 10px; }
-        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
-        .file-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; margin-bottom: 5px; border-radius: 8px; }
-        .tag { font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; }
-        .tag-ok { background: #dcfce7; color: #166534; }
-        .tag-no { background: #fee2e2; color: #991b1b; }
-        .btn-main { background: #1c2434; color: white; border: none; padding: 18px; width: 100%; font-weight: 800; cursor: pointer; border-radius: 10px; font-size: 1.2rem; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .btn-simpan { background: #1c2434; color: white; border: none; padding: 18px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 1.2rem; }
     </style>
 </head>
 <body onclick="startAudio()">
 
-    <div class="overlay"></div>
     <div id="btn-set" onclick="togglePanel()">⚙️</div>
 
-    <div class="content">
-        <div class="header"><h1 id="disp-nama">STAFLOG KORPASGAT</h1></div>
+    <div class="header">
+        <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
+    </div>
 
-        <div class="main-display">
-            <div id="jam">00:00:00</div>
-            <div id="iqomah-box">00:00</div>
-            <div class="info-box">
-                <span id="tgl">KAMIS, 28 MEI 2026</span>
-                <span id="hijri">11 DZULQA'DAH 1447 H</span>
-            </div>
+    <div class="main-display">
+        <div id="jam">00:00:00</div>
+        <div id="iqomah-box">00:00</div>
+        <div class="info-pill">
+            <span id="tgl">SELASA, 28 APRIL 2026</span>
+            <span id="hijri">11 ZULKAIDAH 1447 H</span>
         </div>
+    </div>
 
-        <div class="prayer-grid">
-            <div class="card" id="card-subuh"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
-            <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">11:47</p></div>
-            <div class="card" id="card-ashar"><h3>ASHAR</h3><p id="t-ashar">15:08</p></div>
-            <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
-            <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
-        </div>
-
-        <marquee id="disp-run">KOMANDO! TETAP SEMANGAT DALAM TUGAS DAN IBADAH.</marquee>
+    <div class="prayer-row">
+        <div class="card" id="card-subuh"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
+        <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">11:47</p></div>
+        <div class="card" id="card-ashar"><h3>ASHAR</h3><p id="t-ashar">15:08</p></div>
+        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
+        <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
 
     <div id="panel">
-        <h2 style="margin:0; text-align:center; color:#1c2434;">⚙️ KONFIGURASI SISTEM</h2>
+        <h2 style="text-align:center; margin-top:0;">PENGATURAN DISPLAY</h2>
+        <input type="text" id="in-nama" placeholder="Nama Satuan">
+        <input type="text" id="in-lat" placeholder="Latitude (Contoh: -7.02)">
+        <input type="text" id="in-lon" placeholder="Longitude (Contoh: 107.52)">
         
-        <div class="section-title">📍 Identitas & Lokasi</div>
-        <input type="text" id="in-nama" placeholder="Nama Satuan (Contoh: YONKO 461)">
-        <input type="text" id="in-run" placeholder="Pesan Berjalan">
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="in-lat" placeholder="Latitude (Cth: -7.02)">
-            <input type="text" id="in-lon" placeholder="Longitude (Cth: 107.52)">
+        <p style="font-weight:bold; margin: 15px 0 5px 0;">Upload Media:</p>
+        <div style="font-size:13px; background:#f0f0f0; padding:10px; border-radius:8px;">
+            Background: <input type="file" onchange="upFile('bg', this)"><br>
+            Adzan Isya: <input type="file" onchange="upFile('a-isya', this)">
         </div>
 
-        <div class="section-title">🕌 Suara Adzan Tiap Waktu</div>
-        <div class="file-row"><span>Background Militer</span><input type="file" onchange="upFile('bg', this)" style="width:150px;"> <span id="st-bg" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Audio Tahrim</span><input type="file" onchange="upFile('tahrim', this)" style="width:150px;"> <span id="st-tahrim" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Adzan Subuh</span><input type="file" onchange="upFile('a-subuh', this)" style="width:150px;"> <span id="st-a-subuh" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Adzan Dzuhur</span><input type="file" onchange="upFile('a-dzuhur', this)" style="width:150px;"> <span id="st-a-dzuhur" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Adzan Ashar</span><input type="file" onchange="upFile('a-ashar', this)" style="width:150px;"> <span id="st-a-ashar" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Adzan Maghrib</span><input type="file" onchange="upFile('a-maghrib', this)" style="width:150px;"> <span id="st-a-maghrib" class="tag tag-no">KOSONG</span></div>
-        <div class="file-row"><span>Adzan Isya</span><input type="file" onchange="upFile('a-isya', this)" style="width:150px;"> <span id="st-a-isya" class="tag tag-no">KOSONG</span></div>
-
-        <div class="section-title">⏲️ Jeda Iqomah</div>
-        <input type="number" id="in-iqo" placeholder="Menit (Contoh: 10)">
-
-        <button class="btn-main" onclick="saveSemua()">SIMPAN SEMUA PERUBAHAN</button>
-        <p onclick="togglePanel()" style="text-align:center; cursor:pointer; color:#999; margin-top:15px; font-weight:bold;">[ TUTUP ]</p>
+        <button class="btn-simpan" onclick="saveData()">SIMPAN PERUBAHAN</button>
+        <p onclick="togglePanel()" style="text-align:center; cursor:pointer; color:red; margin-top:15px;">[ TUTUP ]</p>
     </div>
 
     <script>
-        let db, iqoCount = 0, isIqo = false;
-
-        const request = indexedDB.open("JWS_KORPASGAT_ULTIMATE", 1);
+        let db;
+        const request = indexedDB.open("JWS_KORPASGAT_PRO", 1);
         request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
         request.onsuccess = e => { db = e.target.result; muatData(); };
 
-        function hitungWaktu() {
-            const lat = parseFloat(localStorage.getItem("lat")) || -7.02;
-            const lon = parseFloat(localStorage.getItem("lon")) || 107.52;
-            const selisih = Math.floor((lon - 107.52) * 4); 
-            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
-            for (let k in base) {
-                let [h, m] = base[k].split(':').map(Number);
-                let total = (h * 60 + m) - selisih;
-                document.getElementById('t-'+k).innerText = String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
-            }
-        }
-
         function muatData() {
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO! TETAP SEMANGAT DALAM TUGAS DAN IBADAH.";
             document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
-            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
-            document.getElementById("in-lat").value = localStorage.getItem("lat") || "-7.02";
-            document.getElementById("in-lon").value = localStorage.getItem("lon") || "107.52";
-            document.getElementById("in-iqo").value = localStorage.getItem("durIqo") || "10";
-            hitungWaktu();
-
+            document.getElementById("in-lat").value = localStorage.getItem("lat") || "-7.01";
+            document.getElementById("in-lon").value = localStorage.getItem("lon") || "107.55";
+            
             const store = db.transaction("files", "readonly").objectStore("files");
-            const ids = ['bg','tahrim','a-subuh','a-dzuhur','a-ashar','a-maghrib','a-isya'];
-            ids.forEach(id => {
-                store.get(id).onsuccess = e => {
-                    if(e.target.result) {
-                        const st = document.getElementById("st-"+id);
-                        if(st) { st.innerText = "✅ TERISI"; st.className = "tag tag-ok"; }
-                        if(id === 'bg') document.body.style.backgroundImage = `url(${URL.createObjectURL(e.target.result.data)})`;
-                    }
-                };
-            });
+            store.get('bg').onsuccess = e => {
+                if(e.target.result) document.body.style.backgroundImage = `url(${URL.createObjectURL(e.target.result.data)})`;
+            };
         }
 
         function upFile(id, input) {
             const tx = db.transaction("files", "readwrite");
             tx.objectStore("files").put({ id: id, data: input.files[0] });
-            tx.oncomplete = () => { location.reload(); };
+            tx.oncomplete = () => { alert("File Berhasil Diupload!"); };
         }
 
-        function saveSemua() {
+        function saveData() {
             localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
-            localStorage.setItem("tJalan", document.getElementById("in-run").value);
             localStorage.setItem("lat", document.getElementById("in-lat").value);
             localStorage.setItem("lon", document.getElementById("in-lon").value);
-            localStorage.setItem("durIqo", document.getElementById("in-iqo").value);
             location.reload();
         }
 
-        function updateJam() {
+        function updateClock() {
             const now = new Date();
-            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
-            
-            if(!isIqo) {
-                document.getElementById('jam').innerText = jamStr;
-                document.getElementById('jam').style.display = "block";
-                document.getElementById('iqomah-box').style.display = "none";
-            } else {
-                if(iqoCount <= 0) { isIqo = false; }
-                else {
-                    iqoCount--;
-                    const m = Math.floor(iqoCount/60), s = iqoCount%60;
-                    document.getElementById('iqomah-box').innerText = String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
-                    document.getElementById('iqomah-box').style.display = "block";
-                    document.getElementById('jam').style.display = "none";
-                }
-            }
-
+            document.getElementById('jam').innerText = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
             document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}).toUpperCase();
             document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now).toUpperCase();
-
-            document.querySelectorAll('.card').forEach(c => {
-                if(c.querySelector('p').innerText === jamStr.substring(0, 5)) {
-                    c.classList.add('active-now');
-                    if(now.getSeconds() === 0) playAdzan(c.id.split('-')[1]);
-                } else c.classList.remove('active-now');
-            });
-        }
-
-        function playAdzan(w) {
-            const store = db.transaction("files", "readonly").objectStore("files");
-            store.get('a-' + w).onsuccess = e => {
-                if(e.target.result) {
-                    const a = new Audio(URL.createObjectURL(e.target.result.data));
-                    a.play();
-                    a.onended = () => { isIqo = true; iqoCount = parseInt(localStorage.getItem("durIqo")) * 60; };
-                }
-            };
         }
 
         function togglePanel() {
@@ -219,7 +133,7 @@
         }
 
         function startAudio() { document.querySelectorAll("audio").forEach(a => a.play().then(()=>a.pause())); }
-        setInterval(updateJam, 1000);
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
