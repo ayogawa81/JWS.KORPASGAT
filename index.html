@@ -88,4 +88,60 @@
             Adzan Isya: <input type="file" onchange="upFile('a-isya', this)">
         </div>
 
-        <span class="sec-label">WAKTU IQOMAH (
+        <span class="sec-label">WAKTU IQOMAH (MENIT)</span>
+        <input type="number" id="in-iqo" placeholder="Contoh: 10">
+
+        <button class="btn-save" onclick="saveData()">SIMPAN PERUBAHAN</button>
+        <p onclick="togglePanel()" style="text-align:center; cursor:pointer; color:red; margin-top:15px; font-weight:bold;">[ TUTUP ]</p>
+    </div>
+
+    <script>
+        let db;
+        const request = indexedDB.open("JWS_PC_FINAL", 1);
+        request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
+        request.onsuccess = e => { db = e.target.result; muatData(); };
+
+        function muatData() {
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
+            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
+            document.getElementById("in-lat").value = localStorage.getItem("lat") || "-7.01";
+            document.getElementById("in-lon").value = localStorage.getItem("lon") || "107.551";
+            document.getElementById("in-iqo").value = localStorage.getItem("durIqo") || "10";
+            
+            const store = db.transaction("files", "readonly").objectStore("files");
+            store.get('bg').onsuccess = e => {
+                if(e.target.result) document.body.style.backgroundImage = `url(${URL.createObjectURL(e.target.result.data)})`;
+            };
+        }
+
+        function upFile(id, input) {
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").put({ id: id, data: input.files[0] });
+            alert("File Berhasil Disimpan!");
+        }
+
+        function saveData() {
+            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
+            localStorage.setItem("lat", document.getElementById("in-lat").value);
+            localStorage.setItem("lon", document.getElementById("in-lon").value);
+            localStorage.setItem("durIqo", document.getElementById("in-iqo").value);
+            location.reload();
+        }
+
+        function runClock() {
+            const now = new Date();
+            document.getElementById('jam').innerText = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}).toUpperCase();
+            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now).toUpperCase();
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+
+        function startAudio() { document.querySelectorAll("audio").forEach(a => a.play().then(()=>a.pause())); }
+        setInterval(runClock, 1000);
+    </script>
+</body>
+</html>
