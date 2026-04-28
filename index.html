@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V13</title>
+    <title>JWS KORPASGAT V14 - STABIL</title>
     <style>
-        :root { --accent: #fbbf24; }
+        :root { --accent: #fbbf24; --active-color: #ef4444; }
         * { box-sizing: border-box; }
         body { 
             margin: 0; background: #000 no-repeat center fixed; background-size: cover;
@@ -15,24 +15,34 @@
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 3px solid var(--accent); }
         #disp-nama { font-size: 3rem; font-weight: 900; color: var(--accent); margin: 0; }
         
-        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #jam { font-size: 11rem; font-weight: 900; margin: 0; font-family: monospace; }
-        .date-box { font-size: 1.8rem; font-weight: bold; margin-top: 5px; }
+        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        #jam { font-size: 11rem; font-weight: 900; margin: 0; font-family: monospace; z-index: 2; }
+        .date-box { font-size: 1.8rem; font-weight: bold; margin-top: 5px; z-index: 2; }
 
         .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 2px solid var(--accent); }
-        .card { flex: 1; padding: 20px 5px; text-align: center; border-right: 1px solid #333; }
+        .card { flex: 1; padding: 20px 5px; text-align: center; border-right: 1px solid #333; transition: 0.5s; }
+        
+        /* Efek Berwarna Saat Waktu Sholat Tiba */
+        .card.active-now { background: var(--active-color) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.7; } }
+
         .card h3 { margin: 0; font-size: 1.2rem; color: var(--accent); }
+        .card.active-now h3 { color: white; }
         .card p { margin: 5px 0 0; font-size: 3.8rem; font-weight: 900; }
         
         marquee { background: #000; color: var(--accent); font-size: 2rem; font-weight: bold; padding: 8px 0; border-top: 2px solid var(--accent); }
 
-        /* Sederhanakan Panel agar tidak crash */
-        #btn-set { position: fixed; top: 15px; right: 15px; cursor: pointer; opacity: 0.5; z-index: 100; }
-        #panel { display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background: white; color: #333; padding: 20px; border-radius: 10px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 50px #000; }
+        #btn-set { position: fixed; top: 15px; right: 15px; cursor: pointer; opacity: 0.7; z-index: 100; font-size: 24px; }
+        #panel { display: none; position: fixed; top: 5%; left: 10%; width: 80%; height: 85%; background: white; color: #333; padding: 20px; border-radius: 10px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 50px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background: #f9f9f9; }
-        input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
-        .btn-blue { background: #1e3a8a; color: white; border: none; padding: 10px 20px; width: 100%; font-weight: bold; cursor: pointer; }
-        .row-file { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ccc; border-radius: 5px; }
+        .btn-blue { background: #1e3a8a; color: white; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        
+        .row-file { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        /* Tanda Simpan File */
+        .status-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .st-ok { background: #dcfce7; color: #166534; border: 1px solid #166534; }
+        .st-no { background: #fee2e2; color: #991b1b; border: 1px solid #991b1b; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -46,109 +56,67 @@
     </div>
 
     <div class="prayer-row">
-        <div class="card"><h3>SUBUH</h3><p>04:31</p></div>
-        <div class="card"><h3>DZUHUR</h3><p>11:47</p></div>
-        <div class="card"><h3>ASHAR</h3><p>15:08</p></div>
-        <div class="card"><h3>MAGHRIB</h3><p>17:43</p></div>
-        <div class="card"><h3>ISYA</h3><p>18:54</p></div>
+        <div class="card" id="card-subuh"><h3>SUBUH</h3><p>04:31</p></div>
+        <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p>11:47</p></div>
+        <div class="card" id="card-ashar"><h3>ASHAR</h3><p>15:08</p></div>
+        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p>17:43</p></div>
+        <div class="card" id="card-isya"><h3>ISYA</h3><p>18:54</p></div>
     </div>
 
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="border-bottom: 2px solid var(--accent)">PENGATURAN</h2>
+        <h2 style="border-bottom: 3px solid var(--accent); margin-top:0;">PENGATURAN MONITOR</h2>
         <div class="box">
-            <b>Teks Display:</b>
+            <b>Identitas Display:</b>
             <input type="text" id="in-nama" placeholder="Nama Satuan">
             <input type="text" id="in-run" placeholder="Running Text">
-            <button class="btn-blue" onclick="saveTeks()">SIMPAN TEKS</button>
+            <button class="btn-blue" onclick="saveTeks()">SIMPAN PERUBAHAN</button>
         </div>
 
         <div class="box">
-            <b>Media & Suara (Beep/Adzan):</b>
-            <div class="row-file"><span>🖼️ Background</span><input type="file" onchange="upFile('bg', this)"></div>
-            <div class="row-file"><span>🔔 Nada Beep</span><input type="file" onchange="upFile('beep', this)"></div>
-            <div class="row-file"><span>📖 Tahrim</span><input type="file" onchange="upFile('tahrim', this)"></div>
-            <div class="row-file"><span>🕌 Adzan Subuh</span><input type="file" onchange="upFile('a-subuh', this)"></div>
-            <div class="row-file"><span>🕌 Adzan Dzuhur</span><input type="file" onchange="upFile('a-dzuhur', this)"></div>
-            <div class="row-file"><span>🕌 Adzan Ashar</span><input type="file" onchange="upFile('a-ashar', this)"></div>
-            <div class="row-file"><span>🕌 Adzan Maghrib</span><input type="file" onchange="upFile('a-maghrib', this)"></div>
-            <div class="row-file"><span>🕌 Adzan Isya</span><input type="file" onchange="upFile('a-isya', this)"></div>
+            <b>Media & Suara (Tanda ✅ jika sudah ada):</b>
+            <div id="file-list">
+                <div class="row-file"><span>🖼️ Background</span><div><input type="file" onchange="upFile('bg', this)"> <span id="ind-bg" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🔔 Nada Beep</span><div><input type="file" onchange="upFile('beep', this)"> <span id="ind-beep" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>📖 Tahrim</span><div><input type="file" onchange="upFile('tahrim', this)"> <span id="ind-tahrim" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🕌 Adzan Subuh</span><div><input type="file" onchange="upFile('a-subuh', this)"> <span id="ind-a-subuh" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🕌 Adzan Dzuhur</span><div><input type="file" onchange="upFile('a-dzuhur', this)"> <span id="ind-a-dzuhur" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🕌 Adzan Ashar</span><div><input type="file" onchange="upFile('a-ashar', this)"> <span id="ind-a-ashar" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🕌 Adzan Maghrib</span><div><input type="file" onchange="upFile('a-maghrib', this)"> <span id="ind-a-maghrib" class="status-tag st-no">KOSONG</span></div></div>
+                <div class="row-file"><span>🕌 Adzan Isya</span><div><input type="file" onchange="upFile('a-isya', this)"> <span id="ind-a-isya" class="status-tag st-no">KOSONG</span></div></div>
+            </div>
         </div>
-        <button onclick="location.reload()" style="background:red; color:white; border:none; padding:10px; width:100%; cursor:pointer;">REFRESH SISTEM</button>
-        <button onclick="togglePanel()" style="width:100%; background:none; border:none; padding:20px; color:gray;">[ TUTUP ]</button>
+        <button onclick="location.reload()" style="background:#dc2626; color:white; border:none; padding:15px; width:100%; cursor:pointer; font-weight:bold; border-radius:5px;">REFRESH SISTEM</button>
+        <button onclick="togglePanel()" style="width:100%; background:none; border:none; padding:20px; color:gray; cursor:pointer;">[ TUTUP ]</button>
     </div>
 
     <script>
         let db;
-        const request = indexedDB.open("JWS_KORPASGAT_STABIL", 1);
+        const request = indexedDB.open("JWS_V14_KORPASGAT", 1);
         request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        request.onsuccess = e => { db = e.target.result; muat(); };
+        request.onsuccess = e => { db = e.target.result; muatSistem(); };
 
         function upFile(id, input) {
             if(!input.files[0]) return;
             const tx = db.transaction("files", "readwrite");
             tx.objectStore("files").put({ id: id, data: input.files[0] });
-            tx.oncomplete = () => alert("Berhasil diunggah!");
+            tx.oncomplete = () => { alert("File Berhasil Disimpan!"); location.reload(); };
         }
 
-        function muat() {
+        function muatSistem() {
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
             document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
             
             const store = db.transaction("files", "readonly").objectStore("files");
-            ['bg', 'beep', 'tahrim', 'a-subuh', 'a-dzuhur', 'a-ashar', 'a-maghrib', 'a-isya'].forEach(id => {
+            const fileIds = ['bg', 'beep', 'tahrim', 'a-subuh', 'a-dzuhur', 'a-ashar', 'a-maghrib', 'a-isya'];
+            
+            fileIds.forEach(id => {
                 store.get(id).onsuccess = e => {
                     const res = e.target.result;
                     if(res) {
-                        if(id === 'bg') document.body.style.backgroundImage = `url(${URL.createObjectURL(res.data)})`;
-                        else {
-                            const a = new Audio(URL.createObjectURL(res.data));
-                            a.id = "aud-" + id;
-                            document.body.appendChild(a);
-                        }
-                    }
-                };
-            });
-        }
-
-        function saveTeks() {
-            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
-            localStorage.setItem("tJalan", document.getElementById("in-run").value);
-            location.reload();
-        }
-
-        function update() {
-            const now = new Date();
-            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
-            document.getElementById('jam').innerText = jamStr;
-            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
-
-            const jm = jamStr.substring(0, 5);
-            const jadwal = { "04:31":"a-subuh", "11:47":"a-dzuhur", "15:08":"a-ashar", "17:43":"a-maghrib", "18:54":"a-isya" };
-            
-            if(jadwal[jm] && now.getSeconds() === 0) {
-                const beep = document.getElementById("aud-beep");
-                const adzan = document.getElementById("aud-" + jadwal[jm]);
-                if(beep) {
-                    beep.play();
-                    beep.onended = () => { if(adzan) adzan.play(); };
-                } else if(adzan) adzan.play();
-            }
-        }
-
-        function togglePanel() {
-            const p = document.getElementById("panel");
-            p.style.display = (p.style.display === "block") ? "none" : "block";
-            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
-            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
-        }
-
-        function startAudio() {
-            document.querySelectorAll("audio").forEach(a => { a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {}); });
-        }
-        setInterval(update, 1000);
-    </script>
-</body>
-</html>
+                        // Pasang Tanda ✅
+                        const ind = document.getElementById("ind-" + id);
+                        if(ind) { ind.innerText = "✅ TERSIMPAN"; ind.className = "status-tag st-ok"; }
+                        
+                        if(id === 'bg') document.
