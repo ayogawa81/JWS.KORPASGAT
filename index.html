@@ -7,118 +7,199 @@
     <style>
         :root { 
             --bg-img: url('https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?q=80&w=2070'); 
-            --accent: #fbbf24; /* Warna Jingga Pasgat */
-            --dark: #0f172a;
+            --accent: #fbbf24; /* Jingga Pasgat */
         }
-
         body { 
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img); 
-            background-size: cover; background-position: center; 
-            color: white; font-family: 'Segoe UI', sans-serif; 
-            margin: 0; overflow: hidden; height: 100vh; cursor: pointer;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.85)), var(--bg-img); 
+            background-size: cover; background-position: center; color: white; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; overflow: hidden; height: 100vh;
         }
-
-        /* Tampilan Atas */
-        .header-top { text-align: center; padding: 15px 0; background: rgba(0,0,0,0.4); border-bottom: 3px solid var(--accent); }
-        #disp-nama { font-size: 2.5rem; color: var(--accent); margin: 0; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; }
-
-        /* Area Jam */
-        .clock-section { display: flex; align-items: center; justify-content: center; gap: 35px; margin: 10px 0; }
-        #jam { font-size: 8rem; font-weight: 900; line-height: 1; font-family: monospace; text-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-        #analog-clock { width: 140px; height: 140px; border: 4px solid var(--accent); border-radius: 50%; position: relative; background: rgba(255,255,255,0.05); }
+        /* Header & Jam */
+        .header { text-align: center; padding: 20px 0; border-bottom: 3px solid var(--accent); background: rgba(0,0,0,0.5); }
+        #disp-nama { font-size: 2.8rem; color: var(--accent); margin: 0; font-weight: 800; letter-spacing: 5px; }
+        .clock-box { display: flex; align-items: center; justify-content: center; gap: 40px; margin: 15px 0; }
+        #jam { font-size: 8.5rem; font-weight: 900; font-family: monospace; line-height: 1; }
+        
+        /* Analog Clock */
+        #analog { width: 130px; height: 130px; border: 4px solid var(--accent); border-radius: 50%; position: relative; background: rgba(255,255,255,0.05); }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; transform: translateX(-50%); }
-        .hour-hand { width: 6px; height: 35px; background: #fff; z-index: 3; }
-        .min-hand { width: 4px; height: 55px; background: #ddd; z-index: 2; }
-        .sec-hand { width: 2px; height: 60px; background: #ff4444; z-index: 1; }
-        .center-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .h-h { width: 6px; height: 35px; background: white; z-index: 3; }
+        .m-h { width: 4px; height: 55px; background: #ddd; z-index: 2; }
+        .s-h { width: 2px; height: 60px; background: #ff4444; z-index: 1; }
 
-        .dates-container { text-align: center; font-size: 1.5rem; margin-top: 5px; }
-        #tanggal-hijri { color: var(--accent); font-weight: bold; }
+        /* Sholat Grid */
+        .sholat-container { display: flex; gap: 15px; padding: 0 40px; margin-top: 30px; }
+        .card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 25px; border-radius: 15px; flex: 1; text-align: center; border-bottom: 6px solid var(--accent); }
+        .card h3 { margin: 0; font-size: 1.4rem; color: #cbd5e1; }
+        .card p { font-size: 3.5rem; margin: 10px 0 0; font-weight: 900; }
 
-        /* Slide Konten */
-        .slide { display: none; height: 48vh; align-items: center; justify-content: center; padding: 0 40px; animation: fadeIn 1s; }
-        .slide.active { display: flex; flex-direction: column; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .sholat-grid { display: flex; gap: 15px; width: 100%; }
-        .box { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; flex: 1; text-align: center; border-bottom: 8px solid var(--accent); }
-        .box h3 { margin: 0; font-size: 1.3rem; color: #cbd5e1; }
-        .box p { font-size: 3.5rem; margin: 10px 0 0 0; font-weight: 900; }
-
-        /* Running Text */
-        marquee { font-size: 2rem; position: fixed; bottom: 0; background: #000; padding: 15px 0; width: 100%; border-top: 3px solid var(--accent); font-weight: bold; color: var(--accent); }
+        /* Footer */
+        marquee { font-size: 2.2rem; position: fixed; bottom: 0; background: #000; padding: 15px 0; width: 100%; border-top: 3px solid var(--accent); font-weight: bold; color: var(--accent); }
 
         /* Panel Setting */
-        #btn-menu { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.5); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10001; }
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 30px; border-radius: 15px; z-index: 10000; width: 620px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .group { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; background: #fcfcfc; }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-save { width: 100%; padding: 12px; background: #1e293b; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; }
-        
-        /* Iqomah */
-        #slide-iqomah { background: #000; z-index: 9999; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #iqomah-timer { font-size: 20rem; font-weight: 900; color: var(--accent); font-family: monospace; }
+        #btn-set { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); cursor: pointer; z-index: 100; font-size: 24px; display: flex; align-items: center; justify-content: center; }
+        #panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 30px; border-radius: 15px; width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 100px #000; z-index: 1000; }
+        .input-group { margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 8px; }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-save { width: 100%; padding: 12px; background: #1e293b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body onclick="pancingAudio()">
 
-    <div id="btn-menu" onclick="bukaSetting()">⚙️</div>
+    <div id="btn-set" onclick="togglePanel()">⚙️</div>
 
-    <div class="header-top">
+    <div class="header">
         <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
-        <div class="clock-section">
-            <div id="analog-clock">
-                <div id="h-hand" class="hand hour-hand"></div>
-                <div id="m-hand" class="hand min-hand"></div>
-                <div id="s-hand" class="hand sec-hand"></div>
-                <div class="center-dot"></div>
+        <div class="clock-box">
+            <div id="analog">
+                <div id="h-h" class="hand h-h"></div>
+                <div id="m-h" class="hand m-h"></div>
+                <div id="s-h" class="hand s-h"></div>
             </div>
             <div id="jam">00:00:00</div>
         </div>
-        <div class="dates-container"><span id="tanggal">...</span> | <span id="tanggal-hijri">...</span></div>
+        <div style="font-size: 1.5rem;"><span id="tgl"></span> | <span id="hijri" style="color:var(--accent)"></span></div>
     </div>
 
-    <div id="slide-sholat" class="slide active">
-        <div class="sholat-grid">
-            <div class="box"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
-            <div class="box"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
-            <div class="box"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
-            <div class="box"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
-            <div class="box"><h3>ISYA</h3><p id="isya">--:--</p></div>
-        </div>
+    <div class="sholat-container">
+        <div class="card"><h3>SUBUH</h3><p id="subuh">--:--</p></div>
+        <div class="card"><h3>DZUHUR</h3><p id="dzuhur">--:--</p></div>
+        <div class="card"><h3>ASHAR</h3><p id="ashar">--:--</p></div>
+        <div class="card"><h3>MAGHRIB</h3><p id="maghrib">--:--</p></div>
+        <div class="card"><h3>ISYA</h3><p id="isya">--:--</p></div>
     </div>
 
-    <div id="slide-info" class="slide">
-        <div style="background:rgba(0,0,0,0.6); padding:40px; border-radius:25px; border:2px solid var(--accent); text-align:center; width:80%;">
-            <h1 id="val-judul" style="font-size:3.5rem; color:var(--accent); margin:0;">PENGUMUMAN</h1>
-            <p id="val-isi" style="font-size:2.3rem;">-</p>
-        </div>
-    </div>
+    <marquee id="disp-run">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU - KOMANDO!</marquee>
 
-    <div id="slide-iqomah">
-        <h1 style="font-size:5rem; margin:0;">MENUJU IQOMAH</h1>
-        <div id="iqomah-timer">10:00</div>
-    </div>
-
-    <marquee id="disp-running">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU - KOMANDO!</marquee>
-
-    <div id="admin-panel">
-        <h2 style="margin:0 0 15px 0; border-bottom:3px solid var(--accent); color:#1e293b;">⚙️ Panel Pengaturan</h2>
+    <div id="panel">
+        <h2 style="margin-top:0; border-bottom:2px solid var(--accent)">⚙️ Pengaturan Sistem</h2>
         
-        <div class="group">
-            <label><b>Teks & Informasi:</b></label>
+        <div class="input-group">
+            <label><b>Teks Display:</b></label>
             <input type="text" id="in-nama" placeholder="Nama Satuan">
-            <input type="text" id="in-running" placeholder="Running Text">
-            <input type="text" id="in-judul" placeholder="Judul Info">
-            <textarea id="in-isi" rows="2" placeholder="Isi Pengumuman"></textarea>
-            <div style="display:flex; gap:10px; font-size:12px;">
-                Tahrim: <input type="number" id="in-tahrim-min" style="width:60px;"> menit | 
-                Iqomah: <input type="number" id="in-iqomah-min" style="width:60px;"> menit
-            </div>
-            <button class="btn-save" onclick="simpanSemuaTeks()">SIMPAN SEMUA TEKS</button>
+            <input type="text" id="in-run" placeholder="Running Text">
+            <button class="btn-save" onclick="simpanTeks()">SIMPAN TEKS</button>
         </div>
 
-        <div class="group">
-            <label><b>Background & Audio:</b></label>
-            <div style="margin-top:10px; font-size:12px;">
-                Gambar (BG): <input type="file" id="in-bg" accept="image/*" onchange="simpan
+        <div class="input-group">
+            <label><b>Media (Background & Audio):</b></label>
+            <div style="font-size: 12px; margin-top:5px;">
+                Background: <input type="file" id="f-bg" accept="image/*" onchange="simpanFile('bg', this)">
+                Adzan: <input type="file" id="f-adzan" accept="audio/*" onchange="simpanFile('adzan', this)">
+                Tahrim: <input type="file" id="f-tahrim" accept="audio/*" onchange="simpanFile('tahrim', this)">
+            </div>
+            <p style="font-size:11px; color:red;">*Data otomatis tersimpan permanen di browser ini.</p>
+        </div>
+        
+        <button onclick="togglePanel()" style="width:100%; border:none; background:none; color:gray; cursor:pointer;">[ TUTUP ]</button>
+    </div>
+
+    <script>
+        let db;
+        const keys = ["bg", "adzan", "tahrim"];
+
+        // 1. Inisialisasi Database (IndexedDB) untuk simpan File besar
+        const req = indexedDB.open("StaflogPasgatData", 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore("media", { keyPath: "id" });
+        req.onsuccess = e => { 
+            db = e.target.result; 
+            muatData(); 
+        };
+
+        // 2. Simpan & Muat File
+        function simpanFile(id, input) {
+            const file = input.files[0];
+            if(!file) return;
+            const tx = db.transaction("media", "readwrite");
+            tx.objectStore("media").put({ id: id, data: file });
+            tx.oncomplete = () => { alert(id.toUpperCase() + " Berhasil Diperbarui!"); location.reload(); };
+        }
+
+        function muatData() {
+            // Teks dari LocalStorage
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nama") || "STAFLOG KORPASGAT";
+            document.getElementById("disp-run").innerText = localStorage.getItem("run") || "KOMANDO!";
+
+            const store = db.transaction("media", "readonly").objectStore("media");
+            
+            // Muat BG
+            store.get("bg").onsuccess = e => {
+                if(e.target.result) {
+                    const url = URL.createObjectURL(e.target.result.data);
+                    document.documentElement.style.setProperty('--bg-img', `url(${url})`);
+                }
+            };
+
+            // Muat Audio
+            ["adzan", "tahrim"].forEach(k => {
+                store.get(k).onsuccess = e => {
+                    if(e.target.result) {
+                        const a = new Audio(URL.createObjectURL(e.target.result.data));
+                        a.id = "play-" + k;
+                        document.body.appendChild(a);
+                    }
+                };
+            });
+            updateJadwal();
+        }
+
+        function simpanTeks() {
+            localStorage.setItem("nama", document.getElementById("in-nama").value);
+            localStorage.setItem("run", document.getElementById("in-run").value);
+            alert("Teks Berhasil Disimpan!");
+            location.reload();
+        }
+
+        // 3. Logika Waktu & Jadwal
+        function updateJadwal() {
+            // Koordinat default Bandung (bisa disesuaikan)
+            const lat = -7.025; const lng = 107.52;
+            // Simulasi jadwal sederhana (Anda bisa ganti dengan API jika online)
+            document.getElementById("subuh").innerText = "04:35";
+            document.getElementById("dzuhur").innerText = "11:52";
+            document.getElementById("ashar").innerText = "15:12";
+            document.getElementById("maghrib").innerText = "17:48";
+            document.getElementById("isya").innerText = "18:58";
+        }
+
+        function updateClock() {
+            const d = new Date();
+            const jamStr = d.toLocaleTimeString('id-ID', {hour12:false});
+            document.getElementById('jam').innerText = jamStr;
+            document.getElementById('tgl').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+            // Analog hands
+            const s=d.getSeconds(), m=d.getMinutes(), h=d.getHours();
+            document.getElementById('s-h').style.transform = `translateX(-50%) rotate(${s*6}deg)`;
+            document.getElementById('m-h').style.transform = `translateX(-50%) rotate(${m*6}deg)`;
+            document.getElementById('h-h').style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`;
+
+            // Cek Adzan (Hanya pada detik :00)
+            if(s === 0) {
+                const jm = jamStr.substring(0, 5).replace('.', ':');
+                const listSholat = ["04:35", "11:52", "15:12", "17:48", "18:58"];
+                if(listSholat.includes(jm)) {
+                    document.getElementById("play-adzan")?.play();
+                }
+            }
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = p.style.display === "block" ? "none" : "block";
+            document.getElementById("in-nama").value = localStorage.getItem("nama") || "";
+            document.getElementById("in-run").value = localStorage.getItem("run") || "";
+        }
+
+        function pancingAudio() {
+            // Browser butuh klik user sekali agar audio bisa autoplay
+            ["play-adzan", "play-tahrim"].forEach(id => {
+                const a = document.getElementById(id);
+                if(a) { a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {}); }
+            });
+        }
+
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
