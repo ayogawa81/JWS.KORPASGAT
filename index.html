@@ -3,91 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT - FULL SYSTEM</title>
+    <title>JWS KORPASGAT V18 - FULL MEDIA CONTROL</title>
     <style>
-        :root { --accent: #fbbf24; --active: #ef4444; }
-        
+        :root { --accent: #fbbf24; --active-color: #ef4444; }
         body { 
-            margin: 0; background: #000 no-repeat center center fixed; background-size: cover;
-            color: white; font-family: 'Arial', sans-serif;
-            height: 100vh; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
+            margin: 0; background: #000 no-repeat center fixed; background-size: cover;
+            color: white; font-family: Arial, sans-serif; height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; cursor: pointer;
         }
-
-        /* Header Utama */
-        .header { padding: 15px 0; text-align: center; border-bottom: 5px solid var(--accent); background: rgba(0,0,0,0.85); }
-        #disp-nama { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
-
-        /* Display Jam & Tanggal */
-        .main-display { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #jam { font-size: 15rem; font-weight: 900; margin: 0; line-height: 1; }
-        #iqo-timer { font-size: 12rem; color: var(--active); font-weight: 900; display: none; }
+        .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 3px solid var(--accent); }
+        #disp-nama { font-size: 3.2rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
+        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 3px 3px 10px rgba(0,0,0,1); }
+        #jam { font-size: 11rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
+        .date-box { font-size: 1.8rem; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 20px; border-radius: 50px; }
+        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 3px solid var(--accent); }
+        .card { flex: 1; padding: 15px 5px; text-align: center; border-right: 1px solid #333; transition: 0.5s; position: relative; }
+        .card.active-now { background: var(--active-color) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.6; } }
+        .card h3 { margin: 0; font-size: 1.1rem; color: var(--accent); }
+        .card p { margin: 5px 0 0; font-size: 3.2rem; font-weight: 900; }
+        marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 10px 0; border-top: 3px solid var(--accent); }
         
-        .info-pill { background: rgba(0,0,0,0.7); padding: 10px 45px; border: 2px solid var(--accent); border-radius: 50px; margin-top: 10px; }
-        #tgl { font-size: 2rem; font-weight: 900; display: block; text-align: center; }
-
-        /* Row Jadwal Sholat Lengkap */
-        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 5px solid var(--accent); height: 180px; }
-        .card { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid #333; }
-        .card.active { background: var(--active) !important; }
-        .card h3 { margin: 0; font-size: 1.5rem; color: var(--accent); font-weight: 900; }
-        .card p { margin: 5px 0 0; font-size: 4.5rem; font-weight: 900; }
-
-        /* Panel Pengaturan Lengkap */
-        #btn-set { position: fixed; top: 20px; right: 20px; z-index: 100; font-size: 28px; opacity: 0.5; }
-        #panel { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 600px; max-height: 85vh; background: white; color: #333; padding: 25px; 
-            border-radius: 12px; z-index: 1000; box-shadow: 0 0 50px #000; overflow-y: auto;
-        }
-        .sec-head { font-weight: bold; padding: 5px; border-bottom: 2px solid var(--accent); margin: 15px 0 10px 0; color: #1c2434; font-size: 14px; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .file-slot { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 8px; margin-bottom: 4px; border-radius: 4px; font-size: 13px; }
-        .btn-action { background: #1c2434; color: white; border: none; padding: 18px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 1.1rem; margin-top: 15px; }
+        /* Panel Setting Paripurna */
+        #btn-set { position: fixed; top: 15px; right: 15px; cursor: pointer; z-index: 100; font-size: 28px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 50%; }
+        #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
+        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fdfdfd; }
+        .box b { display: block; margin-bottom: 10px; border-left: 4px solid var(--accent); padding-left: 10px; color: #1e3a8a; }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .row-file { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .status-tag { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; min-width: 70px; text-align: center; }
+        .st-ok { background: #dcfce7; color: #166534; }
+        .st-no { background: #fee2e2; color: #991b1b; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 18px; margin-top: 10px; }
     </style>
 </head>
 <body onclick="startAudio()">
 
     <div id="btn-set" onclick="togglePanel()">⚙️</div>
+    <div class="header"><h1 id="disp-nama">STAFLOG KORPASGAT</h1></div>
 
-    <div class="header">
-        <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
-    </div>
-
-    <div class="main-display">
+    <div class="main-clock">
         <div id="jam">00:00:00</div>
-        <div id="iqo-timer">00:00</div>
-        <div class="info-pill">
-            <span id="tgl">SELASA, 28 APRIL 2026</span>
-        </div>
+        <div class="date-box"><span id="tgl"></span> | <span id="hijri" style="color:var(--accent)"></span></div>
     </div>
 
     <div class="prayer-row">
-        <div class="card" id="c-subuh"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
-        <div class="card" id="c-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">11:47</p></div>
-        <div class="card" id="c-ashar"><h3>ASHAR</h3><p id="t-ashar">15:08</p></div>
-        <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
-        <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
+        <div class="card" id="card-subuh"><h3>SUBUH</h3><p id="t-subuh">--:--</p></div>
+        <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">--:--</p></div>
+        <div class="card" id="card-ashar"><h3>ASHAR</h3><p id="t-ashar">--:--</p></div>
+        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">--:--</p></div>
+        <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">--:--</p></div>
     </div>
 
+    <marquee id="disp-run">KOMANDO!</marquee>
+
     <div id="panel">
-        <h2 style="text-align:center; margin-top:0;">PENGATURAN DISPLAY LENGKAP</h2>
+        <h2 style="margin:0 0 20px 0; color:#1e3a8a; border-bottom: 2px solid #eee; padding-bottom:10px;">⚙️ PENGATURAN SISTEM</h2>
         
-        <div class="sec-head">📍 DATA SATUAN & LOKASI</div>
-        <input type="text" id="in-nama" placeholder="Nama Satuan">
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="in-lat" placeholder="Lat (Contoh: -7.02)">
-            <input type="text" id="in-lon" placeholder="Lon (Contoh: 107.52)">
+        <div class="box">
+            <b>Identitas Unit & Pesan</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
+            <input type="text" id="in-run" placeholder="Teks Berjalan">
         </div>
 
-        <div class="sec-head">🎵 MEDIA & ADZAN (SLOT TERPISAH)</div>
-        <div class="file-slot"><span>🌆 Background</span><input type="file" onchange="upFile('bg', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🔔 Nada Beep</span><input type="file" onchange="upFile('beep', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>📖 Tahrim</span><input type="file" onchange="upFile('tahrim', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🕌 Adzan Subuh</span><input type="file" onchange="upFile('a-subuh', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🕌 Adzan Dzuhur</span><input type="file" onchange="upFile('a-dzuhur', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🕌 Adzan Ashar</span><input type="file" onchange="upFile('a-ashar', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🕌 Adzan Maghrib</span><input type="file" onchange="upFile('a-maghrib', this)" style="width:180px;"></div>
-        <div class="file-slot"><span>🕌 Adzan Isya</span><input type="file" onchange="upFile('a-isya', this)" style="width:180px;"></div>
+        <div class="box" style="background:#fffcf0; border:1px solid #fbbf24;">
+            <b>📍 Koordinat Lokasi (Otomatis Jadwal Sholat)</b>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="in-lat" placeholder="Latitude (Cth: -7.02)">
+                <input type="text" id="in-lon" placeholder="Longitude (Cth: 107.52)">
+            </div>
+        </div>
 
-        <div class="sec-head">⏲️ WAKTU IQOMAH (MENIT)</div>
-        <input type="number" id="in-iqo" placeholder="Default
+        <div class="box">
+            <b>Media & Suara (Tanda ✅ Jika Sudah Tersimpan)</b>
+            <div class="row-file"><span>🖼️ Background</span><div><input type="file" onchange="upFile('bg', this)"> <span id="ind-bg" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🔔 Nada Beep</span><div><input type="file" onchange="upFile('beep', this)"> <span id="ind-beep" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>⏲️ Tahrim (Sebelum Adzan)</span><div><input type="file" onchange="upFile('tahrim', this)"> <span id="ind-tahrim" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🕌 Adzan Subuh</span><div><input type="file" onchange="upFile('a-subuh', this)"> <span id="ind-a-subuh" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🕌 Adzan Dzuhur</span><div><input type="file" onchange="upFile('a-dzuhur', this)"> <span id="ind-a-dzuhur" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🕌 Adzan Ashar</span><div><input type="file" onchange="upFile('a-ashar', this)"> <span id="ind-a-ashar" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🕌 Adzan Maghrib</span><div><input type="file" onchange="upFile('a-maghrib', this)"> <span id="ind-a-maghrib" class="status-tag st-no">KOSONG</span></div></div>
+            <div class="row-file"><span>🕌 Adzan Isya</span><div><input type="file" onchange="upFile('a-isya', this)"> <span id="ind-a-isya" class="status-tag st-no">KOSONG</span></div></div>
+        </div>
+        
+        <button class="btn-save" onclick="saveSemua()">SIMPAN PERUBAHAN & REFRESH</button>
+        <button onclick="togglePanel()" style="width:100%; border:none; padding:15px; color:gray; cursor:pointer; background:none;">[ TUTUP ]</button>
+    </div>
+
+    <script>
+        // --- LOGIKA JADWAL SHOLAT OFFLINE ---
+        function hitungJadwal() {
+            const lat = parseFloat(localStorage.getItem("lat")) || -7.02;
+            const lon = parseFloat(localStorage.getItem("lon")) || 107.52;
+            const selisih = Math.floor((lon - 107.52) * 4); 
+            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
+            for (let k in base) {
+                let [h, m] = base[k].split(':').map(Number);
+                let total = (h * 60 + m) - selisih;
+                let final = String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
+                document.getElementById('t-'+k).innerText = final;
+            }
+        }
+
+        let db;
+        const request = indexedDB.open("JWS_V18_FINAL", 1);
+        request.onupgradeneeded = e => { e.target.result.createObjectStore("files", { keyPath: "id" }); };
+        request.onsuccess = e => { db = e.target.result; muatSistem(); };
+
+        function upFile(id, input) {
+            if(!input.files[0]) return;
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").put({ id: id, data: input.files[0] });
+            tx.oncomplete = () => { alert("File Berhasil Disimpan!"); location.reload(); };
+        }
+
+        function muatSistem() {
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
+            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
+            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
+            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
+            document.getElementById("in-lat").value = localStorage.getItem("lat") || "-7.02";
+            document.getElementById("in-lon").value = localStorage.getItem("lon") || "107.52";
+            hitungJadwal();
+            
+            const store = db.transaction("files", "readonly").objectStore("files");
+            const ids = ['bg', 'beep', 'tahrim', 'a-subuh', 'a-dzuhur', 'a-ashar', 'a-maghrib', 'a-isya'];
+            ids.forEach(id => {
+                store.get(id).onsuccess = e => {
+                    const res = e.target.result;
+                    if(res) {
+                        const ind = document.getElementById("ind-" + id);
+                        if(ind) { ind.innerText = "✅ TERISI"; ind.className = "status-tag st-ok"; }
+                        if(id === 'bg') document.body.style.backgroundImage = `url(${URL.createObjectURL(res.data)})`;
+                        else {
+                            const a = new Audio(URL.createObjectURL(res.data));
+                            a.id = "aud-" + id; document.body.appendChild(a);
+                        }
+                    }
+                };
+            });
+        }
+
+        function saveSemua() {
+            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
+            localStorage.setItem("tJalan", document.getElementById("in-run").value);
+            localStorage.setItem("lat", document.getElementById("in-lat").value);
+            localStorage.setItem("lon", document.getElementById("in-lon").value);
+            location.reload();
+        }
+
+        function updateJam() {
+            const now = new Date();
+            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            document.getElementById('jam').innerText = jamStr;
+            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
+
+            const jm = jamStr.substring(0, 5);
+            const prayerTimes = { 
+                "subuh": document.getElementById('t-subuh').innerText,
+                "dzuhur": document.getElementById('t-dzuhur').innerText,
+                "ashar": document.getElementById('t-ashar').innerText,
+                "maghrib": document.getElementById('t-maghrib').innerText,
+                "isya": document.getElementById('t-isya').innerText
+            };
+
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active-now'));
+
+            for(let key in prayerTimes) {
+                if(prayerTimes[key] === jm) {
+                    document.getElementById("card-" + key).classList.add('active-now');
+                    if(now.getSeconds() === 0) mainkanSuara(key);
+                }
+            }
+        }
+
+        function mainkanSuara(waktu) {
+            const beep = document.getElementById("aud-beep");
+            const tahrim = document.getElementById("aud-tahrim");
+            const adzan = document.getElementById("aud-a-" + waktu);
+            
+            if(beep) beep.play();
+            if(tahrim) tahrim.play();
+            if(adzan) setTimeout(() => adzan.play(), 2000); 
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+
+        function startAudio() {
+            document.querySelectorAll("audio").forEach(a => { a.play().then(()=>a.pause()); });
+        }
+        setInterval(updateJam, 1000);
+    </script>
+</body>
+</html>
