@@ -3,197 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STAFLOG KORPASGAT - MONITORING V5</title>
+    <title>STAFLOG KORPASGAT - COMMAND V6</title>
     <style>
-        :root { 
-            --accent: #fbbf24; /* Kuning Emas Pasgat */
-            --bg-blur: rgba(0, 0, 0, 0.7);
-        }
+        :root { --accent: #fbbf24; --bg-blur: rgba(0, 0, 0, 0.8); }
         * { box-sizing: border-box; }
         body { 
-            margin: 0; padding: 0; 
-            background: #000 url('https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?q=80&w=2070') no-repeat center center fixed; 
-            background-size: cover;
-            color: white; font-family: 'Segoe UI', Tahoma, sans-serif;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            margin: 0; background: #000 no-repeat center fixed; background-size: cover;
+            color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* HEADER & JUDUL */
-        .header { 
-            padding: 20px; text-align: center; 
-            background: var(--bg-blur); border-bottom: 4px solid var(--accent);
-        }
-        #disp-nama { 
-            font-size: 3rem; font-weight: 900; color: var(--accent); 
-            margin: 0; letter-spacing: 5px; text-transform: uppercase;
-        }
+        /* UI Utama */
+        .header { padding: 15px; text-align: center; background: var(--bg-blur); border-bottom: 3px solid var(--accent); }
+        #disp-nama { font-size: 2.5rem; font-weight: 900; color: var(--accent); margin: 0; letter-spacing: 4px; }
+        .main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #jam { font-size: 10rem; font-weight: 900; font-family: monospace; margin: 0; }
+        .sholat-row { display: flex; width: 100%; background: var(--bg-blur); border-top: 1px solid rgba(255,255,255,0.1); }
+        .card { flex: 1; padding: 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); }
+        .card h3 { margin: 0; font-size: 1.1rem; color: var(--accent); }
+        .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
+        marquee { font-size: 2rem; font-weight: bold; color: var(--accent); background: #000; padding: 10px 0; border-top: 2px solid var(--accent); }
 
-        /* JAM TENGAH - Dibuat Fleksibel */
-        .main-display {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; background: rgba(0,0,0,0.3);
-        }
-        #jam { 
-            font-size: 10rem; font-weight: 900; font-family: 'Courier New', monospace; 
-            margin: 0; line-height: 1;
-        }
-        .date-info { font-size: 1.8rem; margin-top: 10px; font-weight: 600; }
+        /* Icon Setting */
+        #btn-set { position: fixed; top: 15px; right: 15px; width: 45px; height: 45px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
 
-        /* JADWAL SHOLAT - Baris Bawah */
-        .sholat-row {
-            display: flex; width: 100%; background: var(--bg-blur);
-            border-top: 2px solid rgba(255,255,255,0.2);
-        }
-        .card {
-            flex: 1; padding: 20px 10px; text-align: center;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            border-bottom: 8px solid transparent; transition: 0.3s;
-        }
-        .card:last-child { border-right: none; }
-        .card.active { border-bottom-color: var(--accent); background: rgba(251, 191, 36, 0.1); }
-        .card h3 { margin: 0; font-size: 1.2rem; color: var(--accent); }
-        .card p { margin: 10px 0 0; font-size: 3.5rem; font-weight: 900; }
-
-        /* RUNNING TEXT */
-        .footer { background: #000; padding: 10px 0; border-top: 3px solid var(--accent); }
-        marquee { font-size: 2rem; font-weight: bold; color: var(--accent); }
-
-        /* TOMBOL SETTING KECIL DI POJOK */
-        #btn-set { 
-            position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; 
-            background: rgba(0,0,0,0.5); border: 1px solid var(--accent); 
-            border-radius: 50%; color: var(--accent); cursor: pointer; z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-        }
-        
-        /* PANEL ADMIN */
-        #panel { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: white; color: #333; padding: 25px; border-radius: 15px; 
-            width: 90%; max-width: 600px; z-index: 1000; box-shadow: 0 0 50px #000;
-        }
-        .input-group { margin-bottom: 15px; padding: 10px; background: #f4f4f4; border-radius: 8px; }
-        input[type="text"] { width: 100%; padding: 8px; margin: 5px 0; }
-        .audio-row { display: flex; justify-content: space-between; font-size: 12px; margin-top: 5px; }
-        .btn-save { width: 100%; padding: 12px; background: #1e293b; color: white; border: none; cursor: pointer; font-weight: bold; }
+        /* Panel Setting Baru dengan Tanda File */
+        #panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; width: 650px; z-index: 1000; box-shadow: 0 0 50px #000; }
+        .input-group { margin-bottom: 15px; padding: 15px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .media-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 8px; border-bottom: 1px dashed #cbd5e1; }
+        .media-label { font-weight: bold; width: 120px; font-size: 14px; }
+        .status-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        .status-ready { background: #dcfce7; color: #166534; } /* Hijau jika ada */
+        .status-empty { background: #fee2e2; color: #991b1b; } /* Merah jika kosong */
+        .btn-save { width: 100%; padding: 12px; background: #0f172a; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; }
     </style>
 </head>
-<body onclick="pancingAudio()">
+<body onclick="aktifkanAudio()">
 
     <div id="btn-set" onclick="togglePanel()">⚙️</div>
 
-    <div class="header">
-        <h1 id="disp-nama">STAFLOG KORPASGAT</h1>
-    </div>
+    <div class="header"><h1 id="disp-nama">STAFLOG KORPASGAT</h1></div>
 
-    <div class="main-display">
+    <div class="main">
         <div id="jam">00:00:00</div>
-        <div class="date-info">
-            <span id="tgl">--</span> | <span id="hijri" style="color:var(--accent)">--</span>
-        </div>
+        <div style="font-size: 1.5rem; font-weight: 600;"><span id="tgl"></span> | <span id="hijri" style="color:var(--accent)"></span></div>
     </div>
 
     <div class="sholat-row">
-        <div class="card" id="c-subuh"><h3>SUBUH</h3><p id="subuh">04:35</p></div>
-        <div class="card" id="c-dzuhur"><h3>DZUHUR</h3><p id="dzuhur">11:52</p></div>
-        <div class="card" id="c-ashar"><h3>ASHAR</h3><p id="ashar">15:12</p></div>
-        <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="maghrib">17:48</p></div>
-        <div class="card" id="c-isya"><h3>ISYA</h3><p id="isya">18:58</p></div>
+        <div class="card"><h3>SUBUH</h3><p>04:35</p></div>
+        <div class="card"><h3>DZUHUR</h3><p>11:52</p></div>
+        <div class="card"><h3>ASHAR</h3><p>15:12</p></div>
+        <div class="card"><h3>MAGHRIB</h3><p>17:48</p></div>
+        <div class="card"><h3>ISYA</h3><p>18:58</p></div>
     </div>
 
-    <div class="footer">
-        <marquee id="disp-run">STAFLOG KORPASGAT - KOMANDO!</marquee>
-    </div>
+    <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="margin-top:0">⚙️ Setting Monitor</h2>
+        <h2 style="margin:0 0 15px 0; color:#0f172a; border-bottom:2px solid var(--accent)">Setting Monitor</h2>
+        
         <div class="input-group">
-            <label>Judul & Running Text</label>
-            <input type="text" id="in-nama" placeholder="STAFLOG KORPASGAT">
-            <input type="text" id="in-run" placeholder="Teks Berjalan">
-            <button class="btn-save" onclick="simpanTeks()">SIMPAN TEKS</button>
-        </div>
-        <div class="input-group">
-            <label>Upload Media (Otomatis Tersimpan)</label>
-            <div class="audio-row">BG: <input type="file" accept="image/*" onchange="simpanFile('bg', this)"></div>
-            <div class="audio-row">Subuh: <input type="file" accept="audio/*" onchange="simpanFile('subuh_mp3', this)"></div>
-            <div class="audio-row">Dzuhur: <input type="file" accept="audio/*" onchange="simpanFile('dzuhur_mp3', this)"></div>
-            <div class="audio-row">Ashar: <input type="file" accept="audio/*" onchange="simpanFile('ashar_mp3', this)"></div>
-            <div class="audio-row">Maghrib: <input type="file" accept="audio/*" onchange="simpanFile('maghrib_mp3', this)"></div>
-            <div class="audio-row">Isya: <input type="file" accept="audio/*" onchange="simpanFile('isya_mp3', this)"></div>
-        </div>
-        <button onclick="togglePanel()">[ TUTUP ]</button>
-    </div>
-
-    <script>
-        let db;
-        const req = indexedDB.open("KorpasgatFinalDB", 1);
-        req.onupgradeneeded = e => e.target.result.createObjectStore("media", { keyPath: "id" });
-        req.onsuccess = e => { db = e.target.result; muatData(); };
-
-        function simpanFile(id, input) {
-            const file = input.files[0];
-            if(!file) return;
-            const tx = db.transaction("media", "readwrite");
-            tx.objectStore("media").put({ id: id, data: file });
-            tx.oncomplete = () => { alert("Berhasil!"); location.reload(); };
-        }
-
-        function muatData() {
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nama") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("run") || "KOMANDO!";
-            
-            const store = db.transaction("media", "readonly").objectStore("media");
-            store.get("bg").onsuccess = e => {
-                if(e.target.result) document.body.style.backgroundImage = `url(${URL.createObjectURL(e.target.result.data)})`;
-            };
-            ["subuh_mp3", "dzuhur_mp3", "ashar_mp3", "maghrib_mp3", "isya_mp3"].forEach(k => {
-                store.get(k).onsuccess = e => {
-                    if(e.target.result) {
-                        const a = new Audio(URL.createObjectURL(e.target.result.data));
-                        a.id = "play-" + k;
-                        document.body.appendChild(a);
-                    }
-                };
-            });
-        }
-
-        function simpanTeks() {
-            localStorage.setItem("nama", document.getElementById("in-nama").value);
-            localStorage.setItem("run", document.getElementById("in-run").value);
-            location.reload();
-        }
-
-        function updateWaktu() {
-            const d = new Date();
-            const jamStr = d.toLocaleTimeString('id-ID', {hour12:false});
-            document.getElementById('jam').innerText = jamStr;
-            document.getElementById('tgl').innerText = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(d);
-
-            if(d.getSeconds() === 0) {
-                const jm = jamStr.substring(0, 5).replace('.', ':');
-                const sholat = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-                sholat.forEach(s => {
-                    if(jm === document.getElementById(s).innerText) {
-                        document.getElementById("play-" + s + "_mp3")?.play();
-                    }
-                });
-            }
-        }
-
-        function togglePanel() {
-            const p = document.getElementById("panel");
-            p.style.display = p.style.display === "block" ? "none" : "block";
-        }
-
-        function pancingAudio() {
-            document.querySelectorAll("audio").forEach(a => {
-                a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {});
-            });
-        }
-
-        setInterval(updateWaktu, 1000);
-    </script>
-</body>
-</html>
+            <label><b>Nama Satuan & Teks Berjalan:</b></label>
+            <input type="text" id="in-nama" style="width:100%; margin:5px 0; padding:8px;">
+            <input type="text" id="in-run" style="width:100%; margin:5px 0; padding:8px;">
+            <button class="btn-save" onclick="simpanTeks()">SIMPAN TE
