@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT - COMMAND V7</title>
+    <title>JWS KORPASGAT V8 - BANDUNG REGENCY</title>
     <style>
         :root { --accent: #fbbf24; }
         * { box-sizing: border-box; }
@@ -13,33 +13,31 @@
             display: flex; flex-direction: column;
         }
 
-        /* Desain Klasik Sesuai Permintaan */
-        .top-bar { padding: 20px; text-align: center; background: rgba(0,0,0,0.7); border-bottom: 4px solid var(--accent); }
-        #disp-nama { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; letter-spacing: 5px; text-transform: uppercase; }
+        /* Desain Klasik Sesuai Gambar User */
+        .top-bar { padding: 15px; text-align: center; background: rgba(0,0,0,0.7); border-bottom: 4px solid var(--accent); }
+        #disp-nama { font-size: 3rem; font-weight: 900; color: var(--accent); margin: 0; letter-spacing: 4px; text-transform: uppercase; }
 
-        .mid-section { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.2); }
-        #jam { font-size: 11rem; font-weight: 900; font-family: 'Courier New', monospace; margin: 0; text-shadow: 0 0 30px rgba(251,191,36,0.4); }
-        .date-box { font-size: 1.8rem; font-weight: bold; margin-top: 10px; }
+        .mid-section { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #jam { font-size: 11rem; font-weight: 900; font-family: 'Courier New', monospace; margin: 0; line-height: 1; }
+        .date-box { font-size: 1.8rem; font-weight: bold; margin-top: 15px; }
 
-        .sholat-container { display: flex; width: 100%; background: rgba(0,0,0,0.8); border-top: 2px solid rgba(255,255,255,0.2); }
-        .card { flex: 1; padding: 25px 10px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 8px solid transparent; }
-        .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); letter-spacing: 2px; }
+        .sholat-container { display: flex; width: 100%; background: rgba(0,0,0,0.85); border-top: 2px solid rgba(255,255,255,0.2); }
+        .card { flex: 1; padding: 25px 10px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); }
+        .card h3 { margin: 0; font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
         .card p { margin: 10px 0 0; font-size: 4rem; font-weight: 900; }
-        .card.active { border-bottom-color: var(--accent); background: rgba(251,191,36,0.15); }
 
-        marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 12px 0; border-top: 3px solid var(--accent); }
+        marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 10px 0; border-top: 3px solid var(--accent); }
 
-        /* Tombol & Panel Setting */
+        /* Panel Setting & Tanda Upload */
         #btn-set { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
-        #panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; width: 600px; z-index: 1000; box-shadow: 0 0 100px #000; }
+        #panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 25px; border-radius: 15px; width: 620px; z-index: 1000; box-shadow: 0 0 100px #000; max-height: 90vh; overflow-y: auto; }
         
-        .box { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
-        .file-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ccc; }
-        .file-label { font-weight: bold; font-size: 13px; width: 100px; }
-        .status-tag { font-size: 11px; padding: 3px 8px; border-radius: 5px; font-weight: 900; }
+        .box { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .file-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #cbd5e1; }
+        .status-tag { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 900; }
         .ready { background: #dcfce7; color: #166534; border: 1px solid #166534; }
         .empty { background: #fee2e2; color: #991b1b; border: 1px solid #991b1b; }
-        .btn-save { width: 100%; padding: 15px; background: #1e293b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn-save { width: 100%; padding: 15px; background: #0f172a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body onclick="pancingAudio()">
@@ -54,94 +52,80 @@
     </div>
 
     <div class="sholat-container">
-        <div class="card" id="c-subuh"><h3>SUBUH</h3><p id="subuh">04:35</p></div>
-        <div class="card" id="c-dzuhur"><h3>DZUHUR</h3><p id="dzuhur">11:52</p></div>
-        <div class="card" id="c-ashar"><h3>ASHAR</h3><p id="ashar">15:12</p></div>
-        <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="maghrib">17:48</p></div>
-        <div class="card" id="c-isya"><h3>ISYA</h3><p id="isya">18:58</p></div>
+        <div class="card"><h3>SUBUH</h3><p id="subuh">04:31</p></div>
+        <div class="card"><h3>DZUHUR</h3><p id="dzuhur">11:47</p></div>
+        <div class="card"><h3>ASHAR</h3><p id="ashar">15:08</p></div>
+        <div class="card"><h3>MAGHRIB</h3><p id="maghrib">17:43</p></div>
+        <div class="card"><h3>ISYA</h3><p id="isya">18:54</p></div>
     </div>
 
-    <marquee id="disp-run">STAFLOG KORPASGAT - DISIPLIN ADALAH NAFASKU - KOMANDO!</marquee>
+    <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="margin:0 0 15px 0; border-bottom:3px solid var(--accent)">⚙️ Setting Monitor</h2>
+        <h2 style="margin:0 0 15px 0; color:#0f172a; border-bottom:3px solid var(--accent)">⚙️ Setting Monitor</h2>
         
         <div class="box">
-            <label><b>Judul & Teks Berjalan:</b></label>
-            <input type="text" id="in-nama" style="width:100%; padding:8px; margin:5px 0;">
-            <input type="text" id="in-run" style="width:100%; padding:8px; margin:5px 0;">
-            <button class="btn-save" onclick="simpanTeks()">UPDATE TEKS</button>
+            <label><b>Teks Display:</b></label>
+            <input type="text" id="in-nama" placeholder="Nama Satuan" style="width:100%; padding:10px; margin:5px 0;">
+            <input type="text" id="in-run" placeholder="Running Text" style="width:100%; padding:10px; margin:5px 0;">
+            <button class="btn-save" onclick="simpanTeks()">SIMPAN PERUBAHAN</button>
         </div>
 
         <div class="box">
-            <label><b>Media Management (Status Otomatis):</b></label>
+            <label><b>Media (Tanda ✅ jika sudah upload):</b></label>
             <div class="file-row">
-                <span class="file-label">Background</span>
+                <span style="width:100px; font-weight:bold;">Background</span>
                 <input type="file" accept="image/*" onchange="upload('bg', this)">
                 <span id="st-bg" class="status-tag empty">KOSONG</span>
             </div>
             <div class="file-row">
-                <span class="file-label">Adzan Subuh</span>
-                <input type="file" accept="audio/*" onchange="upload('subuh', this)">
-                <span id="st-subuh" class="status-tag empty">KOSONG</span>
+                <span style="width:100px; font-weight:bold;">Adzan</span>
+                <input type="file" accept="audio/*" onchange="upload('adzan', this)">
+                <span id="st-adzan" class="status-tag empty">KOSONG</span>
             </div>
             <div class="file-row">
-                <span class="file-label">Adzan Dzuhur</span>
-                <input type="file" accept="audio/*" onchange="upload('dzuhur', this)">
-                <span id="st-dzuhur" class="status-tag empty">KOSONG</span>
-            </div>
-            <div class="file-row">
-                <span class="file-label">Adzan Ashar</span>
-                <input type="file" accept="audio/*" onchange="upload('ashar', this)">
-                <span id="st-ashar" class="status-tag empty">KOSONG</span>
-            </div>
-            <div class="file-row">
-                <span class="file-label">Adzan Maghrib</span>
-                <input type="file" accept="audio/*" onchange="upload('maghrib', this)">
-                <span id="st-maghrib" class="status-tag empty">KOSONG</span>
-            </div>
-            <div class="file-row">
-                <span class="file-label">Adzan Isya</span>
-                <input type="file" accept="audio/*" onchange="upload('isya', this)">
-                <span id="st-isya" class="status-tag empty">KOSONG</span>
+                <span style="width:100px; font-weight:bold;">Tahrim</span>
+                <input type="file" accept="audio/*" onchange="upload('tahrim', this)">
+                <span id="st-tahrim" class="status-tag empty">KOSONG</span>
             </div>
         </div>
-        <button onclick="togglePanel()" style="width:100%; border:none; background:none; color:gray; cursor:pointer;">[ TUTUP ]</button>
+        <p style="font-size:12px; color:red;">*Data otomatis tersimpan di browser ini.</p>
+        <button onclick="togglePanel()" style="width:100%; border:none; background:none; color:gray; cursor:pointer; padding:10px;">[ TUTUP ]</button>
     </div>
 
     <script>
         let db;
-        const req = indexedDB.open("StaflogDB_Final", 1);
+        const req = indexedDB.open("StaflogMasterDB", 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore("media", { keyPath: "id" });
-        req.onsuccess = e => { db = e.target.result; load(); };
+        req.onsuccess = e => { db = e.target.result; loadData(); };
 
         function upload(id, input) {
             const file = input.files[0];
             if(!file) return;
             const tx = db.transaction("media", "readwrite");
             tx.objectStore("media").put({ id: id, data: file, name: file.name });
-            tx.oncomplete = () => { alert("Upload Berhasil!"); location.reload(); };
+            tx.oncomplete = () => { 
+                alert("File " + file.name + " berhasil disimpan!"); 
+                location.reload(); 
+            };
         }
 
-        function load() {
+        function loadData() {
             document.getElementById("disp-nama").innerText = localStorage.getItem("n") || "STAFLOG KORPASGAT";
             document.getElementById("disp-run").innerText = localStorage.getItem("r") || "KOMANDO!";
             
             const store = db.transaction("media", "readonly").objectStore("media");
-            ['bg', 'subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'].forEach(id => {
+            ['bg', 'adzan', 'tahrim'].forEach(id => {
                 store.get(id).onsuccess = e => {
                     const res = e.target.result;
-                    if(res) {
-                        // Tanda centang dan nama file
-                        const tag = document.getElementById("st-" + id);
+                    const tag = document.getElementById("st-" + id);
+                    if(res && tag) {
                         tag.innerText = "✅ " + res.name;
                         tag.className = "status-tag ready";
-                        
-                        if(id === 'bg') {
-                            document.body.style.backgroundImage = `url(${URL.createObjectURL(res.data)})`;
-                        } else {
+                        if(id === 'bg') document.body.style.backgroundImage = `url(${URL.createObjectURL(res.data)})`;
+                        if(id !== 'bg') {
                             const a = new Audio(URL.createObjectURL(res.data));
-                            a.id = "play-" + id;
+                            a.id = "audio-" + id;
                             document.body.appendChild(a);
                         }
                     }
@@ -155,7 +139,7 @@
             location.reload();
         }
 
-        function update() {
+        function updateWaktu() {
             const d = new Date();
             const jamStr = d.toLocaleTimeString('id-ID', {hour12:false});
             document.getElementById('jam').innerText = jamStr;
@@ -164,9 +148,11 @@
 
             if(d.getSeconds() === 0) {
                 const jm = jamStr.substring(0, 5).replace('.', ':');
-                ['subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'].forEach(s => {
-                    if(jm === document.getElementById(s).innerText) document.getElementById("play-" + s)?.play();
-                });
+                // Cek waktu sholat Kab. Bandung hari ini
+                const jadwal = ["04:31", "11:47", "15:08", "17:43", "18:54"];
+                if(jadwal.includes(jm)) {
+                    document.getElementById("audio-adzan")?.play();
+                }
             }
         }
 
@@ -183,7 +169,7 @@
             });
         }
 
-        setInterval(update, 1000);
+        setInterval(updateWaktu, 1000);
     </script>
 </body>
 </html>
