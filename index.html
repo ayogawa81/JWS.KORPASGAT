@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V10 - ANTI ERROR</title>
+    <title>JWS KORPASGAT V11 - FULL AUDIO</title>
     <style>
         :root { --accent: #fbbf24; }
         * { box-sizing: border-box; }
@@ -12,7 +12,6 @@
             color: white; font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; cursor: pointer;
         }
-        /* Tampilan Utama Komando */
         .header { padding: 15px; text-align: center; background: rgba(0,0,0,0.7); border-bottom: 4px solid var(--accent); }
         #disp-nama { font-size: 3rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
         .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -23,8 +22,9 @@
         .card h3 { margin: 0; font-size: 1.2rem; color: var(--accent); }
         .card p { margin: 10px 0 0; font-size: 4rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 10px 0; border-top: 3px solid var(--accent); }
-        /* Panel Setting Mantap */
-        #btn-set { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); z-index: 100; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        
+        /* Panel Setting Mantap V11 */
+        #btn-set { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); z-index: 100; display: flex; align-items: center; justify-content: center; }
         #panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: #333; padding: 20px; border-radius: 12px; width: 580px; z-index: 1000; box-shadow: 0 0 100px #000; max-height: 90vh; overflow-y: auto; }
         .box-setting { border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #f8fafc; }
         .input-text { width: 100%; padding: 10px; margin: 5px 0 10px 0; border: 1px solid #cbd5e1; border-radius: 5px; }
@@ -35,7 +35,7 @@
         .st-no { background: #fee2e2; color: #991b1b; border: 1px solid #991b1b; }
     </style>
 </head>
-<body id="mainBody" onclick="aktifkanAudio()">
+<body onclick="aktifkanAudio()">
 
     <div id="btn-set" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="disp-nama">STAFLOG KORPASGAT</h1></div>
@@ -48,7 +48,7 @@
     <div class="prayer-row">
         <div class="card"><h3>SUBUH</h3><p>04:31</p></div>
         <div class="card"><h3>DZUHUR</h3><p>11:47</p></div>
-        <div class="card"><h3>ASHAR</h3><p>15:08</p></div>
+        <div class="card :target"><h3>ASHAR</h3><p>15:08</p></div>
         <div class="card"><h3>MAGHRIB</h3><p>17:43</p></div>
         <div class="card"><h3>ISYA</h3><p>18:54</p></div>
     </div>
@@ -62,95 +62,24 @@
             <input type="text" id="in-run" class="input-text" placeholder="Running Text">
             <button class="btn-simpan" onclick="saveTeks()">SIMPAN PERUBAHAN</button>
         </div>
-        <h3>Media (Audio Adzan):</h3>
+
+        <h3>Pilihan Suara (Beep & Media):</h3>
         <div class="box-setting">
-            <div class="media-row"><b>Background</b><input type="file" accept="image/*" onchange="upMedia('bg', this)"><span id="st-bg" class="tag-status st-no">KOSONG</span></div>
-            <div class="media-row"><b>Tahrim</b><input type="file" accept="audio/*" onchange="upMedia('tahrim', this)"><span id="st-tahrim" class="tag-status st-no">KOSONG</span></div>
+            <div class="media-row"><b>Background Image</b><input type="file" accept="image/*" onchange="upMedia('bg', this)"><span id="st-bg" class="tag-status st-no">KOSONG</span></div>
+            <div class="media-row"><b>Nada Beep/Bell</b><input type="file" accept="audio/*" onchange="upMedia('beep', this)"><span id="st-beep" class="tag-status st-no">KOSONG</span></div>
+            <div class="media-row"><b>Nada Tahrim</b><input type="file" accept="audio/*" onchange="upMedia('tahrim', this)"><span id="st-tahrim" class="tag-status st-no">KOSONG</span></div>
+            <hr>
             <div class="media-row"><b>Adzan Subuh</b><input type="file" accept="audio/*" onchange="upMedia('a-subuh', this)"><span id="st-a-subuh" class="tag-status st-no">KOSONG</span></div>
             <div class="media-row"><b>Adzan Dzuhur</b><input type="file" accept="audio/*" onchange="upMedia('a-dzuhur', this)"><span id="st-a-dzuhur" class="tag-status st-no">KOSONG</span></div>
             <div class="media-row"><b>Adzan Ashar</b><input type="file" accept="audio/*" onchange="upMedia('a-ashar', this)"><span id="st-a-ashar" class="tag-status st-no">KOSONG</span></div>
             <div class="media-row"><b>Adzan Maghrib</b><input type="file" accept="audio/*" onchange="upMedia('a-maghrib', this)"><span id="st-a-maghrib" class="tag-status st-no">KOSONG</span></div>
             <div class="media-row"><b>Adzan Isya</b><input type="file" accept="audio/*" onchange="upMedia('a-isya', this)"><span id="st-a-isya" class="tag-status st-no">KOSONG</span></div>
         </div>
-        <button onclick="location.reload()" style="background:#dc2626; color:white; border:none; padding:10px; width:100%; border-radius:5px; font-weight:bold; cursor:pointer;">⚠️ REFRESH TOTAL (JIKA ERROR)</button>
+        <button onclick="location.reload()" style="background:#dc2626; color:white; border:none; padding:10px; width:100%; border-radius:5px; font-weight:bold; cursor:pointer;">⚠️ REFRESH JIKA ERROR</button>
         <button onclick="togglePanel()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; padding: 15px;">[ TUTUP ]</button>
     </div>
 
     <script>
         let db;
-        const request = indexedDB.open("JWS_KOMANDO_DB", 2); // Versi DB Baru
-        request.onupgradeneeded = e => e.target.result.createObjectStore("files", { keyPath: "id" });
-        request.onsuccess = e => { db = e.target.result; muatTampilan(); };
-
-        function upMedia(id, input) {
-            const file = input.files[0];
-            if(!file) return;
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({ id: id, data: file, name: file.name });
-            tx.oncomplete = () => { alert("File Berhasil Disimpan!"); location.reload(); };
-        }
-
-        function muatTampilan() {
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
-            
-            const store = db.transaction("files", "readonly").objectStore("files");
-            ['bg', 'tahrim', 'a-subuh', 'a-dzuhur', 'a-ashar', 'a-maghrib', 'a-isya'].forEach(id => {
-                store.get(id).onsuccess = e => {
-                    const res = e.target.result;
-                    if(res) {
-                        const tag = document.getElementById("st-" + id);
-                        if(tag) { tag.innerText = "✅ OK"; tag.className = "tag-status st-ok"; }
-                        if(id === 'bg') document.body.style.backgroundImage = `url(${URL.createObjectURL(res.data)})`;
-                        else {
-                            const a = new Audio(URL.createObjectURL(res.data));
-                            a.id = "audio-" + id;
-                            document.body.appendChild(a);
-                        }
-                    }
-                };
-            });
-        }
-
-        function saveTeks() {
-            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
-            localStorage.setItem("tJalan", document.getElementById("in-run").value);
-            location.reload();
-        }
-
-        function updateJam() {
-            const now = new Date();
-            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
-            document.getElementById('jam').innerText = jamStr;
-            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
-
-            // Trigger Adzan (Pengecekan per detik)
-            if(now.getSeconds() === 0) {
-                const jm = jamStr.substring(0, 5);
-                const target = { "04:31":"a-subuh", "11:47":"a-dzuhur", "15:08":"a-ashar", "17:43":"a-maghrib", "18:54":"a-isya" };
-                if(target[jm]) {
-                    const audio = document.getElementById("audio-" + target[jm]);
-                    if(audio) audio.play().catch(err => console.log("Izin Audio Belum Aktif - Klik Layar!"));
-                }
-            }
-        }
-
-        function togglePanel() {
-            const p = document.getElementById("panel");
-            p.style.display = (p.style.display === "block") ? "none" : "block";
-            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
-            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
-        }
-
-        function aktifkanAudio() {
-            // "Pancingan" agar browser mengizinkan audio
-            document.querySelectorAll("audio").forEach(a => {
-                a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(e => {});
-            });
-        }
-
-        setInterval(updateJam, 1000);
-    </script>
-</body>
-</html>
+        const request = indexedDB.open("JWS_KOMANDO_V11", 1);
+        request.onupgradeneeded = e
