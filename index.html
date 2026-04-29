@@ -3,35 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V18 - STABLE TV</title>
+    <title>JWS KORPASGAT V18 - FINAL</title>
     <style>
-        :root { --accent: #fbbf24; --active-color: #ef4444; }
+        :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
             margin: 0; background: #000 no-repeat center fixed; background-size: cover;
-            color: white; font-family: Arial, sans-serif; height: 100vh; overflow: hidden;
+            color: white; font-family: 'Arial', sans-serif; height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; cursor: pointer;
         }
-        .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 3px solid var(--accent); }
-        #disp-nama { font-size: 3.2rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
-        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 3px 3px 15px rgba(0,0,0,1); }
-        #jam { font-size: 11rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
-        .date-box { font-size: 1.8rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 25px; border-radius: 50px; }
-        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 3px solid var(--accent); }
-        .card { flex: 1; padding: 15px 5px; text-align: center; border-right: 1px solid #333; transition: 0.5s; position: relative; }
-        .card.active-now { background: var(--active-color) !important; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.6; } }
-        .card h3 { margin: 0; font-size: 1.1rem; color: var(--accent); }
-        .card p { margin: 5px 0 0; font-size: 3.2rem; font-weight: 900; }
-        marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 10px 0; border-top: 3px solid var(--accent); }
+        .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); }
+        #disp-nama { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
+        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 4px 4px 15px rgba(0,0,0,1); }
+        #jam { font-size: 12rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
+        .date-box { font-size: 2rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); }
+        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
+        .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
+        .card.active-now { background: var(--active) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
+        .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
+        marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         
-        /* Panel Setting */
-        #btn-set { position: fixed; top: 15px; right: 15px; cursor: pointer; z-index: 100; font-size: 28px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 50%; }
+        /* Panel Settings */
+        #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fdfdfd; }
-        .box b { display: block; margin-bottom: 10px; border-left: 4px solid var(--accent); padding-left: 10px; color: #1e3a8a; }
-        input[type="text"] { width: 95%; padding: 10px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        .grid-media { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 18px; }
+        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; }
+        input { width: 95%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -48,4 +47,104 @@
         <div class="card" id="card-subuh"><h3>SUBUH</h3><p id="t-subuh">--:--</p></div>
         <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">--:--</p></div>
         <div class="card" id="card-ashar"><h3>ASHAR</h3><p id="t-ashar">--:--</p></div>
-        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t
+        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">--:--</p></div>
+        <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">--:--</p></div>
+    </div>
+
+    <marquee id="disp-run">KOMANDO!</marquee>
+
+    <div id="panel">
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS KORPASGAT</h2>
+        <div class="box">
+            <b>Identitas & Lokasi</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan (Cth: STAFLOG KORPASGAT)">
+            <input type="text" id="in-run" placeholder="Teks Berjalan">
+            <input type="text" id="in-lat" placeholder="Latitude (Cth: -7.01)">
+            <input type="text" id="in-lon" placeholder="Longitude (Cth: 107.55)">
+        </div>
+        <div class="box">
+            <b>🖼️ Media Link (Gambar & Audio)</b>
+            <input type="text" id="url-bg" placeholder="URL Background Image (Gunakan HTTPS)">
+            <input type="text" id="url-adzan" placeholder="URL Audio Adzan (General .mp3)">
+        </div>
+        <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
+        <p style="text-align:center; color:gray;" onclick="togglePanel()">[ TUTUP ]</p>
+    </div>
+
+    <script>
+        function hitungJadwal() {
+            const lat = parseFloat(localStorage.getItem("lat")) || -7.01;
+            const lon = parseFloat(localStorage.getItem("lon")) || 107.55;
+            const selisih = Math.floor((lon - 107.55) * 4); 
+            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
+            for (let k in base) {
+                let [h, m] = base[k].split(':').map(Number);
+                let total = (h * 60 + m) - selisih;
+                document.getElementById('t-'+k).innerText = String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
+            }
+        }
+
+        function muatSistem() {
+            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
+            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
+            document.getElementById("in-lat").value = localStorage.getItem("lat") || "";
+            document.getElementById("in-lon").value = localStorage.getItem("lon") || "";
+            document.getElementById("url-bg").value = localStorage.getItem("urlBg") || "";
+            document.getElementById("url-adzan").value = localStorage.getItem("urlAdzan") || "";
+
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
+            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
+            
+            const bg = localStorage.getItem("urlBg");
+            if(bg) document.body.style.backgroundImage = "url('" + bg + "')";
+            hitungJadwal();
+        }
+
+        function saveData() {
+            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
+            localStorage.setItem("tJalan", document.getElementById("in-run").value);
+            localStorage.setItem("lat", document.getElementById("in-lat").value);
+            localStorage.setItem("lon", document.getElementById("in-lon").value);
+            localStorage.setItem("urlBg", document.getElementById("url-bg").value);
+            localStorage.setItem("urlAdzan", document.getElementById("url-adzan").value);
+            location.reload();
+        }
+
+        function updateJam() {
+            const now = new Date();
+            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            document.getElementById('jam').innerText = jamStr;
+            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
+
+            const jm = jamStr.substring(0, 5);
+            const prayerTimes = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
+            prayerTimes.forEach(key => {
+                const pTime = document.getElementById('t-' + key).innerText;
+                if(pTime === jm) {
+                    document.getElementById("card-" + key).classList.add('active-now');
+                    if(now.getSeconds() === 0) {
+                        const audio = new Audio(localStorage.getItem("urlAdzan"));
+                        audio.play().catch(e => console.log("Klik layar untuk aktifkan suara"));
+                    }
+                } else {
+                    document.getElementById("card-" + key).classList.remove('active-now');
+                }
+            });
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+
+        function startAudio() {
+            const dummy = new Audio();
+            dummy.play().then(() => dummy.pause());
+        }
+
+        window.onload = muatSistem;
+        setInterval(updateJam, 1000);
+    </script>
+</body>
+</html>
