@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V18 - FULL MEDIA URL</title>
+    <title>JWS KORPASGAT V18 - FINAL STABLE</title>
     <style>
         :root { --accent: #fbbf24; --active-color: #ef4444; }
         body { 
@@ -24,7 +22,6 @@
         .card p { margin: 5px 0 0; font-size: 3.2rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.2rem; font-weight: bold; padding: 10px 0; border-top: 3px solid var(--accent); }
         
-        /* Panel Setting */
         #btn-set { position: fixed; top: 15px; right: 15px; cursor: pointer; z-index: 100; font-size: 28px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 50%; }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fdfdfd; }
@@ -55,7 +52,7 @@
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="color:#1e3a8a;">⚙️ PENGATURAN MEDIA</h2>
+        <h2 style="color:#1e3a8a;">⚙️ PENGATURAN MEDIA (MODE URL TV)</h2>
         
         <div class="box">
             <b>Identitas & Lokasi</b>
@@ -69,15 +66,15 @@
 
         <div class="box">
             <b>🖼️ Background & Alert</b>
-            <input type="text" id="url-bg" placeholder="URL Gambar Background">
+            <input type="text" id="url-bg" placeholder="URL Gambar Background (Direct Link)">
             <input type="text" id="url-beep" placeholder="URL Nada Beep (Singkat)">
         </div>
 
         <div class="box">
-            <b>🕌 Media Tahrim & Adzan (Masukkan URL .mp3)</b>
+            <b>🕌 Media Tahrim & Adzan (Gunakan Direct Link .mp3)</b>
             <div class="grid-media">
                 <div>
-                    <label>Tahrim (Sebelum Adzan)</label>
+                    <label>Tahrim (Semua Waktu)</label>
                     <input type="text" id="url-tahrim" placeholder="URL Tahrim">
                 </div>
                 <div>
@@ -132,7 +129,11 @@
 
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
             document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
-            if(localStorage.getItem("urlBg")) document.body.style.backgroundImage = `url('${localStorage.getItem("urlBg")}')`;
+            
+            const bg = localStorage.getItem("urlBg");
+            if(bg) {
+                document.body.style.backgroundImage = "url('" + bg + "')";
+            }
 
             hitungJadwal();
         }
@@ -144,14 +145,17 @@
             fields.forEach((f, i) => {
                 localStorage.setItem(f, document.getElementById(inputs[i]).value);
             });
+            alert("Data Berhasil Disimpan!");
             location.reload();
         }
 
-        function mainkanSuara(tipe) {
+        function mainkanSuara(tipe, delay = 0) {
             const url = localStorage.getItem(tipe);
             if(url) {
-                const a = new Audio(url);
-                a.play().catch(e => console.log("Audio Blocked"));
+                setTimeout(() => {
+                    const a = new Audio(url);
+                    a.play().catch(e => console.log("Audio Blocked"));
+                }, delay);
             }
         }
 
@@ -170,10 +174,9 @@
                 const pTime = document.getElementById('t-' + key).innerText;
                 if(pTime === jm) {
                     document.getElementById("card-" + key).classList.add('active-now');
-                    // Logika: Detik 0 bunyi Beep & Tahrim, Detik 10 bunyi Adzan
                     if(detik === 0) {
                         mainkanSuara('urlBeep');
-                        mainkanSuara('urlTahrim');
+                        mainkanSuara('urlTahrim', 1000); 
                     }
                     if(detik === 10) {
                         const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
@@ -191,7 +194,6 @@
         }
 
         function startAudio() {
-            // Pancing interaksi agar TV mengizinkan suara
             const dummy = new Audio();
             dummy.play().then(() => dummy.pause());
         }
