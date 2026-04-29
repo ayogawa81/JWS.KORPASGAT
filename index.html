@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 FIX</title>
+    <title>JWS KORPASGAT V32 FINAL FIX</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -18,19 +18,18 @@
         #jam { font-size: 12rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
         .date-box { font-size: 2rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); }
         .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
-        .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
-        .card.active-now { background: var(--active) !important; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; transition: 0.3s; }
+        /* CSS UNTUK HIGHLIGHT MERAH */
+        .active-now { background: var(--active) !important; animation: blink 1s infinite; box-shadow: inset 0 0 50px rgba(0,0,0,0.5); }
+        @keyframes blink { 50% { opacity: 0.7; } }
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
-        
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
-        .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; font-size: 1.2rem; }
-        input { width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; margin-top: 10px; }
+        input { width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; }
     </style>
 </head>
 <body onclick="startAudio()">
@@ -54,22 +53,17 @@
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        <h2 style="text-align:center;">⚙️ PENGATURAN</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
-            <input type="text" id="in-nama" placeholder="Nama Satuan">
-            <input type="text" id="in-run" placeholder="Running Text">
-            <input type="text" id="in-lat" placeholder="Latitude">
-            <input type="text" id="in-lon" placeholder="Longitude">
+            <input type="text" id="in-nama"> <input type="text" id="in-run">
+            <input type="text" id="in-lat"> <input type="text" id="in-lon">
         </div>
         <div class="box">
-            <b>🕌 Media Audio (GitHub)</b>
-            <input type="text" id="url-tahrim" placeholder="File Tahrim">
-            <input type="text" id="url-subuh" placeholder="File Subuh">
-            <input type="text" id="url-dzuhur" placeholder="File Dzuhur">
-            <input type="text" id="url-ashar" placeholder="File Ashar">
-            <input type="text" id="url-maghrib" placeholder="File Maghrib">
-            <input type="text" id="url-isya" placeholder="File Isya">
+            <b>🕌 File Audio (Internal GitHub)</b>
+            <input type="text" id="url-tahrim"> <input type="text" id="url-subuh">
+            <input type="text" id="url-dzuhur"> <input type="text" id="url-ashar">
+            <input type="text" id="url-maghrib"> <input type="text" id="url-isya">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p style="text-align:center; color:gray; cursor:pointer;" onclick="togglePanel()">[ TUTUP ]</p>
@@ -77,48 +71,25 @@
 
     <script>
         const player = new Audio();
-        let audioAktif = false;
+        let canPlay = false;
 
         const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
         const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
 
         function muatSistem() {
-            const defaults = [
-                "STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551",
-                "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
-                "Tarhim.mp3", "subuh.mp3", "dzuhur.mp3", "Ashar.mp3", "Magrib.mp3", "Isya.mp3"
-            ];
-
+            const defaults = ["STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551", "https://i.postimg.cc/T32xKDtZ/Picture2.jpg", "Tarhim.mp3", "subuh.mp3", "dzuhur.mp3", "Ashar.mp3", "Magrib.mp3", "Isya.mp3"];
             keys.forEach((k, i) => {
                 let val = localStorage.getItem(k);
-                if(!val || val.includes("drive.google.com")) {
-                    val = defaults[i];
-                    localStorage.setItem(k, val);
-                }
-                let el = document.getElementById(ids[i]);
-                if(el) el.value = val;
+                if(!val || val.includes("drive.google.com")) { localStorage.setItem(k, defaults[i]); val = defaults[i]; }
+                if(document.getElementById(ids[i])) document.getElementById(ids[i]).value = val;
             });
-
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan");
             document.getElementById("disp-run").innerText = localStorage.getItem("tJalan");
             document.body.style.backgroundImage = "url('https://i.postimg.cc/T32xKDtZ/Picture2.jpg')";
-            hitungJadwal();
+            updateJadwal();
         }
 
-        function saveData() {
-            try {
-                ids.forEach((id, i) => {
-                    let el = document.getElementById(id);
-                    if(el) localStorage.setItem(keys[i], el.value);
-                });
-                alert("Data Berhasil Disimpan!");
-                location.reload();
-            } catch (e) {
-                alert("Gagal Menyimpan: " + e);
-            }
-        }
-
-        function hitungJadwal() {
+        function updateJadwal() {
             const lon = parseFloat(localStorage.getItem("lon")) || 107.551;
             const selisih = Math.floor((lon - 107.551) * 4); 
             const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
@@ -132,21 +103,43 @@
         function updateJam() {
             const now = new Date();
             const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            const jm = jamStr.substring(0, 5);
+            const detik = now.getSeconds();
+
             document.getElementById('jam').innerText = jamStr;
             document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 
-            const jm = jamStr.substring(0, 5);
-            if (now.getSeconds() === 0) {
-                ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
-                    if (document.getElementById('t-' + key).innerText === jm) {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
+                const tAdzan = document.getElementById('t-' + key).innerText;
+                const card = document.getElementById("card-" + key);
+
+                // LOGIKA HIGHLIGHT (Jika Jam Sama Dengan Waktu Salat)
+                if (jm === tAdzan) {
+                    card.classList.add('active-now');
+                    // Bunyikan Audio tepat pada detik 00
+                    if (detik === 0 && canPlay) {
                         const file = localStorage.getItem("url" + key.charAt(0).toUpperCase() + key.slice(1));
-                        if(audioAktif && file) { player.src = file; player.play(); }
+                        player.src = file;
+                        player.play().catch(e => console.log("Gagal putar: " + e));
                     }
-                });
-            }
+                } else {
+                    card.classList.remove('active-now');
+                }
+            });
         }
 
-        function startAudio() { audioAktif = true; player.play().then(() => player.pause()); }
+        function saveData() {
+            ids.forEach((id, i) => { if(document.getElementById(id)) localStorage.setItem(keys[i], document.getElementById(id).value); });
+            alert("Sistem Diperbarui!");
+            location.reload();
+        }
+
+        function startAudio() { 
+            canPlay = true; 
+            player.play().then(() => player.pause()); 
+            console.log("Audio Aktif");
+        }
+
         function togglePanel() { const p = document.getElementById("panel"); p.style.display = (p.style.display === "block") ? "none" : "block"; }
 
         window.onload = muatSistem;
