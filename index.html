@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V18 - FINAL</title>
+    <title>JWS KORPASGAT V18 - FINAL STABLE</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
-            margin: 0; background: #000 no-repeat center fixed; background-size: cover;
+            margin: 0; background-color: #000; 
+            background-repeat: no-repeat; background-position: center; background-attachment: fixed; background-size: cover;
             color: white; font-family: 'Arial', sans-serif; height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; cursor: pointer;
         }
@@ -24,7 +25,6 @@
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         
-        /* Panel Settings */
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
@@ -57,15 +57,15 @@
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS KORPASGAT</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
-            <input type="text" id="in-nama" placeholder="Nama Satuan (Cth: STAFLOG KORPASGAT)">
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
             <input type="text" id="in-run" placeholder="Teks Berjalan">
-            <input type="text" id="in-lat" placeholder="Latitude (Cth: -7.01)">
-            <input type="text" id="in-lon" placeholder="Longitude (Cth: 107.55)">
+            <input type="text" id="in-lat" placeholder="Latitude">
+            <input type="text" id="in-lon" placeholder="Longitude">
         </div>
         <div class="box">
             <b>🖼️ Media Link (Gambar & Audio)</b>
-            <input type="text" id="url-bg" placeholder="URL Background Image (Gunakan HTTPS)">
-            <input type="text" id="url-adzan" placeholder="URL Audio Adzan (General .mp3)">
+            <input type="text" id="url-bg" placeholder="URL Background Image">
+            <input type="text" id="url-adzan" placeholder="URL Audio Adzan (.mp3)">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p style="text-align:center; color:gray;" onclick="togglePanel()">[ TUTUP ]</p>
@@ -85,28 +85,24 @@
         }
 
         function muatSistem() {
-            document.getElementById("in-nama").value = localStorage.getItem("nSatuan") || "";
-            document.getElementById("in-run").value = localStorage.getItem("tJalan") || "";
-            document.getElementById("in-lat").value = localStorage.getItem("lat") || "";
-            document.getElementById("in-lon").value = localStorage.getItem("lon") || "";
-            document.getElementById("url-bg").value = localStorage.getItem("urlBg") || "";
-            document.getElementById("url-adzan").value = localStorage.getItem("urlAdzan") || "";
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlAdzan"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-adzan"];
+            keys.forEach((k, i) => document.getElementById(ids[i]).value = localStorage.getItem(k) || "");
 
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
             document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
             
             const bg = localStorage.getItem("urlBg");
-            if(bg) document.body.style.backgroundImage = "url('" + bg + "')";
+            if(bg && bg.trim() !== "") {
+                document.body.style.backgroundImage = "url('" + bg.trim() + "')";
+            }
             hitungJadwal();
         }
 
         function saveData() {
-            localStorage.setItem("nSatuan", document.getElementById("in-nama").value);
-            localStorage.setItem("tJalan", document.getElementById("in-run").value);
-            localStorage.setItem("lat", document.getElementById("in-lat").value);
-            localStorage.setItem("lon", document.getElementById("in-lon").value);
-            localStorage.setItem("urlBg", document.getElementById("url-bg").value);
-            localStorage.setItem("urlAdzan", document.getElementById("url-adzan").value);
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlAdzan"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-adzan"];
+            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
             location.reload();
         }
 
@@ -118,18 +114,15 @@
             document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
 
             const jm = jamStr.substring(0, 5);
-            const prayerTimes = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-            prayerTimes.forEach(key => {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
                 const pTime = document.getElementById('t-' + key).innerText;
+                const card = document.getElementById("card-" + key);
                 if(pTime === jm) {
-                    document.getElementById("card-" + key).classList.add('active-now');
+                    card.classList.add('active-now');
                     if(now.getSeconds() === 0) {
-                        const audio = new Audio(localStorage.getItem("urlAdzan"));
-                        audio.play().catch(e => console.log("Klik layar untuk aktifkan suara"));
+                        new Audio(localStorage.getItem("urlAdzan")).play().catch(e => console.log("Klik layar!"));
                     }
-                } else {
-                    document.getElementById("card-" + key).classList.remove('active-now');
-                }
+                } else { card.classList.remove('active-now'); }
             });
         }
 
