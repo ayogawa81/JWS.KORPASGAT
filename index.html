@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V23 - FULL SETTINGS</title>
+    <title>JWS KORPASGAT V25 - FINAL GABUNGAN</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -52,24 +52,24 @@
         <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">--:--</p></div>
     </div>
 
-    <marquee id="disp-run">"Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan..."</marquee>
+    <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ PENGATURAN LENGKAP</h2>
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS KORPASGAT</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
             <input type="text" id="in-nama" placeholder="Nama Satuan">
             <input type="text" id="in-run" placeholder="Teks Berjalan">
             <input type="text" id="in-lat" placeholder="Latitude (-7.01)">
-            <input type="text" id="in-lon" placeholder="Longitude (107.55)">
+            <input type="text" id="in-lon" placeholder="Longitude (107.551)">
         </div>
         <div class="box">
             <b>🖼️ Background</b>
             <input type="text" id="url-bg" placeholder="URL Background Image">
         </div>
         <div class="box">
-            <b>🕌 Media Tahrim & Adzan (Gunakan Link .mp3)</b>
-            <input type="text" id="url-tahrim" placeholder="Link Tahrim (Semua Waktu)">
+            <b>🕌 Media Tahrim & Adzan Setiap Waktu</b>
+            <input type="text" id="url-tahrim" placeholder="Link Tahrim (.mp3)">
             <div class="grid-audio">
                 <input type="text" id="url-subuh" placeholder="Adzan Subuh">
                 <input type="text" id="url-dzuhur" placeholder="Adzan Dzuhur">
@@ -86,6 +86,7 @@
         let audioPlayer = new Audio();
 
         function muatSistem() {
+            // Memastikan data dibaca dengan benar untuk mencegah 00:00:00
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
             const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
             
@@ -97,4 +98,16 @@
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
             document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
             
-            const bg = localStorage.getItem("urlBg") || "
+            const bg = localStorage.getItem("urlBg") || "https://i.postimg.cc/T32xKDtZ/Picture2.jpg";
+            document.body.style.backgroundImage = "url('" + bg + "')";
+            
+            hitungJadwal();
+        }
+
+        function hitungJadwal() {
+            const lat = parseFloat(localStorage.getItem("lat")) || -7.01;
+            const lon = parseFloat(localStorage.getItem("lon")) || 107.551;
+            const selisih = Math.floor((lon - 107.551) * 4); 
+            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
+            for (let k in base) {
+                let [h, m] = base[k].split(':').map(Number);
