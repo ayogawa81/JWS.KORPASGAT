@@ -89,19 +89,18 @@
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
             const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
             
-            // Link Permanen dari Data Anda
             const defaults = [
                 "STAFLOG KORPASGAT", 
-                "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh dan pekerjaan itu tidak layak bagimu.", 
+                "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh.", 
                 "-7.01", 
                 "107.551",
                 "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
-                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq", // Tahrim
-                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug", // Subuh
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Dzuhur
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Ashar
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Maghrib
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ"  // Isya
+                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq",
+                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ"
             ];
 
             keys.forEach((k, i) => {
@@ -163,9 +162,11 @@
 
         function playAudio(url) {
             if(!url || url.length < 20) return;
+            audioPlayer.pause();
             audioPlayer.src = url.trim();
+            audioPlayer.setAttribute('type', 'audio/mpeg'); // Memaksa browser memutar, bukan mendownload
             audioPlayer.load();
-            audioPlayer.play().catch(e => console.log("Klik layar satu kali untuk izin suara"));
+            audioPlayer.play().catch(e => console.log("Klik layar sekali untuk izin audio"));
         }
 
         function saveData() {
