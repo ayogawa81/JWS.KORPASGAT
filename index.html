@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 FINAL</title>
+    <title>JWS KORPASGAT V32 HIJRIAH FIX</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -13,7 +13,10 @@
         }
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); }
         #n-satuan { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
-        #jam { font-size: 12rem; font-weight: 900; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; text-shadow: 5px 5px 20px #000; }
+        #jam { font-size: 11rem; font-weight: 900; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; text-shadow: 5px 5px 20px #000; margin-bottom: -20px; }
+        #tgl-container { text-align: center; margin-bottom: 20px; }
+        #tgl-masehi { font-size: 2.5rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 30px; border-radius: 50px; border: 2px solid var(--accent); display: inline-block; margin-right: 10px; }
+        #tgl-hijriah { font-size: 2.5rem; font-weight: bold; color: var(--accent); background: rgba(0,0,0,0.8); padding: 5px 30px; border-radius: 50px; border: 2px solid white; display: inline-block; }
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
         .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
         .active-now { background: var(--active) !important; animation: blink 1s infinite; }
@@ -31,7 +34,13 @@
 
     <div style="position:fixed; top:20px; right:20px; font-size:30px; z-index:100;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
+
     <div id="jam">00:00:00</div>
+    
+    <div id="tgl-container">
+        <div id="tgl-masehi">Rabu, 29 April 2026</div>
+        <div id="tgl-hijriah">12 Syawal 1447 H</div>
+    </div>
 
     <div class="prayer-row">
         <div class="card" id="c-subuh"><h3>SUBUH</h3><p id="t-subuh">04:31</p></div>
@@ -40,6 +49,7 @@
         <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
         <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
+
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
@@ -50,7 +60,7 @@
             <input type="text" id="in-run" placeholder="Running Text">
         </div>
         <div class="box">
-            <b>🕌 Nama File Audio (Harus persis GitHub)</b>
+            <b>🕌 File Audio (Harus Persis GitHub)</b>
             <input type="text" id="in-subuh" placeholder="subuh.mp3">
             <input type="text" id="in-dzuhur" placeholder="dzuhur.mp3">
             <input type="text" id="in-ashar" placeholder="Ashar.mp3">
@@ -65,7 +75,19 @@
         const player = new Audio();
         let audioReady = false;
 
+        function getHijri() {
+            const date = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const masehi = new Intl.DateTimeFormat('id-ID', { weekday: 'long', ...options }).format(date);
+            document.getElementById('tgl-masehi').innerText = masehi;
+
+            // Simple Hijri Calculation (Umul Qura approximation)
+            const hijriDate = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options).format(date);
+            document.getElementById('tgl-hijriah').innerText = hijriDate + " H";
+        }
+
         function muatSistem() {
+            getHijri();
             document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
             document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
             document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
@@ -90,7 +112,7 @@
                         let file = localStorage.getItem('s-' + s);
                         if(file) {
                             player.src = file.trim();
-                            player.play().catch(e => console.log("File tidak ditemukan"));
+                            player.play().catch(e => console.log("Audio play error"));
                         }
                     }
                 } else {
@@ -109,6 +131,7 @@
             });
             location.reload();
         }
+
         window.onload = muatSistem;
         setInterval(update, 1000);
     </script>
