@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V31 FINAL SUPER FIX</title>
+    <title>JWS KORPASGAT V31 FINAL</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -25,11 +25,15 @@
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
-        #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; }
-        input { width: 95%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        .grid-audio { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        /* PANEL PENGATURAN */
+        #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
+        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
+        .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; font-size: 1.2rem; }
+        
+        /* LABEL AUDIO DI LUAR KOLOM */
+        .audio-label { display: block; font-weight: bold; margin-top: 10px; font-size: 0.9rem; color: #555; }
+        input { width: 95%; padding: 10px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
         .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; margin-top: 10px; }
     </style>
 </head>
@@ -55,35 +59,52 @@
 
     <div id="panel">
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        
         <div class="box">
             <b>Identitas & Lokasi</b>
+            <label class="audio-label">Nama Satuan:</label>
             <input type="text" id="in-nama">
+            <label class="audio-label">Running Text:</label>
             <input type="text" id="in-run">
-            <input type="text" id="in-lat">
-            <input type="text" id="in-lon">
+            <label class="audio-label">Latitude / Longitude:</label>
+            <input type="text" id="in-lat" placeholder="Lat">
+            <input type="text" id="in-lon" placeholder="Lon">
         </div>
+
         <div class="box">
             <b>🖼️ Background</b>
+            <label class="audio-label">URL Gambar Latar:</label>
             <input type="text" id="url-bg">
         </div>
+
         <div class="box">
-            <b>🕌 Media Tahrim & Adzan</b>
+            <b>🕌 Media Audio (MP3)</b>
+            <label class="audio-label">Link Audio Tahrim:</label>
             <input type="text" id="url-tahrim">
-            <div class="grid-audio">
-                <input type="text" id="url-subuh">
-                <input type="text" id="url-dzuhur">
-                <input type="text" id="url-ashar">
-                <input type="text" id="url-maghrib">
-                <input type="text" id="url-isya">
-            </div>
+            
+            <label class="audio-label">Link Adzan Subuh:</label>
+            <input type="text" id="url-subuh">
+            
+            <label class="audio-label">Link Adzan Dzuhur:</label>
+            <input type="text" id="url-dzuhur">
+            
+            <label class="audio-label">Link Adzan Ashar:</label>
+            <input type="text" id="url-ashar">
+            
+            <label class="audio-label">Link Adzan Maghrib:</label>
+            <input type="text" id="url-maghrib">
+            
+            <label class="audio-label">Link Adzan Isya:</label>
+            <input type="text" id="url-isya">
         </div>
+
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p style="text-align:center; color:gray; cursor:pointer;" onclick="togglePanel()">[ TUTUP ]</p>
     </div>
 
     <script>
         const audioPlayer = new Audio();
-        audioPlayer.crossOrigin = "anonymous"; 
+        audioPlayer.crossOrigin = "anonymous";
 
         function muatSistem() {
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
@@ -94,19 +115,20 @@
                 "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh.", 
                 "-7.01", "107.551",
                 "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
-                "https://drive.google.com/uc?id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq",
-                "https://drive.google.com/uc?id=1jEjuMF_daZXJfb65gza-8q7IVug",
-                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
-                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
-                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
-                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ"
+                "https://drive.google.com/uc?id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq", // Tahrim
+                "https://drive.google.com/uc?id=1jEjuMF_daZXJfb65gza-8q7IVug", // Subuh
+                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Dzuhur
+                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Ashar
+                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ", // Maghrib
+                "https://drive.google.com/uc?id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ"  // Isya
             ];
 
             keys.forEach((k, i) => {
                 let val = localStorage.getItem(k);
-                if(!val || val.trim() === "" || val === "undefined") {
-                    localStorage.setItem(k, defaults[i]);
+                // Jika kosong atau salah format, pakai default
+                if(!val || val.trim() === "" || val.includes("export=download")) {
                     val = defaults[i];
+                    localStorage.setItem(k, val);
                 }
                 document.getElementById(ids[i]).value = val;
             });
@@ -118,7 +140,6 @@
         }
 
         function hitungJadwal() {
-            const lat = parseFloat(localStorage.getItem("lat")) || -7.01;
             const lon = parseFloat(localStorage.getItem("lon")) || 107.551;
             const selisih = Math.floor((lon - 107.551) * 4); 
             const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
@@ -160,11 +181,10 @@
 
         function playAudio(url) {
             if(!url || url.length < 20) return;
-            // Menghapus trigger download paksa agar langsung diputar di browser
             let cleanUrl = url.replace('export=download&', '').replace('export=download', '');
             audioPlayer.src = cleanUrl;
             audioPlayer.load();
-            audioPlayer.play().catch(e => console.log("Klik layar satu kali untuk suara"));
+            audioPlayer.play().catch(e => console.log("Izin audio diperlukan"));
         }
 
         function saveData() {
@@ -179,10 +199,7 @@
             p.style.display = (p.style.display === "block") ? "none" : "block";
         }
 
-        function startAudio() { 
-            // Trigger audio agar browser mengizinkan pemutaran otomatis adzan
-            audioPlayer.play().then(() => audioPlayer.pause()); 
-        }
+        function startAudio() { audioPlayer.play().then(() => audioPlayer.pause()); }
 
         window.onload = muatSistem;
         setInterval(updateJam, 1000);
