@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V29</title>
+    <title>JWS KORPASGAT V31</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -25,7 +25,6 @@
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         
-        /* Panel Settings */
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
@@ -90,16 +89,18 @@
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
             const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
             
-            // Link Default dari Gambar Anda (image_c29fc0.png)
             const defaults = [
-                "STAFLOG KORPASGAT", "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh dan pekerjaan itu tidak layak bagimu. Karena salat tetap harus diutamakan.", "-7.01", "107.551",
+                "STAFLOG KORPASGAT", 
+                "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh dan pekerjaan itu tidak layak bagimu. Karena salat tetap harus diutamakan.", 
+                "-7.01", 
+                "107.551",
                 "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
-                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq", // Tahrim
-                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug", // Subuh
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Dzuhur
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Ashar
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Maghrib
-                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO"  // Isya
+                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq",
+                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ",
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO6FKdfaQ8gZ"
             ];
 
             keys.forEach((k, i) => {
@@ -145,44 +146,4 @@
                 const card = document.getElementById("card-" + key);
 
                 if (detik === 0) {
-                    let [h, m] = pTime.split(':').map(Number);
-                    if ((now.getHours()*60 + now.getMinutes()) === (h*60 + m - 3)) {
-                        playAudio(localStorage.getItem("urlTahrim"));
-                    }
-                }
-
-                if(pTime === jm) {
-                    card.classList.add('active-now');
-                    if(detik === 0) {
-                        const storageKey = "url" + key.charAt(0).toUpperCase() + key.slice(1);
-                        playAudio(localStorage.getItem(storageKey));
-                    }
-                } else { card.classList.remove('active-now'); }
-            });
-        }
-
-        function playAudio(url) {
-            if(!url || url.trim() === "" || url.includes("placeholder")) return;
-            audioPlayer.src = url.trim();
-            audioPlayer.play().catch(e => console.log("Klik layar TV sekali"));
-        }
-
-        function saveData() {
-            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
-            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
-            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
-            location.reload();
-        }
-
-        function togglePanel() {
-            const p = document.getElementById("panel");
-            p.style.display = (p.style.display === "block") ? "none" : "block";
-        }
-
-        function startAudio() { audioPlayer.play().then(() => audioPlayer.pause()); }
-
-        window.onload = muatSistem;
-        setInterval(updateJam, 1000);
-    </script>
-</body>
-</html>
+                    let [h, m] = pTime.split(':').map(
