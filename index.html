@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 FINAL FIX</title>
+    <title>JWS KORPASGAT V32 FINAL</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -15,7 +15,7 @@
         #n-satuan { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
         #jam { font-size: 12rem; font-weight: 900; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; text-shadow: 5px 5px 20px #000; }
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
-        .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; transition: 0.3s; }
+        .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
         .active-now { background: var(--active) !important; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.7; } }
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
@@ -43,14 +43,14 @@
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ PENGATURAN</h2>
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
         <div class="box">
-            <b>Identitas & Running Text</b>
-            <input type="text" id="in-nama">
-            <input type="text" id="in-run">
+            <b>Identitas & Pesan</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
+            <input type="text" id="in-run" placeholder="Running Text">
         </div>
         <div class="box">
-            <b>🕌 Nama File Audio (Hanya nama file saja)</b>
+            <b>🕌 Nama File Audio (Harus persis GitHub)</b>
             <input type="text" id="in-subuh" placeholder="subuh.mp3">
             <input type="text" id="in-dzuhur" placeholder="dzuhur.mp3">
             <input type="text" id="in-ashar" placeholder="Ashar.mp3">
@@ -71,7 +71,7 @@
             document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
             document.getElementById('in-run').value = localStorage.getItem('tJalan') || "KOMANDO!";
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || (s === "ashar" ? "Ashar.mp3" : s + ".mp3");
+                document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
             });
         }
 
@@ -87,11 +87,11 @@
                 if(hm === target) {
                     card.classList.add('active-now');
                     if(now.getSeconds() === 0 && audioReady) {
-                        let fileName = localStorage.getItem('s-' + s);
-                        // Bersihkan nama file dari titik tambahan di ujung
-                        if(fileName.endsWith('.')) fileName = fileName.slice(0, -1);
-                        player.src = fileName;
-                        player.play().catch(e => alert("Gagal Putar! Cek nama file: " + fileName));
+                        let file = localStorage.getItem('s-' + s);
+                        if(file) {
+                            player.src = file.trim();
+                            player.play().catch(e => console.log("File tidak ditemukan"));
+                        }
                     }
                 } else {
                     card.classList.remove('active-now');
@@ -107,7 +107,6 @@
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
             });
-            alert("Data Berhasil Disimpan!");
             location.reload();
         }
         window.onload = muatSistem;
