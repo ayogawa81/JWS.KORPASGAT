@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V30</title>
+    <title>JWS KORPASGAT V29</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -25,6 +25,7 @@
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         
+        /* Panel Settings */
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: white; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
@@ -53,3 +54,135 @@
     </div>
 
     <marquee id="disp-run">KOMANDO!</marquee>
+
+    <div id="panel">
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        <div class="box">
+            <b>Identitas & Lokasi</b>
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
+            <input type="text" id="in-run" placeholder="Teks Berjalan">
+            <input type="text" id="in-lat" placeholder="Latitude (-7.01)">
+            <input type="text" id="in-lon" placeholder="Longitude (107.551)">
+        </div>
+        <div class="box">
+            <b>🖼️ Background</b>
+            <input type="text" id="url-bg" placeholder="URL Gambar Background">
+        </div>
+        <div class="box">
+            <b>🕌 Media Tahrim & Adzan (Google Drive Link)</b>
+            <input type="text" id="url-tahrim" placeholder="Link Tahrim">
+            <div class="grid-audio">
+                <input type="text" id="url-subuh" placeholder="Adzan Subuh">
+                <input type="text" id="url-dzuhur" placeholder="Adzan Dzuhur">
+                <input type="text" id="url-ashar" placeholder="Adzan Ashar">
+                <input type="text" id="url-maghrib" placeholder="Adzan Maghrib">
+                <input type="text" id="url-isya" placeholder="Adzan Isya">
+            </div>
+        </div>
+        <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
+        <p style="text-align:center; color:gray; cursor:pointer;" onclick="togglePanel()">[ TUTUP ]</p>
+    </div>
+
+    <script>
+        let audioPlayer = new Audio();
+
+        function muatSistem() {
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
+            
+            // Link Default dari Gambar Anda (image_c29fc0.png)
+            const defaults = [
+                "STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551",
+                "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
+                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq", // Tahrim
+                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug", // Subuh
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Dzuhur
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Ashar
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Maghrib
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO"  // Isya
+            ];
+
+            keys.forEach((k, i) => {
+                let val = localStorage.getItem(k);
+                if(!val || val.trim() === "") {
+                    localStorage.setItem(k, defaults[i]);
+                    val = defaults[i];
+                }
+                document.getElementById(ids[i]).value = val;
+            });
+
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan");
+            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan");
+            document.body.style.backgroundImage = "url('" + localStorage.getItem("urlBg") + "')";
+            
+            hitungJadwal();
+        }
+
+        function hitungJadwal() {
+            const lat = parseFloat(localStorage.getItem("lat")) || -7.01;
+            const lon = parseFloat(localStorage.getItem("lon")) || 107.551;
+            const selisih = Math.floor((lon - 107.551) * 4); 
+            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
+            for (let k in base) {
+                let [h, m] = base[k].split(':').map(Number);
+                let total = (h * 60 + m) - selisih;
+                document.getElementById('t-'+k).innerText = String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
+            }
+        }
+
+        function updateJam() {
+            const now = new Date();
+            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            const detik = now.getSeconds();
+            
+            document.getElementById('jam').innerText = jamStr;
+            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
+
+            const jm = jamStr.substring(0, 5);
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
+                const pTime = document.getElementById('t-' + key).innerText;
+                const card = document.getElementById("card-" + key);
+
+                if (detik === 0) {
+                    let [h, m] = pTime.split(':').map(Number);
+                    if ((now.getHours()*60 + now.getMinutes()) === (h*60 + m - 3)) {
+                        playAudio(localStorage.getItem("urlTahrim"));
+                    }
+                }
+
+                if(pTime === jm) {
+                    card.classList.add('active-now');
+                    if(detik === 0) {
+                        const storageKey = "url" + key.charAt(0).toUpperCase() + key.slice(1);
+                        playAudio(localStorage.getItem(storageKey));
+                    }
+                } else { card.classList.remove('active-now'); }
+            });
+        }
+
+        function playAudio(url) {
+            if(!url || url.trim() === "" || url.includes("placeholder")) return;
+            audioPlayer.src = url.trim();
+            audioPlayer.play().catch(e => console.log("Klik layar TV sekali"));
+        }
+
+        function saveData() {
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
+            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
+            location.reload();
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+
+        function startAudio() { audioPlayer.play().then(() => audioPlayer.pause()); }
+
+        window.onload = muatSistem;
+        setInterval(updateJam, 1000);
+    </script>
+</body>
+</html>
