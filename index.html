@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V18 - FINAL STABLE</title>
+    <title>JWS KORPASGAT V18 - STABLE TV</title>
     <style>
         :root { --accent: #fbbf24; --active-color: #ef4444; }
         body { 
             margin: 0; background: #000 no-repeat center fixed; background-size: cover;
             color: white; font-family: Arial, sans-serif; height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; cursor: pointer;
-            transition: background-image 0.5s ease-in-out;
         }
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 3px solid var(--accent); }
         #disp-nama { font-size: 3.2rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
         .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 3px 3px 15px rgba(0,0,0,1); }
         #jam { font-size: 11rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
-        .date-box { font-size: 1.8rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 25px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); }
+        .date-box { font-size: 1.8rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 25px; border-radius: 50px; }
         .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 3px solid var(--accent); }
         .card { flex: 1; padding: 15px 5px; text-align: center; border-right: 1px solid #333; transition: 0.5s; position: relative; }
         .card.active-now { background: var(--active-color) !important; animation: blink 1s infinite; }
@@ -49,149 +48,4 @@
         <div class="card" id="card-subuh"><h3>SUBUH</h3><p id="t-subuh">--:--</p></div>
         <div class="card" id="card-dzuhur"><h3>DZUHUR</h3><p id="t-dzuhur">--:--</p></div>
         <div class="card" id="card-ashar"><h3>ASHAR</h3><p id="t-ashar">--:--</p></div>
-        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">--:--</p></div>
-        <div class="card" id="card-isya"><h3>ISYA</h3><p id="t-isya">--:--</p></div>
-    </div>
-
-    <marquee id="disp-run">KOMANDO!</marquee>
-
-    <div id="panel">
-        <h2 style="color:#1e3a8a;">⚙️ PENGATURAN MEDIA (MODE URL TV)</h2>
-        
-        <div class="box">
-            <b>Identitas & Lokasi</b>
-            <input type="text" id="in-nama" placeholder="Nama Satuan">
-            <input type="text" id="in-run" placeholder="Teks Berjalan">
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="in-lat" placeholder="Latitude (Cth: -7.01)">
-                <input type="text" id="in-lon" placeholder="Longitude (Cth: 107.55)">
-            </div>
-        </div>
-
-        <div class="box">
-            <b>🖼️ Background & Alert</b>
-            <input type="text" id="url-bg" placeholder="URL Gambar Background (Wajib Direct Link)">
-            <input type="text" id="url-beep" placeholder="URL Nada Beep (.mp3)">
-        </div>
-
-        <div class="box">
-            <b>🕌 Media Tahrim & Adzan (Gunakan Direct Link .mp3)</b>
-            <div class="grid-media">
-                <div><label>Tahrim (Waktu Tunggu)</label><input type="text" id="url-tahrim" placeholder="URL Tahrim"></div>
-                <div><label>Adzan Subuh</label><input type="text" id="url-subuh" placeholder="URL Adzan Subuh"></div>
-                <div><label>Adzan Dzuhur</label><input type="text" id="url-dzuhur" placeholder="URL Adzan Dzuhur"></div>
-                <div><label>Adzan Ashar</label><input type="text" id="url-ashar" placeholder="URL Adzan Ashar"></div>
-                <div><label>Adzan Maghrib</label><input type="text" id="url-maghrib" placeholder="URL Adzan Maghrib"></div>
-                <div><label>Adzan Isya</label><input type="text" id="url-isya" placeholder="URL Adzan Isya"></div>
-            </div>
-        </div>
-        
-        <button class="btn-save" onclick="saveSemua()">SIMPAN & REFRESH</button>
-        <button onclick="togglePanel()" style="width:100%; border:none; padding:15px; color:gray; cursor:pointer; background:none;">[ TUTUP ]</button>
-    </div>
-
-    <script>
-        function hitungJadwal() {
-            const lat = parseFloat(localStorage.getItem("lat")) || -7.01;
-            const lon = parseFloat(localStorage.getItem("lon")) || 107.55;
-            const selisih = Math.floor((lon - 107.55) * 4); 
-            const base = { subuh:"04:31", dzuhur:"11:47", ashar:"15:08", maghrib:"17:43", isya:"18:54" };
-            for (let k in base) {
-                let [h, m] = base[k].split(':').map(Number);
-                let total = (h * 60 + m) - selisih;
-                let final = String(Math.floor(total/60)).padStart(2,'0')+":"+String(total%60).padStart(2,'0');
-                document.getElementById('t-'+k).innerText = final;
-            }
-        }
-
-        function muatSistem() {
-            const fields = ['nSatuan', 'tJalan', 'lat', 'lon', 'urlBg', 'urlBeep', 'urlTahrim', 'urlSubuh', 'urlDzuhur', 'urlAshar', 'urlMaghrib', 'urlIsya'];
-            const inputs = ['in-nama', 'in-run', 'in-lat', 'in-lon', 'url-bg', 'url-beep', 'url-tahrim', 'url-subuh', 'url-dzuhur', 'url-ashar', 'url-maghrib', 'url-isya'];
-            
-            fields.forEach((f, i) => {
-                const val = localStorage.getItem(f);
-                if(val) document.getElementById(inputs[i]).value = val;
-            });
-
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
-            
-            // Perbaikan pemanggilan background
-            const bg = localStorage.getItem("urlBg");
-            if(bg && bg.trim() !== "") {
-                // Menggunakan tanda kutip ganda dan paksa refresh URL
-                document.body.style.backgroundImage = "url(\"" + bg + "\")";
-            } else {
-                document.body.style.backgroundColor = "black";
-            }
-
-            hitungJadwal();
-        }
-
-        function saveSemua() {
-            const fields = ['nSatuan', 'tJalan', 'lat', 'lon', 'urlBg', 'urlBeep', 'urlTahrim', 'urlSubuh', 'urlDzuhur', 'urlAshar', 'urlMaghrib', 'urlIsya'];
-            const inputs = ['in-nama', 'in-run', 'in-lat', 'in-lon', 'url-bg', 'url-beep', 'url-tahrim', 'url-subuh', 'url-dzuhur', 'url-ashar', 'url-maghrib', 'url-isya'];
-            
-            fields.forEach((f, i) => {
-                localStorage.setItem(f, document.getElementById(inputs[i]).value);
-            });
-            alert("Setting Disimpan!");
-            location.reload();
-        }
-
-        function mainkanSuara(tipe, delay = 0) {
-            const url = localStorage.getItem(tipe);
-            if(url && url.trim() !== "") {
-                setTimeout(() => {
-                    const a = new Audio(url);
-                    a.play().catch(e => console.log("Audio diblokir browser, klik layar!"));
-                }, delay);
-            }
-        }
-
-        function updateJam() {
-            const now = new Date();
-            const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
-            document.getElementById('jam').innerText = jamStr;
-            document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
-
-            const jm = jamStr.substring(0, 5);
-            const detik = now.getSeconds();
-            const prayerTimes = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-
-            prayerTimes.forEach(key => {
-                const pTime = document.getElementById('t-' + key).innerText;
-                const card = document.getElementById("card-" + key);
-                if(pTime === jm) {
-                    card.classList.add('active-now');
-                    if(detik === 0) {
-                        mainkanSuara('urlBeep');
-                        mainkanSuara('urlTahrim', 1500); 
-                    }
-                    if(detik === 12) { // Adzan bunyi detik ke 12
-                        const capKey = key.charAt(0).toUpperCase() + key.slice(1);
-                        mainkanSuara('url' + capKey);
-                    }
-                } else {
-                    card.classList.remove('active-now');
-                }
-            });
-        }
-
-        function togglePanel() {
-            const p = document.getElementById("panel");
-            p.style.display = (p.style.display === "block") ? "none" : "block";
-        }
-
-        function startAudio() {
-            const dummy = new Audio();
-            dummy.play().then(() => dummy.pause());
-            console.log("Audio diaktifkan");
-        }
-
-        window.onload = muatSistem;
-        setInterval(updateJam, 1000);
-    </script>
-</body>
-</html>
+        <div class="card" id="card-maghrib"><h3>MAGHRIB</h3><p id="t
