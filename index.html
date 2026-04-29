@@ -26,7 +26,6 @@
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         
-        /* PANEL PENGATURAN */
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
         .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; font-size: 1.2rem; }
@@ -59,62 +58,45 @@
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
-            <label class="audio-label">Nama Satuan:</label>
-            <input type="text" id="in-nama">
-            <label class="audio-label">Running Text:</label>
-            <input type="text" id="in-run">
-            <label class="audio-label">Latitude / Longitude:</label>
-            <input type="text" id="in-lat">
-            <input type="text" id="in-lon">
+            <label class="audio-label">Nama Satuan:</label><input type="text" id="in-nama">
+            <label class="audio-label">Running Text:</label><input type="text" id="in-run">
+            <label class="audio-label">Latitude / Longitude:</label><input type="text" id="in-lat"><input type="text" id="in-lon">
         </div>
         <div class="box">
-            <b>🖼️ Background</b>
-            <label class="audio-label">URL Gambar Latar:</label>
-            <input type="text" id="url-bg">
-        </div>
-        <div class="box">
-            <b>🕌 Media Audio (Internal GitHub)</b>
-            <label class="audio-label">Audio Tahrim:</label>
-            <input type="text" id="url-tahrim">
-            <label class="audio-label">Adzan Subuh:</label>
-            <input type="text" id="url-subuh">
-            <label class="audio-label">Adzan Dzuhur:</label>
-            <input type="text" id="url-dzuhur">
-            <label class="audio-label">Adzan Ashar:</label>
-            <input type="text" id="url-ashar">
-            <label class="audio-label">Adzan Maghrib:</label>
-            <input type="text" id="url-maghrib">
-            <label class="audio-label">Adzan Isya:</label>
-            <input type="text" id="url-isya">
+            <b>🕌 Media Audio (Internal)</b>
+            <label class="audio-label">Audio Tahrim:</label><input type="text" id="url-tahrim">
+            <label class="audio-label">Adzan Subuh:</label><input type="text" id="url-subuh">
+            <label class="audio-label">Adzan Dzuhur:</label><input type="text" id="url-dzuhur">
+            <label class="audio-label">Adzan Ashar:</label><input type="text" id="url-ashar">
+            <label class="audio-label">Adzan Maghrib:</label><input type="text" id="url-maghrib">
+            <label class="audio-label">Adzan Isya:</label><input type="text" id="url-isya">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p style="text-align:center; color:gray; cursor:pointer;" onclick="togglePanel()">[ TUTUP ]</p>
     </div>
 
     <script>
-        const audioPlayer = new Audio();
+        const player = new Audio();
+        let audioEnabled = false;
 
         function muatSistem() {
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
             const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
             
-            // Nama file disesuaikan persis dengan hasil unggahan Anda di GitHub
+            // Nama file disesuaikan persis dengan foto unggahan Anda
             const defaults = [
-                "STAFLOG KORPASGAT", 
-                "Jika pekerjaan adalah alasan kenapa kamu melewatkan salat, maka tidak akan ada keberkahan dari penghasilan yang kamu peroleh.", 
-                "-7.01", "107.551",
+                "STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551",
                 "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
                 "Tarhim.mp3", "subuh.mp3", "dzuhur.mp3", "Ashar.mp3", "Magrib.mp3", "Isya.mp3"
             ];
 
             keys.forEach((k, i) => {
                 let val = localStorage.getItem(k);
-                // Paksa ganti jika kosong atau masih mengandung link Google Drive lama
-                if(!val || val.trim() === "" || val.includes("drive.google.com")) {
+                if(!val || val.includes("drive.google.com")) {
                     val = defaults[i];
                     localStorage.setItem(k, val);
                 }
-                document.getElementById(ids[i]).value = val;
+                if(document.getElementById(ids[i])) document.getElementById(ids[i]).value = val;
             });
 
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan");
@@ -137,38 +119,52 @@
         function updateJam() {
             const now = new Date();
             const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
+            const jm = jamStr.substring(0, 5);
             const detik = now.getSeconds();
             
             document.getElementById('jam').innerText = jamStr;
             document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
             document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
 
-            const jm = jamStr.substring(0, 5);
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
-                const pTime = document.getElementById('t-' + key).innerText;
+                const tAdzan = document.getElementById('t-' + key).innerText;
                 const card = document.getElementById("card-" + key);
 
-                if (detik === 0) {
-                    let [h, m] = pTime.split(':').map(Number);
-                    if ((now.getHours()*60 + now.getMinutes()) === (h*60 + m - 3)) {
-                        playAudio(localStorage.getItem("urlTahrim"));
-                    }
-                    if(pTime === jm) {
-                        const storageKey = "url" + key.charAt(0).toUpperCase() + key.slice(1);
-                        playAudio(localStorage.getItem(storageKey));
-                    }
+                if (detik === 0 && tAdzan === jm) {
+                    const audioFile = localStorage.getItem("url" + key.charAt(0).toUpperCase() + key.slice(1));
+                    bunyikan(audioFile);
                 }
-                if(pTime === jm) card.classList.add('active-now');
+                if(tAdzan === jm) card.classList.add('active-now');
                 else card.classList.remove('active-now');
             });
         }
 
-        function playAudio(file) {
-            if(!file) return;
-            audioPlayer.src = file;
-            audioPlayer.load();
-            audioPlayer.play().catch(e => console.log("Klik layar!"));
+        function bunyikan(file) {
+            if(!file || !audioEnabled) return;
+            player.src = file;
+            player.play().catch(e => console.log("Izin audio belum aktif"));
+        }
+
+        function startAudio() {
+            audioEnabled = true;
+            player.play().then(() => player.pause());
+            console.log("Audio Aktif");
         }
 
         function saveData() {
-            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMagh
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
+            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
+            location.reload();
+        }
+
+        function togglePanel() {
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+
+        window.onload = muatSistem;
+        setInterval(updateJam, 1000);
+    </script>
+</body>
+</html>
