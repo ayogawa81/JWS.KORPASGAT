@@ -21,7 +21,7 @@
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
-        #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
+        #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
         input { width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
         .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; }
@@ -31,7 +31,6 @@
 
     <div style="position:fixed; top:20px; right:20px; font-size:30px; z-index:100;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
-
     <div id="jam">00:00:00</div>
 
     <div class="prayer-row">
@@ -41,18 +40,17 @@
         <div class="card" id="c-maghrib"><h3>MAGHRIB</h3><p id="t-maghrib">17:43</p></div>
         <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
-
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        <h2 style="text-align:center;">⚙️ PENGATURAN</h2>
         <div class="box">
-            <b>Identitas</b>
-            <input type="text" id="in-nama" placeholder="Nama Satuan">
-            <input type="text" id="in-run" placeholder="Running Text">
+            <b>Identitas & Running Text</b>
+            <input type="text" id="in-nama">
+            <input type="text" id="in-run">
         </div>
         <div class="box">
-            <b>🕌 File Audio (GitHub)</b>
+            <b>🕌 Nama File Audio (Hanya nama file saja)</b>
             <input type="text" id="in-subuh" placeholder="subuh.mp3">
             <input type="text" id="in-dzuhur" placeholder="dzuhur.mp3">
             <input type="text" id="in-ashar" placeholder="Ashar.mp3">
@@ -68,19 +66,12 @@
         let audioReady = false;
 
         function muatSistem() {
-            // Load Nama & Running Text
-            if(localStorage.getItem('nSatuan')) {
-                document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan');
-                document.getElementById('in-nama').value = localStorage.getItem('nSatuan');
-            }
-            if(localStorage.getItem('tJalan')) {
-                document.getElementById('disp-run').innerText = localStorage.getItem('tJalan');
-                document.getElementById('in-run').value = localStorage.getItem('tJalan');
-            }
-            // Load Audio Names to Inputs
+            document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
+            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "KOMANDO!";
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                let val = localStorage.getItem('s-' + s) || s + ".mp3";
-                document.getElementById('in-' + s).value = val;
+                document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || (s === "ashar" ? "Ashar.mp3" : s + ".mp3");
             });
         }
 
@@ -93,13 +84,14 @@
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 const target = document.getElementById('t-' + s).innerText;
                 const card = document.getElementById('c-' + s);
-                
                 if(hm === target) {
                     card.classList.add('active-now');
                     if(now.getSeconds() === 0 && audioReady) {
-                        let file = localStorage.getItem('s-' + s) || s + ".mp3";
-                        player.src = file;
-                        player.play().catch(e => console.log("Audio play blocked atau file hilang"));
+                        let fileName = localStorage.getItem('s-' + s);
+                        // Bersihkan nama file dari titik tambahan di ujung
+                        if(fileName.endsWith('.')) fileName = fileName.slice(0, -1);
+                        player.src = fileName;
+                        player.play().catch(e => alert("Gagal Putar! Cek nama file: " + fileName));
                     }
                 } else {
                     card.classList.remove('active-now');
@@ -107,6 +99,8 @@
             });
         }
 
+        function aktifkanAudio() { audioReady = true; player.play().then(() => player.pause()); }
+        function togglePanel() { const p = document.getElementById("panel"); p.style.display = (p.style.display === "block") ? "none" : "block"; }
         function saveData() {
             localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
             localStorage.setItem('tJalan', document.getElementById('in-run').value);
@@ -116,18 +110,6 @@
             alert("Data Berhasil Disimpan!");
             location.reload();
         }
-
-        function aktifkanAudio() { 
-            audioReady = true; 
-            player.play().then(() => player.pause());
-            console.log("Audio terpancing aktif");
-        }
-
-        function togglePanel() { 
-            const p = document.getElementById("panel"); 
-            p.style.display = (p.style.display === "block") ? "none" : "block"; 
-        }
-
         window.onload = muatSistem;
         setInterval(update, 1000);
     </script>
