@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 FINAL</title>
+    <title>JWS KORPASGAT V32 FIX</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -26,12 +26,10 @@
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
         
-        /* PANEL PENGATURAN */
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; box-shadow: 0 0 100px #000; }
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
         .box b { display: block; margin-bottom: 10px; color: #1e3a8a; border-left: 5px solid var(--accent); padding-left: 10px; font-size: 1.2rem; }
-        .audio-label { display: block; font-weight: bold; margin-top: 10px; font-size: 0.9rem; color: #555; }
-        input { width: 95%; padding: 10px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        input { width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
         .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; margin-top: 10px; }
     </style>
 </head>
@@ -59,18 +57,19 @@
         <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
-            <label class="audio-label">Nama Satuan:</label><input type="text" id="in-nama">
-            <label class="audio-label">Running Text:</label><input type="text" id="in-run">
-            <label class="audio-label">Lat/Lon:</label><input type="text" id="in-lat"><input type="text" id="in-lon">
+            <input type="text" id="in-nama" placeholder="Nama Satuan">
+            <input type="text" id="in-run" placeholder="Running Text">
+            <input type="text" id="in-lat" placeholder="Latitude">
+            <input type="text" id="in-lon" placeholder="Longitude">
         </div>
         <div class="box">
-            <b>🕌 Media Audio (Internal GitHub)</b>
-            <label class="audio-label">Tahrim:</label><input type="text" id="url-tahrim">
-            <label class="audio-label">Subuh:</label><input type="text" id="url-subuh">
-            <label class="audio-label">Dzuhur:</label><input type="text" id="url-dzuhur">
-            <label class="audio-label">Ashar:</label><input type="text" id="url-ashar">
-            <label class="audio-label">Maghrib:</label><input type="text" id="url-maghrib">
-            <label class="audio-label">Isya:</label><input type="text" id="url-isya">
+            <b>🕌 Media Audio (GitHub)</b>
+            <input type="text" id="url-tahrim" placeholder="File Tahrim">
+            <input type="text" id="url-subuh" placeholder="File Subuh">
+            <input type="text" id="url-dzuhur" placeholder="File Dzuhur">
+            <input type="text" id="url-ashar" placeholder="File Ashar">
+            <input type="text" id="url-maghrib" placeholder="File Maghrib">
+            <input type="text" id="url-isya" placeholder="File Isya">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p style="text-align:center; color:gray; cursor:pointer;" onclick="togglePanel()">[ TUTUP ]</p>
@@ -80,11 +79,10 @@
         const player = new Audio();
         let audioAktif = false;
 
+        const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
+        const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
+
         function muatSistem() {
-            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
-            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
-            
-            // Default file sesuai unggahan GitHub Anda
             const defaults = [
                 "STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551",
                 "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
@@ -97,7 +95,8 @@
                     val = defaults[i];
                     localStorage.setItem(k, val);
                 }
-                if(document.getElementById(ids[i])) document.getElementById(ids[i]).value = val;
+                let el = document.getElementById(ids[i]);
+                if(el) el.value = val;
             });
 
             document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan");
@@ -107,11 +106,16 @@
         }
 
         function saveData() {
-            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
-            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
-            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
-            alert("Data Berhasil Disimpan!");
-            location.reload();
+            try {
+                ids.forEach((id, i) => {
+                    let el = document.getElementById(id);
+                    if(el) localStorage.setItem(keys[i], el.value);
+                });
+                alert("Data Berhasil Disimpan!");
+                location.reload();
+            } catch (e) {
+                alert("Gagal Menyimpan: " + e);
+            }
         }
 
         function hitungJadwal() {
@@ -132,15 +136,14 @@
             document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 
             const jm = jamStr.substring(0, 5);
-            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
-                const tAdzan = document.getElementById('t-' + key).innerText;
-                const card = document.getElementById("card-" + key);
-                if (now.getSeconds() === 0 && tAdzan === jm) {
-                    const file = localStorage.getItem("url" + key.charAt(0).toUpperCase() + key.slice(1));
-                    if(audioAktif) { player.src = file; player.play(); }
-                }
-                if(tAdzan === jm) card.classList.add('active-now'); else card.classList.remove('active-now');
-            });
+            if (now.getSeconds() === 0) {
+                ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
+                    if (document.getElementById('t-' + key).innerText === jm) {
+                        const file = localStorage.getItem("url" + key.charAt(0).toUpperCase() + key.slice(1));
+                        if(audioAktif && file) { player.src = file; player.play(); }
+                    }
+                });
+            }
         }
 
         function startAudio() { audioAktif = true; player.play().then(() => player.pause()); }
