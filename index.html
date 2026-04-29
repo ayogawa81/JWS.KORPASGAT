@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V27 - TIZEN FIX</title>
+    <title>JWS KORPASGAT V29</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
-            margin: 0; background-color: #000; 
-            background-repeat: no-repeat; background-position: center; 
-            background-attachment: fixed; background-size: cover;
+            margin: 0; background-color: #000; background-repeat: no-repeat; 
+            background-position: center; background-attachment: fixed; background-size: cover;
             color: white; font-family: 'Arial', sans-serif; height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; cursor: pointer;
-            /* Transisi halus agar BG tidak berkedip */
-            transition: background-image 0.5s ease-in-out;
         }
-        /* Overlay agar teks tetap terbaca meski BG terang */
-        body::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: -1;
-        }
-        .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); z-index: 1; }
+        .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); }
         #disp-nama { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
-        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 4px 4px 15px rgba(0,0,0,1); z-index: 1; }
+        .main-clock { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-shadow: 4px 4px 15px rgba(0,0,0,1); }
         #jam { font-size: 12rem; font-weight: 900; margin: 0; font-family: monospace; letter-spacing: -5px; }
         .date-box { font-size: 2rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); }
-        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); z-index: 1; }
+        .prayer-row { display: flex; width: 100%; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
         .card { flex: 1; padding: 20px 10px; text-align: center; border-right: 1px solid #333; }
         .card.active-now { background: var(--active) !important; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
         .card h3 { margin: 0; font-size: 1.3rem; color: var(--accent); }
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
-        marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); z-index: 1; }
+        marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         
         /* Panel Settings */
         #btn-set { position: fixed; top: 20px; right: 20px; cursor: pointer; z-index: 100; font-size: 30px; opacity: 0.5; }
@@ -64,7 +56,7 @@
     <marquee id="disp-run">KOMANDO!</marquee>
 
     <div id="panel">
-        <h2 style="text-align:center;">⚙️ PENGATURAN LENGKAP</h2>
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
         <div class="box">
             <b>Identitas & Lokasi</b>
             <input type="text" id="in-nama" placeholder="Nama Satuan">
@@ -74,16 +66,16 @@
         </div>
         <div class="box">
             <b>🖼️ Background</b>
-            <input type="text" id="url-bg" placeholder="URL Gambar (Postimg)">
+            <input type="text" id="url-bg" placeholder="URL Gambar Background">
         </div>
         <div class="box">
-            <b>🕌 Media Tahrim & Adzan Setiap Waktu</b>
-            <input type="text" id="url-tahrim" placeholder="url tahrim">
+            <b>🕌 Media Tahrim & Adzan (Google Drive Link)</b>
+            <input type="text" id="url-tahrim" placeholder="Link Tahrim">
             <div class="grid-audio">
                 <input type="text" id="url-subuh" placeholder="Adzan Subuh">
-                <input type="text" id="url-dzuhur" placeholder="Adzan dzuhur">
-                <input type="text" id="url-ashar" placeholder="adzan Ashar">
-                <input type="text" id="url-maghrib" placeholder="Adzan Magrib">
+                <input type="text" id="url-dzuhur" placeholder="Adzan Dzuhur">
+                <input type="text" id="url-ashar" placeholder="Adzan Ashar">
+                <input type="text" id="url-maghrib" placeholder="Adzan Maghrib">
                 <input type="text" id="url-isya" placeholder="Adzan Isya">
             </div>
         </div>
@@ -98,17 +90,30 @@
             const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
             const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
             
+            // Link Default dari Gambar Anda (image_c29fc0.png)
+            const defaults = [
+                "STAFLOG KORPASGAT", "KOMANDO!", "-7.01", "107.551",
+                "https://i.postimg.cc/T32xKDtZ/Picture2.jpg",
+                "https://drive.google.com/uc?export=download&id=12HExJK8joi5XNhc3RXQVHlgcES9fsZmq", // Tahrim
+                "https://drive.google.com/uc?export=download&id=1jEjuMF_daZXJfb65gza-8q7IVug", // Subuh
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Dzuhur
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Ashar
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO", // Maghrib
+                "https://drive.google.com/uc?export=download&id=1B8WV_ZG1i5CSap8MVMrwoO"  // Isya
+            ];
+
             keys.forEach((k, i) => {
-                const val = localStorage.getItem(k);
-                if(val) document.getElementById(ids[i]).value = val;
+                let val = localStorage.getItem(k);
+                if(!val || val.trim() === "") {
+                    localStorage.setItem(k, defaults[i]);
+                    val = defaults[i];
+                }
+                document.getElementById(ids[i]).value = val;
             });
 
-            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan") || "STAFLOG KORPASGAT";
-            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan") || "KOMANDO!";
-            
-            // FIX BACKGROUND TIZEN: Paksa ganti lewat style inline
-            const bgUrl = localStorage.getItem("urlBg") || "https://i.postimg.cc/T32xKDtZ/Picture2.jpg";
-            document.body.style.backgroundImage = "url('" + bgUrl + "')";
+            document.getElementById("disp-nama").innerText = localStorage.getItem("nSatuan");
+            document.getElementById("disp-run").innerText = localStorage.getItem("tJalan");
+            document.body.style.backgroundImage = "url('" + localStorage.getItem("urlBg") + "')";
             
             hitungJadwal();
         }
@@ -125,17 +130,11 @@
             }
         }
 
-        function saveData() {
-            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
-            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
-            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
-            location.reload();
-        }
-
         function updateJam() {
             const now = new Date();
             const jamStr = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
             const detik = now.getSeconds();
+            
             document.getElementById('jam').innerText = jamStr;
             document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
             document.getElementById('hijri').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(now);
@@ -144,7 +143,7 @@
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(key => {
                 const pTime = document.getElementById('t-' + key).innerText;
                 const card = document.getElementById("card-" + key);
-                
+
                 if (detik === 0) {
                     let [h, m] = pTime.split(':').map(Number);
                     if ((now.getHours()*60 + now.getMinutes()) === (h*60 + m - 3)) {
@@ -155,17 +154,24 @@
                 if(pTime === jm) {
                     card.classList.add('active-now');
                     if(detik === 0) {
-                        const urlKey = "url" + key.charAt(0).toUpperCase() + key.slice(1);
-                        playAudio(localStorage.getItem(urlKey));
+                        const storageKey = "url" + key.charAt(0).toUpperCase() + key.slice(1);
+                        playAudio(localStorage.getItem(storageKey));
                     }
                 } else { card.classList.remove('active-now'); }
             });
         }
 
         function playAudio(url) {
-            if(!url || url.trim() === "") return;
+            if(!url || url.trim() === "" || url.includes("placeholder")) return;
             audioPlayer.src = url.trim();
-            audioPlayer.play().catch(e => console.log("Interaksi diperlukan"));
+            audioPlayer.play().catch(e => console.log("Klik layar TV sekali"));
+        }
+
+        function saveData() {
+            const keys = ["nSatuan", "tJalan", "lat", "lon", "urlBg", "urlTahrim", "urlSubuh", "urlDzuhur", "urlAshar", "urlMaghrib", "urlIsya"];
+            const ids = ["in-nama", "in-run", "in-lat", "in-lon", "url-bg", "url-tahrim", "url-subuh", "url-dzuhur", "url-ashar", "url-maghrib", "url-isya"];
+            keys.forEach((k, i) => localStorage.setItem(k, document.getElementById(ids[i]).value));
+            location.reload();
         }
 
         function togglePanel() {
@@ -173,9 +179,7 @@
             p.style.display = (p.style.display === "block") ? "none" : "block";
         }
 
-        function startAudio() {
-            audioPlayer.play().then(() => audioPlayer.pause());
-        }
+        function startAudio() { audioPlayer.play().then(() => audioPlayer.pause()); }
 
         window.onload = muatSistem;
         setInterval(updateJam, 1000);
