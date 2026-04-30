@@ -38,8 +38,8 @@
     <div id="jam">00:00:00</div>
     
     <div id="tgl-container">
-        <div id="tgl-masehi">Rabu, 29 April 2026</div>
-        <div id="tgl-hijriah">12 Syawal 1447 H</div>
+        <div id="tgl-masehi">...</div>
+        <div id="tgl-hijriah">...</div>
     </div>
 
     <div class="prayer-row">
@@ -60,12 +60,12 @@
             <input type="text" id="in-run" placeholder="Running Text">
         </div>
         <div class="box">
-            <b>🕌 File Audio (Harus Persis GitHub)</b>
-            <input type="text" id="in-subuh" placeholder="subuh.mp3">
-            <input type="text" id="in-dzuhur" placeholder="dzuhur.mp3">
-            <input type="text" id="in-ashar" placeholder="Ashar.mp3">
-            <input type="text" id="in-maghrib" placeholder="Magrib.mp3">
-            <input type="text" id="in-isya" placeholder="Isya.mp3">
+            <b>🕌 Link Audio (Gunakan Link Raw GitHub / MP3)</b>
+            <input type="text" id="in-subuh" placeholder="Link MP3 Subuh">
+            <input type="text" id="in-dzuhur" placeholder="Link MP3 Dzuhur">
+            <input type="text" id="in-ashar" placeholder="Link MP3 Ashar">
+            <input type="text" id="in-maghrib" placeholder="Link MP3 Magrib">
+            <input type="text" id="in-isya" placeholder="Link MP3 Isya">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer;">[ TUTUP ]</p>
@@ -74,6 +74,7 @@
     <script>
         const player = new Audio();
         let audioReady = false;
+        let sudahBunyi = ""; // Mencegah audio berulang di menit yang sama
 
         function getHijri() {
             const date = new Date();
@@ -81,7 +82,7 @@
             const masehi = new Intl.DateTimeFormat('id-ID', { weekday: 'long', ...options }).format(date);
             document.getElementById('tgl-masehi').innerText = masehi;
 
-            // Simple Hijri Calculation (Umul Qura approximation)
+            // Hijriah
             const hijriDate = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options).format(date);
             document.getElementById('tgl-hijriah').innerText = hijriDate + " H";
         }
@@ -106,29 +107,59 @@
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 const target = document.getElementById('t-' + s).innerText;
                 const card = document.getElementById('c-' + s);
+                
                 if(hm === target) {
                     card.classList.add('active-now');
-                    if(now.getSeconds() === 0 && audioReady) {
+                    
+                    // Eksekusi audio hanya jika belum bunyi di menit ini
+                    if(audioReady && sudahBunyi !== s) {
                         let file = localStorage.getItem('s-' + s);
-                        if(file) {
+                        if(file && file.trim() !== "") {
                             player.src = file.trim();
-                            player.play().catch(e => console.log("Audio play error"));
+                            player.play()
+                                .then(() => { 
+                                    sudahBunyi = s; 
+                                    console.log("Memutar: " + s);
+                                })
+                                .catch(e => console.log("Gagal putar audio. Klik layar!"));
                         }
                     }
                 } else {
                     card.classList.remove('active-now');
+                    // Reset tanda bunyi jika sudah ganti menit
+                    if(sudahBunyi === s && hm !== target) {
+                        sudahBunyi = "";
+                    }
                 }
             });
         }
 
-        function aktifkanAudio() { audioReady = true; player.play().then(() => player.pause()); }
-        function togglePanel() { const p = document.getElementById("panel"); p.style.display = (p.style.display === "block") ? "none" : "block"; }
+        // PENTING: Browser butuh interaksi user sebelum memutar suara
+        function aktifkanAudio() { 
+            if(!audioReady) {
+                audioReady = true; 
+                // Putar suara pancingan (silent)
+                player.src = "https://www.soundjay.com/buttons/beep-01a.mp3"; 
+                player.volume = 0.1;
+                player.play().then(() => {
+                    player.pause();
+                    console.log("Sistem Audio Aktif");
+                });
+            }
+        }
+
+        function togglePanel() { 
+            const p = document.getElementById("panel"); 
+            p.style.display = (p.style.display === "block") ? "none" : "block"; 
+        }
+
         function saveData() {
             localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
             localStorage.setItem('tJalan', document.getElementById('in-run').value);
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
             });
+            alert("Data Disimpan!");
             location.reload();
         }
 
