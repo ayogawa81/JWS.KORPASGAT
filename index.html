@@ -8,13 +8,13 @@
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
             margin: 0; background: #000 url('https://i.postimg.cc/T32xKDtZ/Picture2.jpg') no-repeat center fixed; 
-            background-size: cover; color: white; font-family: Arial, sans-serif; 
+            background-size: cover; color: white; font-family: 'Arial Black', sans-serif; 
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
         }
         .header { padding: 10px; text-align: center; background: rgba(0,0,0,0.8); border-bottom: 4px solid var(--accent); }
         #n-satuan { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; text-transform: uppercase; }
         #jam { font-size: 11rem; font-weight: 900; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; text-shadow: 5px 5px 20px #000; margin-bottom: -10px; }
-        #tgl-container { text-align: center; margin-bottom: 20px; min-height: 50px; }
+        #tgl-container { text-align: center; margin-bottom: 20px; }
         #tgl-masehi { font-size: 2.2rem; font-weight: bold; background: rgba(0,0,0,0.6); padding: 5px 30px; border-radius: 50px; border: 2px solid var(--accent); display: inline-block; margin-right: 10px; }
         #tgl-hijriah { font-size: 2.2rem; font-weight: bold; color: var(--accent); background: rgba(0,0,0,0.8); padding: 5px 30px; border-radius: 50px; border: 2px solid white; display: inline-block; }
         .prayer-row { display: flex; background: rgba(0,0,0,0.9); border-top: 4px solid var(--accent); }
@@ -25,23 +25,23 @@
         .card p { margin: 5px 0 0; font-size: 3.5rem; font-weight: 900; }
         marquee { background: #000; color: var(--accent); font-size: 2.5rem; font-weight: bold; padding: 10px 0; border-top: 4px solid var(--accent); }
         #panel { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: #f4f4f4; color: #333; padding: 25px; border-radius: 15px; z-index: 1000; overflow-y: auto; }
-        input { width: 95%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; }
-        #audio-status { position: fixed; bottom: 85px; right: 20px; font-size: 14px; color: #0f0; display: none; background: rgba(0,0,0,0.5); padding: 2px 10px; border-radius: 10px; }
+        input { width: 92%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; margin-top: 10px; }
+        #audio-status { position: fixed; bottom: 85px; right: 20px; font-size: 14px; color: #0f0; display: none; background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 20px; border: 1px solid #0f0; }
     </style>
 </head>
 <body onclick="aktifkanAudio()">
 
     <audio id="mainPlayer" preload="auto"></audio>
-    <div id="audio-status">● Audio Aktif</div>
+    <div id="audio-status">● AUDIO SIAP (KOMANDO)</div>
 
-    <div style="position:fixed; top:20px; right:20px; font-size:30px; z-index:100;" onclick="togglePanel()">⚙️</div>
+    <div style="position:fixed; top:20px; right:20px; font-size:35px; z-index:100; background:rgba(0,0,0,0.5); border-radius:50%; padding:5px;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
 
-    <div id="jam">--:--:--</div>
+    <div id="jam">00:00:00</div>
     
     <div id="tgl-container">
-        <div id="tgl-masehi">Memuat...</div>
+        <div id="tgl-masehi">...</div>
         <div id="tgl-hijriah">...</div>
     </div>
 
@@ -53,4 +53,118 @@
         <div class="card" id="c-isya"><h3>ISYA</h3><p id="t-isya">18:54</p></div>
     </div>
 
-    <marquee
+    <marquee id="disp-run">KOMANDO!</marquee>
+
+    <div id="panel">
+        <h2 style="text-align:center;">⚙️ PENGATURAN JWS</h2>
+        <b>Nama Satuan:</b>
+        <input type="text" id="in-nama">
+        <b>Running Text:</b>
+        <input type="text" id="in-run">
+        <hr>
+        <b>Link Audio MP3 (Direct/Raw):</b>
+        <input type="text" id="in-subuh" placeholder="Link MP3 Subuh">
+        <input type="text" id="in-dzuhur" placeholder="Link MP3 Dzuhur">
+        <input type="text" id="in-ashar" placeholder="Link MP3 Ashar">
+        <input type="text" id="in-maghrib" placeholder="Link MP3 Maghrib">
+        <input type="text" id="in-isya" placeholder="Link MP3 Isya">
+        <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
+        <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
+    </div>
+
+    <script>
+        const player = document.getElementById('mainPlayer');
+        let audioReady = false;
+        let sudahBunyi = "";
+
+        function updateWaktu() {
+            const now = new Date();
+            
+            // Format Jam 00:00:00
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('jam').innerText = h + ":" + m + ":" + s;
+            
+            // Tanggal Masehi
+            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
+
+            // Tanggal Hijriah (Manual Offset Approximation untuk keamanan)
+            try {
+                const optH = { day: 'numeric', month: 'long', year: 'numeric' };
+                const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
+                document.getElementById('tgl-hijriah').innerText = hijri + " H";
+            } catch(e) {
+                document.getElementById('tgl-hijriah').innerText = "12 Syawal 1447 H"; 
+            }
+
+            cekAdzan(h + ":" + m);
+        }
+
+        function cekAdzan(hm) {
+            const list = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
+            list.forEach(s => {
+                const target = document.getElementById('t-' + s).innerText;
+                const card = document.getElementById('c-' + s);
+                
+                if(hm === target) {
+                    card.classList.add('active-now');
+                    if(audioReady && sudahBunyi !== s) {
+                        let link = localStorage.getItem('s-' + s);
+                        if(link && link.trim() !== "") {
+                            sudahBunyi = s;
+                            player.src = link.trim();
+                            player.play().catch(err => console.log("Audio Play Blocked"));
+                        }
+                    }
+                } else {
+                    card.classList.remove('active-now');
+                    if(sudahBunyi === s && hm !== target) sudahBunyi = "";
+                }
+            });
+        }
+
+        function aktifkanAudio() {
+            if(!audioReady) {
+                audioReady = true;
+                player.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+                player.play();
+                document.getElementById('audio-status').style.display = "block";
+            }
+        }
+
+        function muatData() {
+            document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
+            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "KOMANDO!";
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
+            });
+        }
+
+        function saveData() {
+            localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
+            localStorage.setItem('tJalan', document.getElementById('in-run').value);
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
+                localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
+            });
+            alert("Data Berhasil Disimpan!");
+            location.reload();
+        }
+
+        function togglePanel() { 
+            const p = document.getElementById("panel");
+            p.style.display = (p.style.display === "block") ? "none" : "block"; 
+        }
+
+        window.onload = () => {
+            muatData();
+            updateWaktu(); 
+            setInterval(updateWaktu, 1000);
+        };
+    </script>
+</body>
+</html>
