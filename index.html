@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 HIJRIAH FIX</title>
+    <title>JWS KORPASGAT V32 FIX TV</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -28,9 +28,13 @@
         .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: white; }
         input { width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
         .btn-save { background: #1e3a8a; color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 20px; }
+        #audio-status { position: fixed; bottom: 80px; right: 20px; font-size: 12px; color: #0f0; display: none; }
     </style>
 </head>
-<body onclick="aktifkanAudio()">
+<body onclick="aktifkanAudio()" onkeydown="aktifkanAudio()">
+
+    <audio id="mainPlayer" preload="auto"></audio>
+    <div id="audio-status">● Audio Ready</div>
 
     <div style="position:fixed; top:20px; right:20px; font-size:30px; z-index:100;" onclick="togglePanel()">⚙️</div>
     <div class="header"><h1 id="n-satuan">STAFLOG KORPASGAT</h1></div>
@@ -60,21 +64,21 @@
             <input type="text" id="in-run" placeholder="Running Text">
         </div>
         <div class="box">
-            <b>🕌 Link Audio (Gunakan Link Raw GitHub / MP3)</b>
-            <input type="text" id="in-subuh" placeholder="Link MP3 Subuh">
-            <input type="text" id="in-dzuhur" placeholder="Link MP3 Dzuhur">
-            <input type="text" id="in-ashar" placeholder="Link MP3 Ashar">
-            <input type="text" id="in-maghrib" placeholder="Link MP3 Magrib">
-            <input type="text" id="in-isya" placeholder="Link MP3 Isya">
+            <b>🕌 Link Audio (Raw GitHub / MP3)</b>
+            <input type="text" id="in-subuh" placeholder="Link Subuh">
+            <input type="text" id="in-dzuhur" placeholder="Link Dzuhur">
+            <input type="text" id="in-ashar" placeholder="Link Ashar">
+            <input type="text" id="in-maghrib" placeholder="Link Maghrib">
+            <input type="text" id="in-isya" placeholder="Link Isya">
         </div>
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer;">[ TUTUP ]</p>
     </div>
 
     <script>
-        const player = new Audio();
+        const player = document.getElementById('mainPlayer');
         let audioReady = false;
-        let sudahBunyi = ""; // Mencegah audio berulang di menit yang sama
+        let sudahBunyi = "";
 
         function getHijri() {
             const date = new Date();
@@ -82,9 +86,12 @@
             const masehi = new Intl.DateTimeFormat('id-ID', { weekday: 'long', ...options }).format(date);
             document.getElementById('tgl-masehi').innerText = masehi;
 
-            // Hijriah
-            const hijriDate = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options).format(date);
-            document.getElementById('tgl-hijriah').innerText = hijriDate + " H";
+            try {
+                const hijriDate = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options).format(date);
+                document.getElementById('tgl-hijriah').innerText = hijriDate + " H";
+            } catch(e) {
+                document.getElementById('tgl-hijriah').innerText = "Update Hijriah...";
+            }
         }
 
         function muatSistem() {
@@ -102,69 +109,4 @@
             const now = new Date();
             const time = now.toLocaleTimeString('id-ID', {hour12:false}).replace(/\./g, ':');
             document.getElementById('jam').innerText = time;
-            const hm = time.substring(0, 5);
-
-            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                const target = document.getElementById('t-' + s).innerText;
-                const card = document.getElementById('c-' + s);
-                
-                if(hm === target) {
-                    card.classList.add('active-now');
-                    
-                    // Eksekusi audio hanya jika belum bunyi di menit ini
-                    if(audioReady && sudahBunyi !== s) {
-                        let file = localStorage.getItem('s-' + s);
-                        if(file && file.trim() !== "") {
-                            player.src = file.trim();
-                            player.play()
-                                .then(() => { 
-                                    sudahBunyi = s; 
-                                    console.log("Memutar: " + s);
-                                })
-                                .catch(e => console.log("Gagal putar audio. Klik layar!"));
-                        }
-                    }
-                } else {
-                    card.classList.remove('active-now');
-                    // Reset tanda bunyi jika sudah ganti menit
-                    if(sudahBunyi === s && hm !== target) {
-                        sudahBunyi = "";
-                    }
-                }
-            });
-        }
-
-        // PENTING: Browser butuh interaksi user sebelum memutar suara
-        function aktifkanAudio() { 
-            if(!audioReady) {
-                audioReady = true; 
-                // Putar suara pancingan (silent)
-                player.src = "https://www.soundjay.com/buttons/beep-01a.mp3"; 
-                player.volume = 0.1;
-                player.play().then(() => {
-                    player.pause();
-                    console.log("Sistem Audio Aktif");
-                });
-            }
-        }
-
-        function togglePanel() { 
-            const p = document.getElementById("panel"); 
-            p.style.display = (p.style.display === "block") ? "none" : "block"; 
-        }
-
-        function saveData() {
-            localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
-            localStorage.setItem('tJalan', document.getElementById('in-run').value);
-            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
-                localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
-            });
-            alert("Data Disimpan!");
-            location.reload();
-        }
-
-        window.onload = muatSistem;
-        setInterval(update, 1000);
-    </script>
-</body>
-</html>
+            const hm =
