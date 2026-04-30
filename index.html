@@ -96,7 +96,7 @@
             try {
                 const optH = { day: 'numeric', month: 'long', year: 'numeric' };
                 const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
-                document.getElementById('tgl-hijriah').innerText = hijri + " H";
+                document.getElementById('tgl-hijriah').innerText = hijri + " ";
             } catch(e) {
                 document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
             }
