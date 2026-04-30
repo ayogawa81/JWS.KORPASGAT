@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWS KORPASGAT V32 FINAL</title>
+    <title>JWS KORPASGAT V32 FINAL FIX</title>
     <style>
         :root { --accent: #fbbf24; --active: #ef4444; }
         body { 
@@ -61,13 +61,18 @@
         <input type="text" id="in-nama">
         <b>Running Text:</b>
         <input type="text" id="in-run">
+        <b>Koordinat (Latitude, Longitude):</b>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="in-lat" placeholder="Lat: -6.9175">
+            <input type="text" id="in-lon" placeholder="Lon: 107.6191">
+        </div>
         <hr>
-        <b>Link Audio MP3 (Direct/Raw):</b>
-        <input type="text" id="in-subuh" placeholder="Link MP3 Subuh">
-        <input type="text" id="in-dzuhur" placeholder="Link MP3 Dzuhur">
-        <input type="text" id="in-ashar" placeholder="Link MP3 Ashar">
-        <input type="text" id="in-maghrib" placeholder="Link MP3 Maghrib">
-        <input type="text" id="in-isya" placeholder="Link MP3 Isya">
+        <b>Link Audio (URL LENGKAP):</b>
+        <input type="text" id="in-subuh" placeholder="https://.../subuh.mp3">
+        <input type="text" id="in-dzuhur" placeholder="https://.../dzuhur.mp3">
+        <input type="text" id="in-ashar" placeholder="https://.../ashar.mp3">
+        <input type="text" id="in-maghrib" placeholder="https://.../maghrib.mp3">
+        <input type="text" id="in-isya" placeholder="https://.../isya.mp3">
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
@@ -79,44 +84,38 @@
 
         function updateWaktu() {
             const now = new Date();
-            
-            // Format Jam 00:00:00
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('jam').innerText = h + ":" + m + ":" + s;
             
-            // Tanggal Masehi
             const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             document.getElementById('tgl-masehi').innerText = hari[now.getDay()] + ", " + now.getDate() + " " + bulan[now.getMonth()] + " " + now.getFullYear();
 
-            // Tanggal Hijriah (Manual Offset Approximation untuk keamanan)
             try {
                 const optH = { day: 'numeric', month: 'long', year: 'numeric' };
                 const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optH).format(now);
                 document.getElementById('tgl-hijriah').innerText = hijri + " H";
             } catch(e) {
-                document.getElementById('tgl-hijriah').innerText = "12 Syawal 1447 H"; 
+                document.getElementById('tgl-hijriah').innerText = "Update Kalender..."; 
             }
 
             cekAdzan(h + ":" + m);
         }
 
         function cekAdzan(hm) {
-            const list = ["subuh", "dzuhur", "ashar", "maghrib", "isya"];
-            list.forEach(s => {
+            ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 const target = document.getElementById('t-' + s).innerText;
                 const card = document.getElementById('c-' + s);
-                
                 if(hm === target) {
                     card.classList.add('active-now');
                     if(audioReady && sudahBunyi !== s) {
                         let link = localStorage.getItem('s-' + s);
-                        if(link && link.trim() !== "") {
+                        if(link && link.startsWith('http')) {
                             sudahBunyi = s;
                             player.src = link.trim();
-                            player.play().catch(err => console.log("Audio Play Blocked"));
+                            player.play().catch(err => console.log("Blocked"));
                         }
                     }
                 } else {
@@ -137,9 +136,11 @@
 
         function muatData() {
             document.getElementById('n-satuan').innerText = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
-            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "STAFLOG KORPASGAT";
+            document.getElementById('in-nama').value = localStorage.getItem('nSatuan') || "";
             document.getElementById('disp-run').innerText = localStorage.getItem('tJalan') || "KOMANDO!";
-            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "KOMANDO!";
+            document.getElementById('in-run').value = localStorage.getItem('tJalan') || "";
+            document.getElementById('in-lat').value = localStorage.getItem('lat') || "";
+            document.getElementById('in-lon').value = localStorage.getItem('lon') || "";
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 document.getElementById('in-' + s).value = localStorage.getItem('s-' + s) || "";
             });
@@ -148,10 +149,11 @@
         function saveData() {
             localStorage.setItem('nSatuan', document.getElementById('in-nama').value);
             localStorage.setItem('tJalan', document.getElementById('in-run').value);
+            localStorage.setItem('lat', document.getElementById('in-lat').value);
+            localStorage.setItem('lon', document.getElementById('in-lon').value);
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 localStorage.setItem('s-' + s, document.getElementById('in-' + s).value);
             });
-            alert("Data Berhasil Disimpan!");
             location.reload();
         }
 
@@ -160,11 +162,7 @@
             p.style.display = (p.style.display === "block") ? "none" : "block"; 
         }
 
-        window.onload = () => {
-            muatData();
-            updateWaktu(); 
-            setInterval(updateWaktu, 1000);
-        };
+        window.onload = () => { muatData(); updateWaktu(); setInterval(updateWaktu, 1000); };
     </script>
 </body>
 </html>
