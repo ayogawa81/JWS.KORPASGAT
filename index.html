@@ -67,12 +67,13 @@
             <input type="text" id="in-lon" placeholder="Lon: 107.6191">
         </div>
         <hr>
-        <b>Link Audio (URL LENGKAP):</b>
-        <input type="text" id="in-subuh" placeholder="https://.../subuh.mp3">
-        <input type="text" id="in-dzuhur" placeholder="https://.../dzuhur.mp3">
-        <input type="text" id="in-ashar" placeholder="https://.../ashar.mp3">
-        <input type="text" id="in-maghrib" placeholder="https://.../maghrib.mp3">
-        <input type="text" id="in-isya" placeholder="https://.../isya.mp3">
+        <b>Nama File Audio (Cukup Nama MP3 Saja):</b>
+        <p style="font-size: 12px; color: gray; margin: 0;">Biarkan kosong untuk suara default.</p>
+        <input type="text" id="in-subuh" placeholder="Contoh: subuh.mp3">
+        <input type="text" id="in-dzuhur" placeholder="Contoh: dzuhur.mp3">
+        <input type="text" id="in-ashar" placeholder="Contoh: Ashar.mp3">
+        <input type="text" id="in-maghrib" placeholder="Contoh: Magrib.mp3">
+        <input type="text" id="in-isya" placeholder="Contoh: Isya.mp3">
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
@@ -81,6 +82,9 @@
         const player = document.getElementById('mainPlayer');
         let audioReady = false;
         let sudahBunyi = "";
+
+        // URL PATEN DARI GITHUB ANDA
+        const baseURL = "https://github.com/ayogawa81/JWS.KORPASGAT/raw/refs/heads/main/";
 
         function updateWaktu() {
             const now = new Date();
@@ -111,12 +115,22 @@
                 if(hm === target) {
                     card.classList.add('active-now');
                     if(audioReady && sudahBunyi !== s) {
-                        let link = localStorage.getItem('s-' + s);
-                        if(link && link.startsWith('http')) {
-                            sudahBunyi = s;
-                            player.src = link.trim();
-                            player.play().catch(err => console.log("Blocked"));
-                        }
+                        let userInput = localStorage.getItem('s-' + s);
+                        
+                        // Jika input kosong, otomatis panggil nama waktu shalat .mp3 (misal: subuh.mp3)
+                        // Jika input diisi, panggil nama file tersebut
+                        let fileName = (userInput && userInput.trim() !== "") ? userInput.trim() : (s.charAt(0).toUpperCase() + s.slice(1) + ".mp3");
+                        
+                        // Jika nama filenya "subuh" (huruf kecil semua di array), kita sesuaikan dengan nama file di GitHub
+                        if(s === "subuh") fileName = "subuh.mp3";
+                        if(s === "dzuhur") fileName = "dzuhur.mp3";
+                        if(s === "ashar") fileName = "Ashar.mp3";
+                        if(s === "maghrib") fileName = "Magrib.mp3";
+                        if(s === "isya") fileName = "Isya.mp3";
+
+                        sudahBunyi = s;
+                        player.src = baseURL + fileName;
+                        player.play().catch(err => console.log("Gagal putar audio: " + baseURL + fileName));
                     }
                 } else {
                     card.classList.remove('active-now');
