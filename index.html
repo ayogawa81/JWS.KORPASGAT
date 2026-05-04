@@ -67,12 +67,14 @@
             <input type="text" id="in-lon" placeholder="Lon: 107.6191">
         </div>
         <hr>
-        <b>Link Audio (URL LENGKAP):</b>
-        <input type="text" id="in-subuh" placeholder="https://.../subuh.mp3">
-        <input type="text" id="in-dzuhur" placeholder="https://.../dzuhur.mp3">
-        <input type="text" id="in-ashar" placeholder="https://.../ashar.mp3">
-        <input type="text" id="in-maghrib" placeholder="https://.../maghrib.mp3">
-        <input type="text" id="in-isya" placeholder="https://.../isya.mp3">
+        <b>Nama File Audio (Simpan di Folder Audio):</b>
+        <p style="font-size: 12px; color: red; margin: 0;">*Cukup tulis nama filenya saja, misal: subuh.mp3</p>
+        <input type="text" id="in-subuh" placeholder="subuh.mp3">
+        <input type="text" id="in-dzuhur" placeholder="dzuhur.mp3">
+        <input type="text" id="in-ashar" placeholder="ashar.mp3">
+        <input type="text" id="in-maghrib" placeholder="maghrib.mp3">
+        <input type="text" id="in-isya" placeholder="isya.mp3">
+        
         <button class="btn-save" onclick="saveData()">SIMPAN & REFRESH</button>
         <p onclick="togglePanel()" style="text-align:center; color:gray; cursor:pointer; margin-top:20px;">[ TUTUP ]</p>
     </div>
@@ -81,6 +83,11 @@
         const player = document.getElementById('mainPlayer');
         let audioReady = false;
         let sudahBunyi = "";
+
+        // --- PENGATURAN PATEN URL ---
+        // Ganti URL di bawah ini sesuai alamat folder audio Anda
+        const baseURL = "http://localhost/audio/"; 
+        const defaultFile = "adzan.mp3"; 
 
         function updateWaktu() {
             const now = new Date();
@@ -108,15 +115,20 @@
             ["subuh", "dzuhur", "ashar", "maghrib", "isya"].forEach(s => {
                 const target = document.getElementById('t-' + s).innerText;
                 const card = document.getElementById('c-' + s);
+                
                 if(hm === target) {
                     card.classList.add('active-now');
                     if(audioReady && sudahBunyi !== s) {
-                        let link = localStorage.getItem('s-' + s);
-                        if(link && link.startsWith('http')) {
-                            sudahBunyi = s;
-                            player.src = link.trim();
-                            player.play().catch(err => console.log("Blocked"));
-                        }
+                        let fileName = localStorage.getItem('s-' + s);
+                        
+                        // Logika Gabung: BaseURL + NamaFile (Jika kosong pakai defaultFile)
+                        let audioSource = (fileName && fileName.trim() !== "") 
+                                          ? baseURL + fileName.trim() 
+                                          : baseURL + defaultFile;
+
+                        sudahBunyi = s;
+                        player.src = audioSource;
+                        player.play().catch(err => console.log("Gagal memutar: " + audioSource));
                     }
                 } else {
                     card.classList.remove('active-now');
